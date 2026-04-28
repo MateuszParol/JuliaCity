@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: ready_to_plan
-last_updated: "2026-04-28T15:29:28.496Z"
+last_updated: "2026-04-28T21:00:33.263Z"
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 6
-  completed_plans: 0
-  percent: 25
+  completed_plans: 6
+  percent: 100
 ---
 
 # State: JuliaCity
