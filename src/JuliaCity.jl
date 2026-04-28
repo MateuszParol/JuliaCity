@@ -23,8 +23,10 @@ using Random
 # Typy domenowe (Punkt2D, Algorytm, StanSymulacji)
 include("typy.jl")
 
+# Generator punktów testowych (PKT-01..04)
+include("punkty.jl")
+
 # Eksport publicznego API
-# generuj_punkty będzie dodany w plan 05 (po stworzeniu src/punkty.jl)
-export Punkt2D, StanSymulacji, Algorytm
+export Punkt2D, StanSymulacji, Algorytm, generuj_punkty
 
 end # module
