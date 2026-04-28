@@ -23,7 +23,13 @@
   3. Uruchomienie `using JuliaCity; generuj_punkty(1000)` zwraca `Vector{Punkt2D}` o długości 1000, wszystkie współrzędne w `[0,1]²`, deterministycznie powtarzalne dla `seed=42` (różne wywołania → identyczne dane).
   4. `generuj_punkty` nie modyfikuje `Random.GLOBAL_RNG` (test sprawdzający `copy(Random.default_rng())` przed/po) — używa lokalnego `Xoshiro(seed)`.
   5. Wszystkie komentarze w `src/*.jl` po polsku; konwencja „polski w UI / angielski w internal asserts" udokumentowana w `CONTRIBUTING.md`.
-**Plans**: TBD
+**Plans**: 6 plans
+- [ ] 01-01-PLAN.md — Instalacja Julia 1.10+ przez juliaup (checkpoint, blokuje fazę)
+- [ ] 01-02-PLAN.md — Repo skeleton: .editorconfig, .gitattributes, .gitignore, LICENSE, README.md, CONTRIBUTING.md, placeholder katalogi
+- [ ] 01-03-PLAN.md — Project.toml + Manifest.toml: [deps], [compat] (Wariant b), [extras]+[targets], stub test/runtests.jl
+- [ ] 01-04-PLAN.md — Core types: src/JuliaCity.jl module + src/typy.jl (Punkt2D, Algorytm, StanSymulacji{R} z const fields)
+- [ ] 01-05-PLAN.md — generuj_punkty: src/punkty.jl z dwiema metodami (D-11), wire do JuliaCity module
+- [ ] 01-06-PLAN.md — Pełen test suite (encoding guard, PKT-01..04, StanSymulacji, Aqua, JET smoke) + .github/workflows/CI.yml (matrix 3×3)
 **UI hint**: no
 
 ### Phase 2: Energy, SA Algorithm & Test Suite
@@ -69,7 +75,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Bootstrap, Core Types & Points | 0/0 | Not started | - |
+| 1. Bootstrap, Core Types & Points | 0/6 | Planned       | - |
 | 2. Energy, SA Algorithm & Test Suite | 0/0 | Not started | - |
 | 3. Visualization & Export | 0/0 | Not started | - |
 | 4. Demo, Benchmarks & Documentation | 0/0 | Not started | - |
