@@ -1,3 +1,16 @@
+---
+gsd_state_version: 1.0
+milestone: v1.1
+milestone_name: milestone
+status: unknown
+last_updated: "2026-04-28T12:57:59.822Z"
+progress:
+  total_phases: 4
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+---
+
 # State: JuliaCity
 
 *This file is project memory. It survives context resets and persists between sessions.*
@@ -15,9 +28,9 @@
 | Phase | 1 (of 4) |
 | Phase Name | Bootstrap, Core Types & Points |
 | Plan | None yet (run `/gsd-plan-phase 1`) |
-| Status | Ready to plan |
+| Status | Context gathered — ready to plan |
 | Progress | `[░░░░░░░░░░░░░░░░░░░░] 0% (0/4 phases complete)` |
-| Last Action | Roadmap created |
+| Last Action | Phase 1 context gathered (`.planning/phases/01-bootstrap-core-types-points/01-CONTEXT.md`) |
 | Next Action | `/gsd-plan-phase 1` |
 
 ## Roadmap Snapshot
@@ -61,16 +74,16 @@
 |----------|-------|--------|
 | Threading granularity at N=1000 — `@threads` may be net-negative for sub-millisecond inner loops; need empirical `MIN_N_THREAD` threshold | Phase 2 | Deferred to implementation; benchmark `JULIA_NUM_THREADS=1,2,4,8` for `oblicz_energie` |
 | `KROKI_NA_KLATKE` default — UX-tuning decision for N=1000 on commodity laptops | Phase 3 | Default ≥ 10 per VIZ-05; tune empirically |
-| Distance matrix precompute (~8 MB Float64) vs on-the-fly | Phase 2 | Recommendation: precompute (PITFALLS Pitfall 10); finalize during plan |
+| Distance matrix precompute (~8 MB Float64) vs on-the-fly | Phase 1 | RESOLVED 2026-04-28 — precompute `D::Matrix{Float64}` lock-in (Phase 1 CONTEXT D-08; Phase 2 fills values) |
 | CairoMakie fallback for headless CI? | Phase 3+4 | If CI fails on Linux, add backend abstraction; otherwise GLMakie-only |
 
 ### Active TODOs
 
 *Carry across phases when relevant.*
 
-- [ ] Confirm `Manifest.toml` is committed (this is an application, not a library — pins reproducibility for demo)
-- [ ] Add encoding-validation CI guard test (UTF-8 well-formed, NFC-normalized, no BOM)
-- [ ] Document Polish-typography convention (proper „..." quotes in user-facing strings) before README polish
+- [ ] Confirm `Manifest.toml` is committed (this is an application, not a library — pins reproducibility for demo) [Phase 1 D-25 — verify after execute]
+- [ ] Add encoding-validation CI guard test (UTF-8 well-formed, NFC-normalized, no BOM) [Phase 1 D-21 — folded into runtests.jl]
+- [ ] Document Polish-typography convention (proper „..." quotes in user-facing strings) before README polish [Phase 4 — deferred]
 
 ### Blockers
 
@@ -79,12 +92,14 @@
 ## Session Continuity
 
 **On resume:**
+
 1. Read this file (STATE.md) — confirms current position and decisions
 2. Read ROADMAP.md — confirms phase scope and success criteria
 3. Read REQUIREMENTS.md — confirms which REQ-IDs belong to current phase
 4. Run `/gsd-plan-phase {current_phase}` if no plan exists, else `/gsd-implement-plan`
 
 **Files of record:**
+
 - `.planning/PROJECT.md` — vision, constraints, key decisions
 - `.planning/REQUIREMENTS.md` — v1/v2 requirements with phase traceability
 - `.planning/ROADMAP.md` — phases, goals, success criteria
@@ -93,4 +108,4 @@
 
 ---
 *State initialized: 2026-04-28 after roadmap creation*
-*Last updated: 2026-04-28*
+*Last updated: 2026-04-28 after Phase 1 context discussion*
