@@ -3,12 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-04-28T12:57:59.822Z"
+last_updated: "2026-04-28T15:06:31.350Z"
 progress:
   total_phases: 4
   completed_phases: 0
-  total_plans: 0
+  total_plans: 6
   completed_plans: 0
+  percent: 0
 ---
 
 # State: JuliaCity
@@ -27,11 +28,11 @@ progress:
 |-------|-------|
 | Phase | 1 (of 4) |
 | Phase Name | Bootstrap, Core Types & Points |
-| Plan | None yet (run `/gsd-plan-phase 1`) |
-| Status | Context gathered — ready to plan |
+| Plan | 6 plans in 6 waves (`.planning/phases/01-bootstrap-core-types-points/01-{01..06}-PLAN.md`) |
+| Status | Ready to execute |
 | Progress | `[░░░░░░░░░░░░░░░░░░░░] 0% (0/4 phases complete)` |
-| Last Action | Phase 1 context gathered (`.planning/phases/01-bootstrap-core-types-points/01-CONTEXT.md`) |
-| Next Action | `/gsd-plan-phase 1` |
+| Last Action | Phase 1 plans created and verified (25/25 decisions, 10/10 REQ-IDs covered) |
+| Next Action | `/gsd-execute-phase 1` (Wave 1 = juliaup install checkpoint, `autonomous: false`) |
 
 ## Roadmap Snapshot
 
