@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+concurrency:
+  # Anuluj poprzedni bieg dla tej samej referencji (PR/branch)
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Julia ${{ matrix.version }} - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.allow_failure || false }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - '1.10'      # LTS (compat floor)
+          - '1.11'      # current minor
+          - 'nightly'   # bleeding edge — allow-failure
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+        arch:
+          - x64
+        include:
+          - version: 'nightly'
+            allow_failure: true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Julia ${{ matrix.version }}
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix.version }}
+          arch: ${{ matrix.arch }}
+
+      - name: Cache Julia artifacts and packages
+        uses: julia-actions/cache@v2
+
+      - name: Build package (Pkg.instantiate + Pkg.build)
+        uses: julia-actions/julia-buildpkg@v1
+
+      - name: Run tests
+        uses: julia-actions/julia-runtest@v1
+        env:
+          # 2 vCPUs na shared GitHub runners (A3 z RESEARCH.md)
+          JULIA_NUM_THREADS: 2
