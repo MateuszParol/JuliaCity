@@ -130,22 +130,65 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BOOT-01 — BOOT-04 | TBD | Pending |
-| PKT-01 — PKT-04 | TBD | Pending |
-| ENE-01 — ENE-05 | TBD | Pending |
-| ALG-01 — ALG-08 | TBD | Pending |
-| VIZ-01 — VIZ-07 | TBD | Pending |
-| EKS-01 — EKS-04 | TBD | Pending |
-| DEMO-01 — DEMO-04 | TBD | Pending |
-| TEST-01 — TEST-08 | TBD | Pending |
-| BENCH-01 — BENCH-05 | TBD | Pending |
-| LANG-01 — LANG-04 | TBD | Pending |
+| BOOT-01 | Phase 1 | Pending |
+| BOOT-02 | Phase 1 | Pending |
+| BOOT-03 | Phase 1 | Pending |
+| BOOT-04 | Phase 1 | Pending |
+| PKT-01 | Phase 1 | Pending |
+| PKT-02 | Phase 1 | Pending |
+| PKT-03 | Phase 1 | Pending |
+| PKT-04 | Phase 1 | Pending |
+| ENE-01 | Phase 2 | Pending |
+| ENE-02 | Phase 2 | Pending |
+| ENE-03 | Phase 2 | Pending |
+| ENE-04 | Phase 2 | Pending |
+| ENE-05 | Phase 2 | Pending |
+| ALG-01 | Phase 2 | Pending |
+| ALG-02 | Phase 2 | Pending |
+| ALG-03 | Phase 2 | Pending |
+| ALG-04 | Phase 2 | Pending |
+| ALG-05 | Phase 2 | Pending |
+| ALG-06 | Phase 2 | Pending |
+| ALG-07 | Phase 2 | Pending |
+| ALG-08 | Phase 2 | Pending |
+| VIZ-01 | Phase 3 | Pending |
+| VIZ-02 | Phase 3 | Pending |
+| VIZ-03 | Phase 3 | Pending |
+| VIZ-04 | Phase 3 | Pending |
+| VIZ-05 | Phase 3 | Pending |
+| VIZ-06 | Phase 3 | Pending |
+| VIZ-07 | Phase 3 | Pending |
+| EKS-01 | Phase 3 | Pending |
+| EKS-02 | Phase 3 | Pending |
+| EKS-03 | Phase 3 | Pending |
+| EKS-04 | Phase 3 | Pending |
+| DEMO-01 | Phase 4 | Pending |
+| DEMO-02 | Phase 4 | Pending |
+| DEMO-03 | Phase 4 | Pending |
+| DEMO-04 | Phase 4 | Pending |
+| TEST-01 | Phase 2 | Pending |
+| TEST-02 | Phase 2 | Pending |
+| TEST-03 | Phase 2 | Pending |
+| TEST-04 | Phase 2 | Pending |
+| TEST-05 | Phase 2 | Pending |
+| TEST-06 | Phase 2 | Pending |
+| TEST-07 | Phase 2 | Pending |
+| TEST-08 | Phase 2 | Pending |
+| BENCH-01 | Phase 4 | Pending |
+| BENCH-02 | Phase 4 | Pending |
+| BENCH-03 | Phase 4 | Pending |
+| BENCH-04 | Phase 4 | Pending |
+| BENCH-05 | Phase 4 | Pending |
+| LANG-01 | Phase 1 | Pending |
+| LANG-02 | Phase 4 | Pending |
+| LANG-03 | Phase 4 | Pending |
+| LANG-04 | Phase 1 | Pending |
 
 **Coverage:**
-- v1 requirements: 51 total
-- Mapped to phases: 0 (uzupełnione przez roadmappera)
-- Unmapped: 51 ⚠️ (oczekuje roadmappera)
+- v1 requirements: 53 total (recount: BOOT×4 + PKT×4 + ENE×5 + ALG×8 + VIZ×7 + EKS×4 + DEMO×4 + TEST×8 + BENCH×5 + LANG×4 = 53; previous header "51" was a miscount)
+- Mapped to phases: 53 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-04-28*
-*Last updated: 2026-04-28 after initial definition*
+*Last updated: 2026-04-28 after roadmap creation (traceability filled, total recount fixed)*
