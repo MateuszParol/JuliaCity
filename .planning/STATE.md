@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
-status: unknown
+status: ready_to_plan
 last_updated: "2026-04-28T15:29:28.496Z"
 progress:
   total_phases: 4
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 6
   completed_plans: 0
-  percent: 0
+  percent: 25
 ---
 
 # State: JuliaCity
@@ -24,8 +24,8 @@ progress:
 
 ## Current Position
 
-Phase: 01 (bootstrap-core-types-points) — EXECUTING
-Plan: 1 of 6
+Phase: 2
+Plan: Not started
 | Field | Value |
 |-------|-------|
 | Phase | 1 (of 4) |
