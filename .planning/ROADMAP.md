@@ -29,7 +29,7 @@
 - [x] 01-03-PLAN.md — Project.toml + Manifest.toml: [deps], [compat] (Wariant b), [extras]+[targets], stub test/runtests.jl
 - [x] 01-04-PLAN.md — Core types: src/JuliaCity.jl module + src/typy.jl (Punkt2D, Algorytm, StanSymulacji{R} z const fields)
 - [x] 01-05-PLAN.md — generuj_punkty: src/punkty.jl z dwiema metodami (D-11), wire do JuliaCity module
-- [ ] 01-06-PLAN.md — Pełen test suite (encoding guard, PKT-01..04, StanSymulacji, Aqua, JET smoke) + .github/workflows/CI.yml (matrix 3×3)
+- [x] 01-06-PLAN.md — Pełen test suite (encoding guard, PKT-01..04, StanSymulacji, Aqua, JET smoke) + .github/workflows/CI.yml (matrix 3×3)
 **UI hint**: no
 
 ### Phase 2: Energy, SA Algorithm & Test Suite
