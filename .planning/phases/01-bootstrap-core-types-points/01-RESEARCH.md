@@ -867,27 +867,27 @@ end
 
 **Action for planner:** Dla każdego `[ASSUMED]` powyżej dodać explicit verification step do PLAN.md (smoke test, manual check, lub deferral).
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Czy PkgTemplates `Tests()` plugin tworzy `[extras]+[targets]` w `Project.toml`?**
    - What we know: Plugin tworzy `test/runtests.jl` skeleton. Niejasne czy edytuje root `Project.toml`.
    - What's unclear: Wymaga uruchomienia generacji żeby sprawdzić.
-   - Recommendation: Planner zakłada **NIE** — dodaj `[extras]+[targets]` ręcznie. Jeśli plugin to dodał, merge ostatecznie spójne.
+   - RESOLVED: Plan 03 manually adds [extras]+[targets] (Plan 03 Task 2). Recommendation: Planner zakłada **NIE** — dodaj `[extras]+[targets]` ręcznie. Jeśli plugin to dodał, merge ostatecznie spójne.
 
 2. **Czy default `.gitignore` od PkgTemplates zawiera `Manifest.toml`?**
    - What we know: JuliaCI defaultuje do library mode.
    - What's unclear: Aktualna wersja PkgTemplates 0.7.x — verify.
-   - Recommendation: Planner instruuje task post-generation: `grep -q '^/Manifest.toml$' .gitignore && sed -i.bak '/^Manifest.toml$/d' .gitignore`.
+   - RESOLVED: Plan 02 .gitignore explicitly omits Manifest.toml; Manifest.toml is committed (Plan 02 Task 2 / Plan 03 Task 4). Recommendation: Planner instruuje task post-generation: `grep -q '^/Manifest.toml$' .gitignore && sed -i.bak '/^Manifest.toml$/d' .gitignore`.
 
 3. **Czy `Aqua.test_all` w Phase 1 (z minimal kodem) przejdzie bez błędów?**
    - What we know: Aqua catches type piracy, ambiguities, stale deps. Phase 1 ma trywialne typy + 1 funkcję.
    - What's unclear: Aqua może raportować "stale deps" jeśli `[compat]` zawiera GLMakie/Makie ale `[deps]` nie.
-   - Recommendation: **Wariant b** w D-17 — tylko pakiety w `[deps]` mają `[compat]`. To rozwiązuje preventatively.
+   - RESOLVED: revision applies Variant a per ROADMAP SC2 + Aqua stale_deps=false suppression (Plan 03 Task 3 / Plan 06 Task 1). Recommendation: **Wariant b** w D-17 — tylko pakiety w `[deps]` mają `[compat]`. To rozwiązuje preventatively. (NADPISANE PRZEZ REVISION: Wariant a wybrany dla literal SC2 compliance; Aqua suppression mitiguje stale_deps warning do Phase 4.)
 
 4. **Czy `julia-actions/setup-julia@v2` poprawnie obsługuje `version: '1.11'`?**
    - What we know: `@v2` jest current major.
    - What's unclear: Czy wszystkie minor versions są w cache; czy `nightly` channel'em jest poprawny string.
-   - Recommendation: Kopiuj YAML z reference Julia projektu (np. JuliaArrays/StaticArrays) jako sanity baseline.
+   - RESOLVED: julia-actions/setup-julia@v2 used in CI matrix (Plan 06 Task 2). Recommendation: Kopiuj YAML z reference Julia projektu (np. JuliaArrays/StaticArrays) jako sanity baseline.
 
 ## Environment Availability
 
