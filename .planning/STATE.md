@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: unknown
-last_updated: "2026-04-28T15:06:31.350Z"
+last_updated: "2026-04-28T15:29:28.496Z"
 progress:
   total_phases: 4
   completed_phases: 0
@@ -20,10 +20,12 @@ progress:
 
 **Name:** JuliaCity
 **Core Value:** Wizualnie przekonująca, fizycznie umotywowana heurystyka TSP w idiomatycznej Julii — jeśli wszystko inne zawiedzie, użytkownik musi zobaczyć, jak trasa „bańki mydlanej" zaciska się wokół 1000 punktów w czasie rzeczywistym i otrzymać krótszą trasę niż naiwny baseline.
-**Current Focus:** Phase 1 — Bootstrap, Core Types & Points
+**Current Focus:** Phase 01 — bootstrap-core-types-points
 
 ## Current Position
 
+Phase: 01 (bootstrap-core-types-points) — EXECUTING
+Plan: 1 of 6
 | Field | Value |
 |-------|-------|
 | Phase | 1 (of 4) |

@@ -24,7 +24,7 @@
   4. `generuj_punkty` nie modyfikuje `Random.GLOBAL_RNG` (test sprawdzający `copy(Random.default_rng())` przed/po) — używa lokalnego `Xoshiro(seed)`.
   5. Wszystkie komentarze w `src/*.jl` po polsku; konwencja „polski w UI / angielski w internal asserts" udokumentowana w `CONTRIBUTING.md`.
 **Plans**: 6 plans
-- [ ] 01-01-PLAN.md — Instalacja Julia 1.10+ przez juliaup (checkpoint, blokuje fazę)
+- [x] 01-01-PLAN.md — Instalacja Julia 1.10+ przez juliaup (checkpoint, blokuje fazę)
 - [ ] 01-02-PLAN.md — Repo skeleton: .editorconfig, .gitattributes, .gitignore, LICENSE, README.md, CONTRIBUTING.md, placeholder katalogi
 - [ ] 01-03-PLAN.md — Project.toml + Manifest.toml: [deps], [compat] (Wariant b), [extras]+[targets], stub test/runtests.jl
 - [ ] 01-04-PLAN.md — Core types: src/JuliaCity.jl module + src/typy.jl (Punkt2D, Algorytm, StanSymulacji{R} z const fields)
