@@ -12,21 +12,21 @@
 
 ### Validated
 
-(Brak — projekt świeży, każde wymaganie to hipoteza do walidacji przez wdrożenie)
+- [x] Generator 1000 losowych punktów 2D z opcjonalnym seedem (domyślnie deterministycznym) — *Validated in Phase 01: `generuj_punkty(n; seed=42)` + `generuj_punkty(n, rng)` w `src/punkty.jl`*
+- [x] Pełna struktura pakietu Julia (`src/`, `test/`, `examples/`, `Project.toml`) — *Validated in Phase 01: skeleton + `Project.toml` + `Manifest.toml` + module entry*
+- [x] Polski język w kodzie i komentarzach — *Validated in Phase 01 dla source/test code; etykiety osi/tytuły wykresów do walidacji w fazie wizualizacji*
 
 ### Active
 
-- [ ] Generator 1000 losowych punktów 2D z opcjonalnym seedem (domyślnie deterministycznym)
 - [ ] Heurystyka „bańki mydlanej" (wybór wariantu — force-directed, SA, lub hybryda — w fazie research)
 - [ ] Funkcja `oblicz_energie()` jako miara długości trasy (type-stable, bez alokacji w hot path)
 - [ ] Funkcja `symuluj_krok!()` aktualizująca stan symulacji in-place
 - [ ] Wielowątkowość przez `Threads.@threads` w gorących pętlach
 - [ ] Wizualizacja w GLMakie z animacją „zaciągania się" trasy w czasie rzeczywistym
 - [ ] Eksport animacji do MP4/GIF (opcjonalny przełącznik)
-- [ ] Polski język w kodzie, komentarzach, etykietach osi i tytułach
-- [ ] Pełna struktura pakietu Julia (`src/`, `test/`, `examples/`, `Project.toml`)
+- [ ] Polski język w etykietach osi i tytułach wykresów (dotyczy fazy wizualizacji)
 - [ ] Benchmark jakości — porównanie wynikowej długości trasy z baselinem (np. nearest-neighbor)
-- [ ] Suite testowa: poprawność cyklu Hamiltona, type stability, brak alokacji w gorącej pętli
+- [ ] Suite testowa: poprawność cyklu Hamiltona, type stability, brak alokacji w gorącej pętli (Phase 01: 80/80 stub testów; pełna walidacja TSP-specific w kolejnych fazach)
 
 ### Out of Scope
 
@@ -88,4 +88,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-28 after initialization*
+*Last updated: 2026-04-28 after Phase 01 (bootstrap, core types & points)*
