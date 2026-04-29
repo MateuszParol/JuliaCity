@@ -267,4 +267,45 @@ const ENERGIA_REF = NaN   # placeholder - Task 3b wpisuje konkretna Float64
         @info "ALG-06: cierpliwosc=10 -> n_krokow=$(n_krokow) (cap=$(params.liczba_krokow); patience early-stop dziala)"
     end
 
+
+    # ──────────────────────────────────────────────────────────────────────
+    # 8. BL-01 boundary regression: i=n-1 case nie crashuje (gap-closure 02-07)
+    # ──────────────────────────────────────────────────────────────────────
+    @testset "BL-01 boundary i=n-1 nigdy nie crashuje (gap-closure)" begin
+        # Cel: dowiesc ze fix `1:(n-2)` w symuluj_krok! eliminuje probabilistyczny
+        # crash z empty range. Pre-fix: i=n-1 -> j-range (n+1):n pusty -> ArgumentError.
+        # Post-fix: i sampled from 1:(n-2) wylacznie - boundary i=n-1 niemozliwy.
+        #
+        # N=3 fixture: jedyna legalna para to (i=1, j=3). i sampled from 1:1, j from 3:3.
+        # 10_000 krokow gwarantuje ze pre-fix wersja by crashnela (P>1-(0.5)^10000 ≈ 1.0).
+
+        # N=3 boundary fixture
+        punkty3 = generuj_punkty(3; seed=42)
+        stan3 = StanSymulacji(punkty3; rng=Xoshiro(42))
+        inicjuj_nn!(stan3)
+        alg3 = SimAnnealing(stan3)
+        stan3.temperatura = alg3.T_zero
+        params3 = Parametry(liczba_krokow=10_000)
+
+        # Hard assert: brak ArgumentError przez 10_000 krokow
+        for _ in 1:10_000
+            symuluj_krok!(stan3, params3, alg3)
+        end
+        @test sort(stan3.trasa) == collect(1:3)  # Hamilton invariant zachowany
+        @test stan3.iteracja == 10_000
+
+        # N=20 sanity: pre-fix mial ~5% per-step crash; post-fix MUST sustain 100_000
+        punkty20 = generuj_punkty(20; seed=43)
+        stan20 = StanSymulacji(punkty20; rng=Xoshiro(43))
+        inicjuj_nn!(stan20)
+        alg20 = SimAnnealing(stan20)
+        stan20.temperatura = alg20.T_zero
+        params20 = Parametry(liczba_krokow=100_000)
+        for _ in 1:100_000
+            symuluj_krok!(stan20, params20, alg20)
+        end
+        @test sort(stan20.trasa) == collect(1:20)
+        @test stan20.iteracja == 100_000
+    end
+
 end  # outer @testset "test_symulacja.jl"
