@@ -66,9 +66,9 @@
 - [x] 02-07-PLAN.md — BL-01 fix in `symuluj_krok!` + `kalibruj_T0` (`1:(n-2)` upper bound) + N=3 boundary regression tests + deferred-items.md cleanup
 
 **Wave 8** *(gap-closure: parallel — Aqua, BL-03 patience, BL-04 threading)*
-- [ ] 02-08-PLAN.md — BL-02 + IN-04 fix: hoist `check_extras` to top-level Aqua kwarg + extend ignore list (BenchmarkTools, GLMakie, Makie, Observables)
-- [ ] 02-09-PLAN.md — BL-03 fix: `uruchom_sa!` patience reset semantic (rule 2 — strict per-step delta<0 via `energia_prev` tracker) + discriminator test
-- [ ] 02-10-PLAN.md — BL-04 fix: canonical chunked-threading pattern (`collect(chunks(...))` + `eachindex`) in `oblicz_energie` 3-arg
+- [x] 02-08-PLAN.md — BL-02 + IN-04 fix: hoist `check_extras` to top-level Aqua kwarg + extend ignore list (BenchmarkTools, GLMakie, Makie, Observables)
+- [x] 02-09-PLAN.md — BL-03 fix: `uruchom_sa!` patience reset semantic (rule 2 — strict per-step delta<0 via `energia_prev` tracker) + discriminator test
+- [x] 02-10-PLAN.md — BL-04 fix: canonical chunked-threading pattern (`collect(chunks(...))` + `eachindex`) in `oblicz_energie` 3-arg
 
 **Wave 9** *(gap-closure: parallel — WR-01 NaN guard, WR-08 dynamic threads)*
 - [ ] 02-11-PLAN.md — WR-01 fix: `kalibruj_T0` 3-way length dispatch (length>=2 / ==1 / ==0) + degenerate-path test
