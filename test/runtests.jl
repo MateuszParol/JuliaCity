@@ -209,11 +209,16 @@ using StableRNGs
     #    commit dodac kwarg.
     # ─────────────────────────────────────────────────────────────────────────
     @testset "Aqua.jl quality (TEST-06)" begin
+        # BL-02 + IN-04 (gap-closure 02-08): check_extras hoisted from deps_compat
+        # sub-tuple to top-level kwarg. Ignore list extended to BenchmarkTools/GLMakie/
+        # Makie/Observables — INTENCJONALNIE w [extras] dla Phase 3 (viz) i Phase 4 (bench)
+        # per CONTEXT.md, NIE usuwane z Project.toml. Pattern D: stdlib :Random/:Statistics
+        # bez compat entry → deps_compat ignore.
         Aqua.test_all(JuliaCity;
             ambiguities = (recursive = false,),
             stale_deps = false,
-            deps_compat = (ignore = [:Random, :Statistics],
-                           check_extras = (ignore = [:Test, :Unicode],)),
+            deps_compat = (ignore = [:Random, :Statistics],),
+            check_extras = (ignore = [:Test, :Unicode, :BenchmarkTools, :GLMakie, :Makie, :Observables],),
         )
     end
 
