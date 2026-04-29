@@ -48,7 +48,7 @@
 - [x] 02-01-PLAN.md — Project.toml deps (ChunkSplitters, Statistics, PerformanceTestTools w [extras]+[targets].test) + `Parametry` struct + Wave 0 StableRNG↔Punkt2D smoke
 
 **Wave 2** *(blocked on Wave 1)*
-- [ ] 02-02-PLAN.md — `src/energia.jl`: `oblicz_macierz_dystans!`, `oblicz_energie` (2 metody, ChunkSplitters-threaded), `delta_energii` O(1), `kalibruj_T0` = 2σ
+- [x] 02-02-PLAN.md — `src/energia.jl`: `oblicz_macierz_dystans!`, `oblicz_energie` (2 metody, ChunkSplitters-threaded), `delta_energii` O(1), `kalibruj_T0` = 2σ
 
 **Wave 3** *(blocked on Wave 2)*
 - [ ] 02-03-PLAN.md — `src/baselines.jl`: `trasa_nn(D; start=1)` (pure) + `inicjuj_nn!(stan)` (mutating wrapper)
