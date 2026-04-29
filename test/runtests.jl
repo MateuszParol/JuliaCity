@@ -1,7 +1,9 @@
-# Test suite pakietu JuliaCity — Phase 1 + Phase 2 Wave 0.
+# Test suite pakietu JuliaCity — Phase 1 + Phase 2 (kompletna).
 # Pokrywa: encoding hygiene (BOOT-03, D-21), generuj_punkty (PKT-01..04),
 # StanSymulacji konstruktor + const protection, Wave 0 StableRNG↔Punkt2D smoke
-# (Plan 02-01), Aqua quality, JET smoke.
+# (Plan 02-01), test_energia.jl/test_baselines.jl/test_symulacja.jl includes
+# (Plan 02-05), Aqua TEST-06 (rozszerzony), JET TEST-07 (@test_opt na 4 hot-path
+# functions). 21 REQ-IDow Phase 2 pokrytych po wireing-u w Plan 02-06.
 #
 # Asercje wewnętrzne (errors message) po angielsku per LANG-04 / D-23.
 # Komentarze po polsku per LANG-01 / D-22.
@@ -178,40 +180,72 @@ using StableRNGs
     end
 
     # ─────────────────────────────────────────────────────────────────────────
-    # 6. Aqua.jl quality gate (TEST-06 częściowo — pełen w Phase 2)
+    # 6. Energia (Plan 02-02 + Plan 02-05 testset-y)
+    #    Pokrywa REQ ENE-01..05 + TEST-02/03 (czesciowo) + ALG-05.
     # ─────────────────────────────────────────────────────────────────────────
-    @testset "Aqua.jl quality" begin
-        # Aqua importowany na top-levelu pliku (makra muszą być w scope przy parsowaniu).
-        # Wariant a z plan 03 wymaga GLMakie/Makie/Observables/BenchmarkTools w [compat]
-        # od Phase 1 (ROADMAP SC2 literal compliance), ale w [deps] dochodzą w Phase 3
-        # (GLMakie/Makie/Observables) i Phase 4 (BenchmarkTools). Wyłączamy stale_deps
-        # do tego czasu — re-enable w Phase 4 gdy wszystkie compat-entries mają deps.
-        # TODO Phase 4: usuń stale_deps=false gdy BenchmarkTools wejdzie do [deps]
-        #
-        # `deps_compat`: stdlib (Random, Test, Unicode) NIE wymaga wpisów w [compat]
-        # per konwencja Pkg ekosystemu (sterowane przez julia="1.10") — patrz plan-03
-        # SUMMARY decisions. Aqua mimo to flaguje brak compat dla stdlib w [deps]+[extras];
-        # ignorujemy te konkretne pakiety, reszta deps_compat checks działa.
-        deps_compat_kwargs = (ignore = [:Random], check_extras = (ignore = [:Test, :Unicode],))
-        Aqua.test_all(JuliaCity; stale_deps = false, deps_compat = deps_compat_kwargs)
+    include("test_energia.jl")
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # 7. Baselines + TEST-05 NN-baseline-beat (Plan 02-03 + Plan 02-05)
+    #    Pokrywa REQ ALG-04 + TEST-05.
+    # ─────────────────────────────────────────────────────────────────────────
+    include("test_baselines.jl")
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # 8. Symulacja SA + TEST-01/03/04/08 (Plan 02-04 + Plan 02-05)
+    #    Pokrywa REQ ALG-01..03/06..08 + TEST-01/04/08.
+    # ─────────────────────────────────────────────────────────────────────────
+    include("test_symulacja.jl")
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # 9. Aqua.jl quality gate (TEST-06) — rozszerzony z Phase 1 stub.
+    #    Phase 2 dodaje :Statistics do deps_compat ignore (stdlib bez compat
+    #    entry per Pattern D — analogiczne do :Random z Phase 1). Trzymamy
+    #    stale_deps=false do Phase 4 (BenchmarkTools wejdzie do [deps] dopiero
+    #    w bench/). NIE dodajemy unbound_args=(broken=true,) preemptywnie
+    #    (Pitfall F z 02-RESEARCH.md): tylko jezeli Aqua faktycznie zglosi
+    #    false-positive na StanSymulacji{R}. Jezeli to sie dzieje na pierwszym
+    #    uruchomieniu, Plan 02-06 SUMMARY ma to udokumentowac i w nastepnym
+    #    commit dodac kwarg.
+    # ─────────────────────────────────────────────────────────────────────────
+    @testset "Aqua.jl quality (TEST-06)" begin
+        Aqua.test_all(JuliaCity;
+            ambiguities = (recursive = false,),
+            stale_deps = false,
+            deps_compat = (ignore = [:Random, :Statistics],
+                           check_extras = (ignore = [:Test, :Unicode],)),
+        )
     end
 
     # ─────────────────────────────────────────────────────────────────────────
-    # 7. JET smoke test (TEST-07 wstępnie — pełen @report_opt na publicznym API w Phase 2)
+    # 10. JET type stability (TEST-07) — zastepuje Phase 1 JET smoke stub.
+    #     @test_opt automatycznie failuje testset jezeli JET znajdzie issue.
+    #     target_modules=(JuliaCity,) filtruje szum z Base/Core (Pitfall C
+    #     z 02-RESEARCH.md). Pokrywa 4 hot-path public functions:
+    #     oblicz_energie, delta_energii, symuluj_krok!, kalibruj_T0.
     # ─────────────────────────────────────────────────────────────────────────
-    @testset "JET smoke" begin
-        # JET importowany na top-levelu pliku (makra muszą być w scope przy parsowaniu).
-        # Phase 1 — minimalny smoke: tylko że @report_opt na generuj_punkty nie wybucha.
-        # Pełna analiza @report_opt + @report_call na oblicz_energie, symuluj_krok!,
-        # delta_energii dochodzi w Phase 2.
-        #
-        # Soft assertion: jakikolwiek wynik bez exception oznacza że JET zaanalizował
-        # `generuj_punkty` poprawnie. Różne wersje JET zwracają różne typy result-u
-        # (`JETCallResult`, `OptAnalysisResult`, etc.) — nie testujemy konkretnego typu,
-        # bo Phase 1 to tylko gate "macro się parsuje + analiza nie wybucha".
-        # Hard test (`isempty(get_reports(result))`) dochodzi w Phase 2 razem z
-        # oblicz_energie / symuluj_krok! / delta_energii (real type-stability concerns).
-        result = @report_opt generuj_punkty(10; seed=42)
-        @test result !== nothing
+    @testset "JET type stability (TEST-07)" begin
+        # Fixture (deterministyczny seed=42, N=20 wystarczy dla type-inference)
+        punkty = generuj_punkty(20; seed=42)
+        stan = StanSymulacji(punkty; rng=Xoshiro(42))
+        inicjuj_nn!(stan)
+        alg = SimAnnealing(stan)
+        stan.temperatura = alg.T_zero
+        params = Parametry(liczba_krokow=100)
+        bufor = zeros(Float64, Threads.nthreads())
+
+        # Warmup — JET analizuje skompilowany kod, ale dla pewnosci po pierwszej
+        # kompilacji wywolujemy kazda funkcje raz. To rowniez gwarantuje ze stan
+        # jest w realnym runtime state (nie tylko zero-state) przed @test_opt.
+        oblicz_energie(stan.D, stan.trasa, bufor)
+        delta_energii(stan, 5, 17)
+        symuluj_krok!(stan, params, alg)
+        kalibruj_T0(stan; n_probek=10)
+
+        # Hard assertion: brak issues w JuliaCity-targeted analysis.
+        @test_opt target_modules=(JuliaCity,) oblicz_energie(stan.D, stan.trasa, bufor)
+        @test_opt target_modules=(JuliaCity,) delta_energii(stan, 5, 17)
+        @test_opt target_modules=(JuliaCity,) symuluj_krok!(stan, params, alg)
+        @test_opt target_modules=(JuliaCity,) kalibruj_T0(stan; n_probek=10)
     end
 end
