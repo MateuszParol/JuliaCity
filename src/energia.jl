@@ -175,7 +175,8 @@ function kalibruj_T0(stan::StanSymulacji; n_probek::Int=1000, rng=stan.rng)::Flo
     worsening = Float64[]
     sizehint!(worsening, n_probek)
     for _ in 1:n_probek
-        i = rand(rng, 1:(n - 1))
+        # BL-01 fix: 1:(n-2) zamiast 1:(n-1) - i=n-1 dawalo pusty (i+2):n range
+        i = rand(rng, 1:(n - 2))
         j = rand(rng, (i + 2):n)
         delta = delta_energii(stan, i, j)
         if delta > 0.0

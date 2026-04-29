@@ -92,12 +92,21 @@ grep -cE 'TRASA_REF = Int\[\]|ENERGIA_REF = NaN|TRASA_REF = \[\]' test/test_symu
   while preserving the gate for future verifier (placeholder grep must return 0)
 - Plan 02-06 (quality gates) can also re-run this if CI validates first
 
+## Resolution log
+
+- **Plan 02-07 (gap-closure, 2026-04-29)** — BL-01 (2-opt empty range crash) resolved.
+  - `src/algorytmy/simulowane_wyzarzanie.jl:108`: `rand(stan.rng, 1:(n - 1))` -> `rand(stan.rng, 1:(n - 2))`
+  - `src/energia.jl:178`: `rand(rng, 1:(n - 1))` -> `rand(rng, 1:(n - 2))`
+  - Regression tests: `test/test_symulacja.jl::"BL-01 boundary..."` (10_000 N=3 steps + 100_000 N=20 steps); `test/test_energia.jl::"BL-01 kalibruj_T0 boundary..."` (10_000 N=3 prob).
+  - D-05/D-06 LOCKED shape (i, i+2..n) preserved — fix removes only the always-empty `i=n-1` case.
+  - User notification: an erratum entry should be added to `02-CONTEXT.md` documenting that D-05's "1:n-1" upper bound was an off-by-one (NOT a decision change). This plan does NOT modify CONTEXT.md — that is left to the developer.
+
 ## Status
 
 | Item | Severity | Suggested resolver | Status |
 |------|----------|--------------------|--------|
-| 2-opt edge case `i = n-1` empty `j` range | Low (probabilistic crash) | Plan 02-05 or 02-06 | Pre-existing, locked pattern |
+| 2-opt edge case `i = n-1` empty `j` range | Low (probabilistic crash) | Plan 02-05 or 02-06 | RESOLVED in plan 02-07 (gap-closure) |
 | TEST-08 placeholder removal | Low (test broken until CI run) | First CI run with Julia | Helper script + `@test_broken` guard in place |
 
 ---
-*Last updated: 2026-04-29 by Plan 02-05 executor.*
+*Last updated: 2026-04-29 by Plan 02-07 (gap-closure) executor.*

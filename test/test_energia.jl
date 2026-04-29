@@ -146,4 +146,39 @@ using Random: Xoshiro
         @test stan.D[1, 2] ≈ sqrt((p1[1] - p2[1])^2 + (p1[2] - p2[2])^2)
     end
 
+
+    # ──────────────────────────────────────────────────────────────────────
+    # 8. BL-01 kalibruj_T0 boundary regression (gap-closure 02-07)
+    # ──────────────────────────────────────────────────────────────────────
+    @testset "BL-01 kalibruj_T0 boundary nie crashuje (gap-closure)" begin
+        # Cel: dowiesc ze fix `1:(n-2)` w kalibruj_T0 (src/energia.jl:178) eliminuje
+        # probabilistyczny crash z empty range. Pre-fix: i=n-1 -> j-range pusty -> ArgumentError.
+        # N=3 fixture: jedyna legalna para to (i=1, j=3). 10_000 probek gwarantuje
+        # ze pre-fix wersja by crashnela (P -> 1.0 dla 10_000 prob).
+        #
+        # UWAGA: N=3 daje tylko jedna legalna pare, wiec wszystkie delts sa identyczne;
+        # std([d, d, ...]) == 0 -> T0 == 0.0. WR-01 (std NaN dla length==1) jest
+        # adresowane w osobnym planie 02-11; tutaj asercja covers oba scenariusze
+        # przez (T0 >= 0.0) || isnan(T0).
+
+        punkty3 = generuj_punkty(3; seed=42)
+        stan3 = StanSymulacji(punkty3; rng=Xoshiro(42))
+        inicjuj_nn!(stan3)
+
+        # Hard assert: brak ArgumentError przy 10_000 prob na N=3 (kazda iteracja w
+        # kalibruj_T0 wewnetrznie wola rand(rng, 1:(n-2)) i rand(rng, (i+2):n)).
+        T0 = kalibruj_T0(stan3; n_probek=10_000)
+        @test (T0 >= 0.0) || isnan(T0)  # crash-free; WR-01 adresuje NaN edge oddzielnie
+        @test T0 isa Float64
+
+        # N=20 sanity (analogiczne do symuluj_krok! N=20 testu): 5_000 prob, ~5% pre-fix
+        # crash rate -> P(no crash) ≈ (0.95)^5000 ≈ 0. Post-fix: zawsze przechodzi.
+        punkty20 = generuj_punkty(20; seed=43)
+        stan20 = StanSymulacji(punkty20; rng=Xoshiro(43))
+        inicjuj_nn!(stan20)
+        T0_20 = kalibruj_T0(stan20; n_probek=5_000)
+        @test T0_20 isa Float64
+        @test (T0_20 >= 0.0) || isnan(T0_20)
+    end
+
 end  # outer @testset "test_energia.jl"
