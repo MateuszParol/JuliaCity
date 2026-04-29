@@ -42,7 +42,13 @@
   3. Uruchomienie SA z tym samym seedem master pod `JULIA_NUM_THREADS=1` i `JULIA_NUM_THREADS=8` daje identyczną trasę końcową (per-thread RNG zbudowany deterministycznie z master seeda).
   4. Wynikowa trasa SA jest co najmniej 10% krótsza niż baseline NN (test asercja na fixtureze N=1000, seed=42); T₀ jest kalibrowane z 1000 losowych delt energii (T₀ = 2σ).
   5. `julia --project=. test/runtests.jl` raportuje 0 failures: `@testset`-y dla niezmiennika Hamiltona, `@inferred` na publicznym API, `@allocated == 0`, determinizmu wieloraetkowego, NN-baseline-beat, `Aqua.test_all` (z udokumentowanymi suppressions), `JET.@report_opt` clean, golden-value `StableRNG(42)` na małym fixturze.
-**Plans**: TBD
+**Plans**: 6 plans
+- [ ] 02-01-PLAN.md — Foundation: Project.toml deps + Parametry + Wave 0 StableRNG smoke
+- [ ] 02-02-PLAN.md — src/energia.jl: macierz dystansów, oblicz_energie (chunked threading), delta_energii, kalibruj_T0
+- [ ] 02-03-PLAN.md — src/baselines.jl: trasa_nn (pure) + inicjuj_nn! (mutating wrapper)
+- [ ] 02-04-PLAN.md — src/algorytmy/simulowane_wyzarzanie.jl: SimAnnealing struct + symuluj_krok! (zero-alloc hot path)
+- [ ] 02-05-PLAN.md — Test files: test_energia.jl + test_baselines.jl + test_symulacja.jl (TEST-01/03/04/05/08)
+- [ ] 02-06-PLAN.md — runtests.jl integration: 3 includes + Aqua TEST-06 + JET TEST-07; PerformanceTestTools w extras
 **UI hint**: no
 
 ### Phase 3: Visualization & Export
@@ -76,7 +82,7 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Bootstrap, Core Types & Points | 0/6 | Planned       | - |
-| 2. Energy, SA Algorithm & Test Suite | 0/0 | Not started | - |
+| 2. Energy, SA Algorithm & Test Suite | 0/6 | Planned     | - |
 | 3. Visualization & Export | 0/0 | Not started | - |
 | 4. Demo, Benchmarks & Documentation | 0/0 | Not started | - |
 
