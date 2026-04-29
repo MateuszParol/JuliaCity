@@ -76,3 +76,18 @@ function StanSymulacji(punkty::Vector{Punkt2D}; rng::R=Xoshiro(42)) where {R<:Ab
     trasa = collect(1:n)
     return StanSymulacji{R}(punkty, D, rng, trasa, 0.0, 0.0, 0)
 end
+
+"""
+    Parametry
+
+Hiperparametry niezależne od algorytmu (D-01). Slot na `kroki_na_klatke` w Phase 3
+(wizualizacja). `liczba_krokow` to budżet kroków SA — domyślnie 50_000 dla N=1000
+(D-02: α^50_000 ≈ 6.7×10⁻³ daje schemat chłodzenia z ~80% acceptance ratio na
+starcie do ~1% pod koniec).
+
+# Pola
+- `liczba_krokow::Int = 50_000` — twardy cap kroków (D-02, D-04)
+"""
+Base.@kwdef struct Parametry
+    liczba_krokow::Int = 50_000
+end
