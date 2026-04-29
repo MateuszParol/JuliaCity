@@ -28,8 +28,12 @@ include("typy.jl")
 # Generator punktów testowych (PKT-01..04)
 include("punkty.jl")
 
+# Energia + macierz dystansów + delta 2-opt + kalibracja T0 (REQ ENE-01..05 + ALG-05)
+include("energia.jl")
+
 # Eksport publicznego API
 export Punkt2D, StanSymulacji, Algorytm, generuj_punkty,
-       Parametry
+       Parametry,
+       oblicz_macierz_dystans!, oblicz_energie, delta_energii, kalibruj_T0
 
 end # module
