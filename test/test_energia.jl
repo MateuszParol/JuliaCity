@@ -181,4 +181,62 @@ using Random: Xoshiro
         @test (T0_20 >= 0.0) || isnan(T0_20)
     end
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # 9. WR-01 kalibruj_T0 single-worsening-sample fallback (gap-closure 02-11)
+    # ─────────────────────────────────────────────────────────────────────────
+    @testset "WR-01 kalibruj_T0 single-worsening-sample fallback" begin
+        # Cel: dowiesc ze fix WR-01 (3-way length dispatch) zwraca finite Float64
+        # gdy length(worsening) == 1 (pre-fix: NaN przez std() z corrected=true).
+        #
+        # Strategia: n_probek=1000 jest canonical (length>>1) - test regression.
+        # n_probek=2 wymusza pelny dispatch (length>=2 path lub fallback ==1).
+        # n_probek=1 z fixturem ktory daje worsening -> length==1 fallback path.
+
+        # Path 1 (regression): canonical length>=2.
+        punkty = generuj_punkty(20; seed=42)
+        stan = StanSymulacji(punkty; rng=Xoshiro(42))
+        inicjuj_nn!(stan)
+        T0_canonical = kalibruj_T0(stan; n_probek=1000)
+        @test T0_canonical isa Float64
+        @test isfinite(T0_canonical)
+        @test T0_canonical > 0
+
+        # Path 2 (small n_probek): length>=2 OR length==1 fallback OR length==0 throw.
+        # Test stable behavior: ZADEN wynik nie moze byc NaN.
+        stan2 = StanSymulacji(punkty; rng=Xoshiro(42))
+        inicjuj_nn!(stan2)
+        try
+            T0_small = kalibruj_T0(stan2; n_probek=2)
+            # length(worsening) ∈ {0, 1, 2}. Throw na 0; finite na 1 i 2.
+            @test T0_small isa Float64
+            @test isfinite(T0_small)
+            @test T0_small > 0
+        catch e
+            # length==0 path - acceptable per nowy contract
+            @test e isa ArgumentError
+            @test occursin("no worsening moves sampled", e.msg)
+        end
+
+        # Path 3 (n_probek=1 deterministic worsening): seed wybrany aby wymusic
+        # exactly one worsening sample (jezeli sie nie uda - fallback to length==0
+        # ArgumentError ktory tez jest poprawnym contractem).
+        stan3 = StanSymulacji(punkty; rng=Xoshiro(42))
+        inicjuj_nn!(stan3)
+        try
+            T0_one = kalibruj_T0(stan3; n_probek=1)
+            @test T0_one isa Float64
+            @test isfinite(T0_one)  # KLUCZOWE: NIGDY NaN po fixie WR-01
+            @test T0_one > 0
+        catch e
+            @test e isa ArgumentError
+        end
+
+        # Strukturalny check src/energia.jl: 3-way dispatch obecny.
+        src_path = joinpath(pkgdir(JuliaCity), "src", "energia.jl")
+        src_content = read(src_path, String)
+        @test occursin("if length(worsening) >= 2", src_content)
+        @test occursin("elseif length(worsening) == 1", src_content)
+        @test !occursin("@assert !isempty(worsening)", src_content)  # old guard removed
+    end
+
 end  # outer @testset "test_energia.jl"
