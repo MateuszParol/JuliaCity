@@ -308,4 +308,80 @@ const ENERGIA_REF = NaN   # placeholder - Task 3b wpisuje konkretna Float64
         @test stan20.iteracja == 100_000
     end
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # 9. BL-03 patience reset semantics: rule (2) delta<0 vs rule (1) best-known
+    # ─────────────────────────────────────────────────────────────────────────
+    @testset "BL-03 patience reset semantics (gap-closure 02-09)" begin
+        # Cel: dowiesc ze fix BL-03 zmienia uruchom_sa! z rule (1) best-known
+        # na rule (2) strict per-step delta<0 (zgodnie z D-04 + docstring).
+        #
+        # Strategia testu: zbudowac LOKALNA replika obu regul, przejsc po tej samej
+        # sekwencji energii, i porownac zachowanie licznika. Sekwencja zaprojektowana
+        # tak, ze rule (1) i rule (2) DIVERGUJA na konkretnym kroku.
+
+        # Sekwencja: E0=100 (init), E1=99 (improvement), E2=102 (worsening accepted),
+        # E3=100 (improvement vs E2, but >= best-known E1=99), E4=100 (no change).
+        energie = [100.0, 99.0, 102.0, 100.0, 100.0]
+
+        # Replika rule (2) - delta<0 vs poprzedniego kroku (FIX behaviour):
+        function policz_resety_rule2(seq::Vector{Float64})
+            resety = 0
+            e_prev = seq[1]
+            for k in 2:length(seq)
+                if seq[k] < e_prev
+                    resety += 1
+                end
+                e_prev = seq[k]
+            end
+            return resety
+        end
+
+        # Replika rule (1) - delta<0 vs best-known minimum (PRE-FIX behaviour):
+        function policz_resety_rule1(seq::Vector{Float64})
+            resety = 0
+            e_min = seq[1]
+            for k in 2:length(seq)
+                if seq[k] < e_min
+                    e_min = seq[k]
+                    resety += 1
+                end
+            end
+            return resety
+        end
+
+        # Rule (1): reset gdy E < e_min. seq=(100,99,102,100,100):
+        #   E1=99 < 100 -> reset (e_min=99). E2=102 not<99. E3=100 not<99. E4=100 not<99.
+        #   Total: 1 reset.
+        @test policz_resety_rule1(energie) == 1
+
+        # Rule (2): reset gdy E < e_prev. seq=(100,99,102,100,100):
+        #   E1=99 < 100 -> reset. E2=102 not<99. E3=100 < 102 -> reset. E4=100 not<100.
+        #   Total: 2 resets.
+        @test policz_resety_rule2(energie) == 2
+
+        # Sanity: regulami rozne dla tej sekwencji - kluczowy element discriminator.
+        @test policz_resety_rule1(energie) != policz_resety_rule2(energie)
+
+        # Strukturalny check: src/algorytmy/simulowane_wyzarzanie.jl uzywa
+        # energia_prev (rule 2 fix). NIE uzywa energia_min w uruchom_sa! body.
+        src_path = joinpath(pkgdir(JuliaCity), "src", "algorytmy", "simulowane_wyzarzanie.jl")
+        src_content = read(src_path, String)
+        @test occursin("energia_prev", src_content)
+        # energia_min variable removed from uruchom_sa! (rule 1 indicator)
+        @test !occursin("energia_min = stan.energia", src_content)
+
+        # Behavioral sanity: uruchom_sa! terminuje poprawnie z fixed semantyka i
+        # Hamilton invariant zachowany (continuity check vs ALG-06 testset).
+        punkty = generuj_punkty(20; seed=42)
+        stan = StanSymulacji(punkty; rng=Xoshiro(42))
+        inicjuj_nn!(stan)
+        alg = SimAnnealing(stan; alfa=0.99, cierpliwosc=50)
+        stan.temperatura = alg.T_zero
+        params = Parametry(liczba_krokow=2000)
+        n_krokow = uruchom_sa!(stan, params, alg)
+        @test n_krokow > 0
+        @test n_krokow == stan.iteracja
+        @test sort(stan.trasa) == collect(1:20)
+    end
+
 end  # outer @testset "test_symulacja.jl"
