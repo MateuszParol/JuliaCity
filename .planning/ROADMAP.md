@@ -42,13 +42,32 @@
   3. Uruchomienie SA z tym samym seedem master pod `JULIA_NUM_THREADS=1` i `JULIA_NUM_THREADS=8` daje identyczną trasę końcową (per-thread RNG zbudowany deterministycznie z master seeda).
   4. Wynikowa trasa SA jest co najmniej 10% krótsza niż baseline NN (test asercja na fixtureze N=1000, seed=42); T₀ jest kalibrowane z 1000 losowych delt energii (T₀ = 2σ).
   5. `julia --project=. test/runtests.jl` raportuje 0 failures: `@testset`-y dla niezmiennika Hamiltona, `@inferred` na publicznym API, `@allocated == 0`, determinizmu wieloraetkowego, NN-baseline-beat, `Aqua.test_all` (z udokumentowanymi suppressions), `JET.@report_opt` clean, golden-value `StableRNG(42)` na małym fixturze.
-**Plans**: 6 plans
-- [ ] 02-01-PLAN.md — Foundation: Project.toml deps + Parametry + Wave 0 StableRNG smoke
-- [ ] 02-02-PLAN.md — src/energia.jl: macierz dystansów, oblicz_energie (chunked threading), delta_energii, kalibruj_T0
-- [ ] 02-03-PLAN.md — src/baselines.jl: trasa_nn (pure) + inicjuj_nn! (mutating wrapper)
-- [ ] 02-04-PLAN.md — src/algorytmy/simulowane_wyzarzanie.jl: SimAnnealing struct + symuluj_krok! (zero-alloc hot path)
-- [ ] 02-05-PLAN.md — Test files: test_energia.jl + test_baselines.jl + test_symulacja.jl (TEST-01/03/04/05/08)
-- [ ] 02-06-PLAN.md — runtests.jl integration: 3 includes + Aqua TEST-06 + JET TEST-07; PerformanceTestTools w extras
+**Plans**: 6 plans in 6 waves (sequential — `src/JuliaCity.jl` file conflict + dependency chain)
+
+**Wave 1** *(foundation — no deps)*
+- [ ] 02-01-PLAN.md — Project.toml deps (ChunkSplitters, Statistics, PerformanceTestTools w [extras]+[targets].test) + `Parametry` struct + Wave 0 StableRNG↔Punkt2D smoke
+
+**Wave 2** *(blocked on Wave 1)*
+- [ ] 02-02-PLAN.md — `src/energia.jl`: `oblicz_macierz_dystans!`, `oblicz_energie` (2 metody, ChunkSplitters-threaded), `delta_energii` O(1), `kalibruj_T0` = 2σ
+
+**Wave 3** *(blocked on Wave 2)*
+- [ ] 02-03-PLAN.md — `src/baselines.jl`: `trasa_nn(D; start=1)` (pure) + `inicjuj_nn!(stan)` (mutating wrapper)
+
+**Wave 4** *(blocked on Wave 3)*
+- [ ] 02-04-PLAN.md — `src/algorytmy/simulowane_wyzarzanie.jl`: `SimAnnealing <: Algorytm` + `symuluj_krok!` (zero-alloc) + `uruchom_sa!` (ALG-06 stagnation-patience stop, D-04)
+
+**Wave 5** *(blocked on Wave 4)*
+- [ ] 02-05-PLAN.md — `test/test_energia.jl` + `test/test_baselines.jl` + `test/test_symulacja.jl` (każdy w outer `@testset`); TEST-01/03/04/05/08; ALG-06 patience early-stop test; TEST-08 golden-value via Task 3a placeholder + Task 3b helper-script generation
+
+**Wave 6** *(blocked on Wave 5)*
+- [ ] 02-06-PLAN.md — `test/runtests.jl` integration: 3 `include`s + Aqua TEST-06 (deps_compat ignore [Random, Statistics]) + JET TEST-07 (`@test_opt target_modules=(JuliaCity,)`)
+
+**Cross-cutting constraints** *(must_haves shared across plans):*
+- `StanSymulacji` shape preserved (Phase 1 D-06 lock — no field additions; SA stop counter local to `uruchom_sa!`)
+- ASCII-only identifiers (`alfa`, `cierpliwosc`, `simulowane_wyzarzanie.jl`); Polish docstrings/comments OK with diacritics (NFC)
+- JET pinned at `0.9` (NOT 0.11 — incompatible with `julia = "1.10"` compat floor)
+- ChunkSplitters 3.x for thread-stable chunk IDs (Pitfall 2 mitigation; not `threadid()`)
+
 **UI hint**: no
 
 ### Phase 3: Visualization & Export

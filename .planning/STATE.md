@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
-status: ready_to_plan
-last_updated: "2026-04-29T00:00:00.000Z"
+status: ready_to_execute
+last_updated: "2026-04-29T01:00:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 6
+  total_plans: 12
   completed_plans: 6
-  percent: 100
+  percent: 50
 ---
 
 # State: JuliaCity
@@ -28,11 +28,11 @@ progress:
 |-------|-------|
 | Phase | 2 (of 4) |
 | Phase Name | Energy, SA Algorithm & Test Suite |
-| Plan | Not started — context gathered (`02-CONTEXT.md`, `02-DISCUSSION-LOG.md`) |
-| Status | Ready to plan |
-| Progress | `[█████░░░░░░░░░░░░░░░] 25% (1/4 phases complete)` |
-| Last Action | Phase 1 executed and verified (6/6 plans, REVIEW + VERIFICATION written) |
-| Next Action | `/gsd-plan-phase 2` |
+| Plan | 6 plans in 6 waves (`02-{01..06}-PLAN.md`); RESEARCH + PATTERNS written; verification PASSED iter 2/3 |
+| Status | Ready to execute |
+| Progress | `[█████░░░░░░░░░░░░░░░] 25% (1/4 phases complete; 6/12 plans done)` |
+| Last Action | Phase 2 plans created and verified (21/21 REQ-IDs covered, 7 issues resolved in revision pass) |
+| Next Action | `/gsd-execute-phase 2` (Wave 1 = Project.toml deps + Parametry + Wave 0 smoke; `autonomous: yes`) |
 
 ## Roadmap Snapshot
 
@@ -109,4 +109,4 @@ progress:
 
 ---
 *State initialized: 2026-04-28 after roadmap creation*
-*Last updated: 2026-04-29 — synced after Phase 1 closure, before Phase 2 planning*
+*Last updated: 2026-04-29 — Phase 2 plans verified (21/21 REQs, iter 2/3 PASSED), ready to execute*
