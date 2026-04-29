@@ -19,14 +19,17 @@ module JuliaCity
 # Zewnętrzne zależności runtime
 using GeometryBasics: Point2
 using Random
+using ChunkSplitters                       # Phase 2 (D-11) — chunked threading
+using Statistics: std                      # Phase 2 — kalibruj_T0 używa std()
 
-# Typy domenowe (Punkt2D, Algorytm, StanSymulacji)
+# Typy domenowe (Punkt2D, Algorytm, StanSymulacji, Parametry)
 include("typy.jl")
 
 # Generator punktów testowych (PKT-01..04)
 include("punkty.jl")
 
 # Eksport publicznego API
-export Punkt2D, StanSymulacji, Algorytm, generuj_punkty
+export Punkt2D, StanSymulacji, Algorytm, generuj_punkty,
+       Parametry
 
 end # module
