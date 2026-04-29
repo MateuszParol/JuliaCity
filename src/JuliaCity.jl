@@ -31,9 +31,13 @@ include("punkty.jl")
 # Energia + macierz dystansów + delta 2-opt + kalibracja T0 (REQ ENE-01..05 + ALG-05)
 include("energia.jl")
 
+# Baseline NN + mutujący inicjalizator Stana (REQ ALG-04)
+include("baselines.jl")
+
 # Eksport publicznego API
 export Punkt2D, StanSymulacji, Algorytm, generuj_punkty,
        Parametry,
-       oblicz_macierz_dystans!, oblicz_energie, delta_energii, kalibruj_T0
+       oblicz_macierz_dystans!, oblicz_energie, delta_energii, kalibruj_T0,
+       trasa_nn, inicjuj_nn!
 
 end # module
