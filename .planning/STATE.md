@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: ready_to_plan
-last_updated: "2026-04-28T21:00:33.263Z"
+last_updated: "2026-04-29T00:00:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 1
@@ -20,25 +20,23 @@ progress:
 
 **Name:** JuliaCity
 **Core Value:** Wizualnie przekonująca, fizycznie umotywowana heurystyka TSP w idiomatycznej Julii — jeśli wszystko inne zawiedzie, użytkownik musi zobaczyć, jak trasa „bańki mydlanej" zaciska się wokół 1000 punktów w czasie rzeczywistym i otrzymać krótszą trasę niż naiwny baseline.
-**Current Focus:** Phase 01 — bootstrap-core-types-points
+**Current Focus:** Phase 02 — energy-sa-algorithm-test-suite
 
 ## Current Position
 
-Phase: 2
-Plan: Not started
 | Field | Value |
 |-------|-------|
-| Phase | 1 (of 4) |
-| Phase Name | Bootstrap, Core Types & Points |
-| Plan | 6 plans in 6 waves (`.planning/phases/01-bootstrap-core-types-points/01-{01..06}-PLAN.md`) |
-| Status | Ready to execute |
-| Progress | `[░░░░░░░░░░░░░░░░░░░░] 0% (0/4 phases complete)` |
-| Last Action | Phase 1 plans created and verified (25/25 decisions, 10/10 REQ-IDs covered) |
-| Next Action | `/gsd-execute-phase 1` (Wave 1 = juliaup install checkpoint, `autonomous: false`) |
+| Phase | 2 (of 4) |
+| Phase Name | Energy, SA Algorithm & Test Suite |
+| Plan | Not started — context gathered (`02-CONTEXT.md`, `02-DISCUSSION-LOG.md`) |
+| Status | Ready to plan |
+| Progress | `[█████░░░░░░░░░░░░░░░] 25% (1/4 phases complete)` |
+| Last Action | Phase 1 executed and verified (6/6 plans, REVIEW + VERIFICATION written) |
+| Next Action | `/gsd-plan-phase 2` |
 
 ## Roadmap Snapshot
 
-- [ ] **Phase 1: Bootstrap, Core Types & Points** — pakiet, encoding hygiene, `StanSymulacji`, `generuj_punkty`
+- [x] **Phase 1: Bootstrap, Core Types & Points** — pakiet, encoding hygiene, `StanSymulacji`, `generuj_punkty`
 - [ ] **Phase 2: Energy, SA Algorithm & Test Suite** — `oblicz_energie`, `symuluj_krok!` (SA), pełen suite testowy
 - [ ] **Phase 3: Visualization & Export** — GLMakie + Observables, eksport MP4/GIF
 - [ ] **Phase 4: Demo, Benchmarks & Documentation** — `examples/`, `bench/`, README po polsku
@@ -49,7 +47,7 @@ Plan: Not started
 
 | Metric | Value | Target | Notes |
 |--------|-------|--------|-------|
-| Phases complete | 0/4 | 4/4 | — |
+| Phases complete | 1/4 | 4/4 | — |
 | Requirements verified | 0/53 | 53/53 | — |
 | Test pass rate | n/a | 100% | suite jeszcze nie istnieje |
 | `@allocated` on `symuluj_krok!` | n/a | 0 | hard requirement (TEST-03) |
@@ -111,4 +109,4 @@ Plan: Not started
 
 ---
 *State initialized: 2026-04-28 after roadmap creation*
-*Last updated: 2026-04-28 after Phase 1 context discussion*
+*Last updated: 2026-04-29 — synced after Phase 1 closure, before Phase 2 planning*
