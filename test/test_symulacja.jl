@@ -236,4 +236,35 @@ const ENERGIA_REF = NaN   # placeholder - Task 3b wpisuje konkretna Float64
         @test isapprox(r1.energia, rn.energia; rtol=1e-12)
     end
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # 7. ALG-06 stagnation patience early-stop (D-04)
+    # ─────────────────────────────────────────────────────────────────────────
+    @testset "ALG-06: stagnation patience early-stop (D-04)" begin
+        # Cel: dowiesc ze uruchom_sa! z malym cierpliwosc=10 zatrzymuje
+        # petle PRZED params.liczba_krokow=10_000. Bez ALG-06 stop loop
+        # zawsze konczyl by sie na hard cap. Patience-based exit jest
+        # jedynym mechanizmem ktory moze dac stan.iteracja < 10_000.
+        #
+        # D-04 lock: reset licznika tylko gdy delta < 0 (strict improvement).
+        # Akceptacja Metropolis przy delta >= 0 NIE resetuje (eksploracja, nie postep).
+
+        punkty = generuj_punkty(20; seed=42)
+        stan = StanSymulacji(punkty; rng=Xoshiro(42))
+        inicjuj_nn!(stan)
+        # ALPHA=0.5 -> bardzo szybkie chlodzenie -> energia szybko stagnuje
+        # CIERPLIWOSC=10 -> pierwsze 10 krokow bez strict improvement -> exit
+        alg = SimAnnealing(stan; alfa=0.5, cierpliwosc=10)
+        stan.temperatura = alg.T_zero
+        params = Parametry(liczba_krokow=10_000)
+
+        n_krokow = uruchom_sa!(stan, params, alg)
+
+        # KLUCZOWE: stan.iteracja < params.liczba_krokow dowodzi early-stop dziala
+        @test stan.iteracja < params.liczba_krokow
+        @test n_krokow == stan.iteracja  # consistency
+        @test sort(stan.trasa) == collect(1:20)  # Hamilton invariant zachowany
+
+        @info "ALG-06: cierpliwosc=10 -> n_krokow=$(n_krokow) (cap=$(params.liczba_krokow); patience early-stop dziala)"
+    end
+
 end  # outer @testset "test_symulacja.jl"
