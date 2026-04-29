@@ -172,6 +172,12 @@ typowych pogorszeń, schemat chłodzenia α^N daje ~1% pod koniec (D-02).
 
 Pokrywa REQ ALG-05.
 
+# Edge cases (gap-closure 02-11, WR-01)
+- `length(worsening) >= 2`: kanoniczne `2σ` (D-03 LOCKED).
+- `length(worsening) == 1`: fallback `2 * |delta|` (legitymny przy malym `n_probek`;
+   zapobiega `NaN` z `Statistics.std` (corrected=true dzieli przez `n-1 = 0`)).
+- `length(worsening) == 0`: rzuca `ArgumentError` (programmatic — zwiększ `n_probek`).
+
 # Argumenty
 - `stan::StanSymulacji` — stan po `oblicz_macierz_dystans!` z `n >= 3`
 - `n_probek::Int` (kwarg) — liczba próbek, domyślnie 1000
@@ -191,7 +197,16 @@ function kalibruj_T0(stan::StanSymulacji; n_probek::Int=1000, rng=stan.rng)::Flo
             push!(worsening, delta)
         end
     end
-    @assert !isempty(worsening) "no worsening moves sampled"
-    sigma = std(worsening)
-    return 2.0 * sigma
+    # WR-01 fix (gap-closure 02-11): 3-way dispatch po length(worsening).
+    # length>=2: kanoniczne 2σ (D-03 LOCKED). length==1: fallback 2*|delta|
+    # (zapobiega NaN gdy std() z corrected=true dzieli przez n-1 = 0).
+    # length==0: ArgumentError (programmatic - n_probek za male LUB Metropolis nieuzyteczny).
+    if length(worsening) >= 2
+        return 2.0 * std(worsening)
+    elseif length(worsening) == 1
+        # Single-worsening fallback: σ aproksymowane przez sama wartosc.
+        return 2.0 * max(abs(worsening[1]), 1e-9)
+    else
+        throw(ArgumentError("kalibruj_T0: no worsening moves sampled (n_probek=$(n_probek), n=$(n)) - increase n_probek or check fixture"))
+    end
 end
