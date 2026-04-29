@@ -54,7 +54,7 @@
 - [x] 02-03-PLAN.md — `src/baselines.jl`: `trasa_nn(D; start=1)` (pure) + `inicjuj_nn!(stan)` (mutating wrapper)
 
 **Wave 4** *(blocked on Wave 3)*
-- [ ] 02-04-PLAN.md — `src/algorytmy/simulowane_wyzarzanie.jl`: `SimAnnealing <: Algorytm` + `symuluj_krok!` (zero-alloc) + `uruchom_sa!` (ALG-06 stagnation-patience stop, D-04)
+- [x] 02-04-PLAN.md — `src/algorytmy/simulowane_wyzarzanie.jl`: `SimAnnealing <: Algorytm` + `symuluj_krok!` (zero-alloc) + `uruchom_sa!` (ALG-06 stagnation-patience stop, D-04)
 
 **Wave 5** *(blocked on Wave 4)*
 - [ ] 02-05-PLAN.md — `test/test_energia.jl` + `test/test_baselines.jl` + `test/test_symulacja.jl` (każdy w outer `@testset`); TEST-01/03/04/05/08; ALG-06 patience early-stop test; TEST-08 golden-value via Task 3a placeholder + Task 3b helper-script generation
