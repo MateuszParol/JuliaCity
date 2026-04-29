@@ -110,9 +110,17 @@ function oblicz_energie(D::Matrix{Float64}, trasa::Vector{Int}, bufor::Vector{Fl
     n = length(trasa)
     nchunks = length(bufor)
     fill!(bufor, 0.0)
-    Threads.@threads :static for (chunk_idx, krawedzie) in enumerate(chunks(1:n; n=nchunks))
+    # BL-04 fix (gap-closure 02-10): kanoniczny chunked-threading pattern.
+    # Pre-fix wzorzec `Iterators.Enumerate` nad `chunks(...)` byl non-canonical —
+    # `Threads.@threads` (Julia 1.10) wymaga indexable iteratora; Enumerate nie
+    # ma stabilnego getindex. Materializujemy chunki przez `collect` do Vector
+    # UnitRange{Int} (length=nchunks <= nthreads(), ~128B alloc miesci sie w
+    # ENE-03 threshold <4096B). Indexujemy przez `eachindex(cs)`.
+    # D-11 LOCKED: ChunkSplitters preserved (NIE wracamy do threadid()).
+    cs = collect(chunks(1:n; n=nchunks))
+    Threads.@threads :static for chunk_idx in eachindex(cs)
         s = 0.0
-        @inbounds for k in krawedzie
+        @inbounds for k in cs[chunk_idx]
             i_aktualne = trasa[k]
             i_nastepne = trasa[mod1(k + 1, n)]
             s += D[i_aktualne, i_nastepne]
