@@ -1,6 +1,7 @@
-# Test suite pakietu JuliaCity — Phase 1.
+# Test suite pakietu JuliaCity — Phase 1 + Phase 2 Wave 0.
 # Pokrywa: encoding hygiene (BOOT-03, D-21), generuj_punkty (PKT-01..04),
-# StanSymulacji konstruktor + const protection, Aqua quality, JET smoke.
+# StanSymulacji konstruktor + const protection, Wave 0 StableRNG↔Punkt2D smoke
+# (Plan 02-01), Aqua quality, JET smoke.
 #
 # Asercje wewnętrzne (errors message) po angielsku per LANG-04 / D-23.
 # Komentarze po polsku per LANG-01 / D-22.
@@ -12,6 +13,7 @@ using Random: Xoshiro, default_rng
 using Unicode
 using Aqua
 using JET
+using StableRNGs
 
 @testset "JuliaCity" begin
 
@@ -156,7 +158,27 @@ using JET
     end
 
     # ─────────────────────────────────────────────────────────────────────────
-    # 5. Aqua.jl quality gate (TEST-06 częściowo — pełen w Phase 2)
+    # 5. Wave 0 smoke: StableRNG ↔ Punkt2D dispatch (Phase 2 Plan 02-01)
+    # Krytyczny PRZED TEST-08 (golden value w Phase 2 Plan 02-05).
+    # Research-flagged jako MEDIUM confidence (Pitfall E w 02-RESEARCH.md):
+    # `rand(StableRNG, Point2{Float64}, n)` działa via GeometryBasics' Random.SamplerType
+    # dispatch — community-evidence, niezweryfikowane oficjalnie. Ten test gwarantuje
+    # że Phase 1 src/punkty.jl::generuj_punkty(n, rng) NIE wymaga fallbacku.
+    # ─────────────────────────────────────────────────────────────────────────
+    @testset "Wave 0: StableRNG ↔ Punkt2D smoke (Plan 02-01)" begin
+        pkty = generuj_punkty(5, StableRNG(42))
+        @test eltype(pkty) == Punkt2D
+        @test length(pkty) == 5
+        # determinizm w obrębie tej samej wersji StableRNGs
+        @test generuj_punkty(5, StableRNG(42)) == generuj_punkty(5, StableRNG(42))
+        # dwa różne seedy dają różne wyniki
+        @test generuj_punkty(5, StableRNG(42)) != generuj_punkty(5, StableRNG(43))
+        # punkty w [0,1]² (jak generuj_punkty z Xoshiro)
+        @test all(p -> 0.0 <= p[1] <= 1.0 && 0.0 <= p[2] <= 1.0, pkty)
+    end
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # 6. Aqua.jl quality gate (TEST-06 częściowo — pełen w Phase 2)
     # ─────────────────────────────────────────────────────────────────────────
     @testset "Aqua.jl quality" begin
         # Aqua importowany na top-levelu pliku (makra muszą być w scope przy parsowaniu).
@@ -175,7 +197,7 @@ using JET
     end
 
     # ─────────────────────────────────────────────────────────────────────────
-    # 6. JET smoke test (TEST-07 wstępnie — pełen @report_opt na publicznym API w Phase 2)
+    # 7. JET smoke test (TEST-07 wstępnie — pełen @report_opt na publicznym API w Phase 2)
     # ─────────────────────────────────────────────────────────────────────────
     @testset "JET smoke" begin
         # JET importowany na top-levelu pliku (makra muszą być w scope przy parsowaniu).
