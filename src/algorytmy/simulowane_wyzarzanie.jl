@@ -156,22 +156,23 @@ Phase 4; konkretne kryterium dwu-warunkowe OR z reset only-on-strict-improvement
 """
 function uruchom_sa!(stan::StanSymulacji, params::Parametry, alg::SimAnnealing)::Int
     iteracja_start = stan.iteracja
-    # Snapshot best-known energy at entry; aktualizowane tylko gdy delta < 0
-    # zostanie zaakceptowane i stan.energia spadnie ponizej tej wartosci.
-    energia_min = stan.energia
+    # BL-03 fix (gap-closure 02-09): reset licznika przy STRICT PER-STEP improvement
+    # (stan.energia spadnie ponizej energii z POPRZEDNIEGO kroku, delta < 0).
+    # NIE wzgledem best-known minimum (poprzednia impl - rule (1) niezgodna z D-04).
+    # D-04 LOCKED + docstring uruchom_sa!: rule (2) "reset tylko przy strict Δ < 0".
+    energia_prev = stan.energia
     licznik_bez_poprawy = 0
 
     while stan.iteracja < params.liczba_krokow && licznik_bez_poprawy < alg.cierpliwosc
         symuluj_krok!(stan, params, alg)
-        # D-04: reset TYLKO przy strict improvement (delta < 0).
-        # Akceptacja Metropolis przy delta >= 0 NIE resetuje - to eksploracja,
-        # nie postep wobec best-known minimum.
-        if stan.energia < energia_min
-            energia_min = stan.energia
+        # Strict per-step improvement: stan.energia < energia_prev <=> delta < 0
+        # Akceptacja Metropolis worsening (delta >= 0) NIE resetuje - to eksploracja.
+        if stan.energia < energia_prev
             licznik_bez_poprawy = 0
         else
             licznik_bez_poprawy += 1
         end
+        energia_prev = stan.energia
     end
     return stan.iteracja - iteracja_start
 end
