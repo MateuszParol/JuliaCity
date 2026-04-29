@@ -42,7 +42,7 @@
   3. Uruchomienie SA z tym samym seedem master pod `JULIA_NUM_THREADS=1` i `JULIA_NUM_THREADS=8` daje identyczną trasę końcową (per-thread RNG zbudowany deterministycznie z master seeda).
   4. Wynikowa trasa SA jest co najmniej 10% krótsza niż baseline NN (test asercja na fixtureze N=1000, seed=42); T₀ jest kalibrowane z 1000 losowych delt energii (T₀ = 2σ).
   5. `julia --project=. test/runtests.jl` raportuje 0 failures: `@testset`-y dla niezmiennika Hamiltona, `@inferred` na publicznym API, `@allocated == 0`, determinizmu wieloraetkowego, NN-baseline-beat, `Aqua.test_all` (z udokumentowanymi suppressions), `JET.@report_opt` clean, golden-value `StableRNG(42)` na małym fixturze.
-**Plans**: 6 plans in 6 waves (sequential — `src/JuliaCity.jl` file conflict + dependency chain)
+**Plans**: 6 plans in 6 waves (sequential — `src/JuliaCity.jl` file conflict + dependency chain) + 7 gap-closure plans (waves 7-10) addressing VERIFICATION.md/REVIEW.md blockers
 
 **Wave 1** *(foundation — no deps)*
 - [x] 02-01-PLAN.md — Project.toml deps (ChunkSplitters, Statistics, PerformanceTestTools w [extras]+[targets].test) + `Parametry` struct + Wave 0 StableRNG↔Punkt2D smoke
@@ -61,6 +61,21 @@
 
 **Wave 6** *(blocked on Wave 5)*
 - [x] 02-06-PLAN.md — `test/runtests.jl` integration: 3 `include`s + Aqua TEST-06 (deps_compat ignore [Random, Statistics]) + JET TEST-07 (`@test_opt target_modules=(JuliaCity,)`)
+
+**Wave 7** *(gap-closure: BL-01 off-by-one fix)*
+- [ ] 02-07-PLAN.md — BL-01 fix in `symuluj_krok!` + `kalibruj_T0` (`1:(n-2)` upper bound) + N=3 boundary regression tests + deferred-items.md cleanup
+
+**Wave 8** *(gap-closure: parallel — Aqua, BL-03 patience, BL-04 threading)*
+- [ ] 02-08-PLAN.md — BL-02 + IN-04 fix: hoist `check_extras` to top-level Aqua kwarg + extend ignore list (BenchmarkTools, GLMakie, Makie, Observables)
+- [ ] 02-09-PLAN.md — BL-03 fix: `uruchom_sa!` patience reset semantic (rule 2 — strict per-step delta<0 via `energia_prev` tracker) + discriminator test
+- [ ] 02-10-PLAN.md — BL-04 fix: canonical chunked-threading pattern (`collect(chunks(...))` + `eachindex`) in `oblicz_energie` 3-arg
+
+**Wave 9** *(gap-closure: parallel — WR-01 NaN guard, WR-08 dynamic threads)*
+- [ ] 02-11-PLAN.md — WR-01 fix: `kalibruj_T0` 3-way length dispatch (length>=2 / ==1 / ==0) + degenerate-path test
+- [ ] 02-12-PLAN.md — WR-08 fix: dynamic `max(2, Sys.CPU_THREADS)` in TEST-04 subprocess + single-core skip gate
+
+**Wave 10** *(gap-closure: empirical verification — REQUIRES JULIA TOOLCHAIN)*
+- [ ] 02-13-PLAN.md *(autonomous: false)* — Manifest.toml regen + TEST-08 placeholder removal + `Pkg.test()` exit 0 evidence
 
 **Cross-cutting constraints** *(must_haves shared across plans):*
 - `StanSymulacji` shape preserved (Phase 1 D-06 lock — no field additions; SA stop counter local to `uruchom_sa!`)
@@ -101,7 +116,7 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Bootstrap, Core Types & Points | 0/6 | Planned       | - |
-| 2. Energy, SA Algorithm & Test Suite | 0/6 | Planned     | - |
+| 2. Energy, SA Algorithm & Test Suite | 6/13 | In progress (gap-closure) | - |
 | 3. Visualization & Export | 0/0 | Not started | - |
 | 4. Demo, Benchmarks & Documentation | 0/0 | Not started | - |
 
