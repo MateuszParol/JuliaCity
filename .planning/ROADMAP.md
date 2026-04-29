@@ -63,7 +63,7 @@
 - [x] 02-06-PLAN.md — `test/runtests.jl` integration: 3 `include`s + Aqua TEST-06 (deps_compat ignore [Random, Statistics]) + JET TEST-07 (`@test_opt target_modules=(JuliaCity,)`)
 
 **Wave 7** *(gap-closure: BL-01 off-by-one fix)*
-- [ ] 02-07-PLAN.md — BL-01 fix in `symuluj_krok!` + `kalibruj_T0` (`1:(n-2)` upper bound) + N=3 boundary regression tests + deferred-items.md cleanup
+- [x] 02-07-PLAN.md — BL-01 fix in `symuluj_krok!` + `kalibruj_T0` (`1:(n-2)` upper bound) + N=3 boundary regression tests + deferred-items.md cleanup
 
 **Wave 8** *(gap-closure: parallel — Aqua, BL-03 patience, BL-04 threading)*
 - [ ] 02-08-PLAN.md — BL-02 + IN-04 fix: hoist `check_extras` to top-level Aqua kwarg + extend ignore list (BenchmarkTools, GLMakie, Makie, Observables)
