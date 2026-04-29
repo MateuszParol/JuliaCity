@@ -51,7 +51,7 @@
 - [x] 02-02-PLAN.md — `src/energia.jl`: `oblicz_macierz_dystans!`, `oblicz_energie` (2 metody, ChunkSplitters-threaded), `delta_energii` O(1), `kalibruj_T0` = 2σ
 
 **Wave 3** *(blocked on Wave 2)*
-- [ ] 02-03-PLAN.md — `src/baselines.jl`: `trasa_nn(D; start=1)` (pure) + `inicjuj_nn!(stan)` (mutating wrapper)
+- [x] 02-03-PLAN.md — `src/baselines.jl`: `trasa_nn(D; start=1)` (pure) + `inicjuj_nn!(stan)` (mutating wrapper)
 
 **Wave 4** *(blocked on Wave 3)*
 - [ ] 02-04-PLAN.md — `src/algorytmy/simulowane_wyzarzanie.jl`: `SimAnnealing <: Algorytm` + `symuluj_krok!` (zero-alloc) + `uruchom_sa!` (ALG-06 stagnation-patience stop, D-04)
