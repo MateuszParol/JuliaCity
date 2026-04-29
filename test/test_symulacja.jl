@@ -195,13 +195,23 @@ const ENERGIA_REF = NaN   # placeholder - Task 3b wpisuje konkretna Float64
     end
 
     # ─────────────────────────────────────────────────────────────────────────
-    # 6. TEST-04 subprocess: JULIA_NUM_THREADS=1 vs 8 -> identical trajektoria
+    # 6. TEST-04 subprocess: JULIA_NUM_THREADS=1 vs N -> identical trajektoria
     # ─────────────────────────────────────────────────────────────────────────
-    @testset "TEST-04 subprocess: JULIA_NUM_THREADS=1 vs 8 -> identical trajektoria" begin
+    @testset "TEST-04 subprocess: JULIA_NUM_THREADS=1 vs N -> identical trajektoria" begin
         # Pattern z RESEARCH Example 3 (linie 491-530) - PerformanceTestTools.@include_foreach
         # spawn-uje subprocess z env override (JULIA_NUM_THREADS) i serializuje wyniki
         # do tempname() plikow. Test sprawdza ze inicjuj_nn! + 5_000 krokow SA daje
-        # bit-identyczna trase i sub-ULP energia tolerance dla 1 vs 8 watkow.
+        # bit-identyczna trase i sub-ULP energia tolerance dla 1 vs N watkow.
+        #
+        # WR-08 fix (gap-closure 02-12): hardcoded JULIA_NUM_THREADS=8 zastapione
+        # max(2, Sys.CPU_THREADS). Single-core CI runners zostaja skipped (porownanie
+        # 1-vs-N wymaga >=2 logicznych rdzeni).
+        if Sys.CPU_THREADS < 2
+            @test_skip "TEST-04 subprocess wymaga >=2 logicznych rdzeni (Sys.CPU_THREADS=$(Sys.CPU_THREADS))"
+            return
+        end
+        nthr_high = string(max(2, Sys.CPU_THREADS))   # WR-08: dynamic, NIE hardcoded 8
+
         sa_run_script = """
         using JuliaCity, Random, Serialization
         punkty = generuj_punkty(1000; seed=42)
@@ -225,8 +235,8 @@ const ENERGIA_REF = NaN   # placeholder - Task 3b wpisuje konkretna Float64
         PerformanceTestTools.@include_foreach(
             script_path,
             [
-                ["JULIA_NUM_THREADS" => "1", "JC_OUT" => out_1],
-                ["JULIA_NUM_THREADS" => "8", "JC_OUT" => out_n],
+                ["JULIA_NUM_THREADS" => "1",       "JC_OUT" => out_1],
+                ["JULIA_NUM_THREADS" => nthr_high, "JC_OUT" => out_n],
             ]
         )
         r1 = deserialize(out_1)
