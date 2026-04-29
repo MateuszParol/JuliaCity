@@ -79,7 +79,7 @@ rozgrzewce (TEST-02, TEST-03, REQ ALG-03). Uzywa wylacznie `stan.rng` (single
 master RNG per D-09; brak per-thread RNG).
 
 Mechanika 2-opt (D-05/D-06/D-07 - LOCKED):
-- `i = rand(stan.rng, 1:(n-1))`
+- `i = rand(stan.rng, 1:(n-2))`  (BL-01 fix: i=n-1 zawsze produkowalo pusty (i+2):n range)
 - `j = rand(stan.rng, (i+2):n)` - wyklucza adjacent (j >= i+2)
 - `delta = delta_energii(stan, i, j)`
 - accept iff `delta < 0` OR `rand(stan.rng) < exp(-delta / stan.temperatura)`
@@ -105,7 +105,9 @@ dla single master seed), ALG-08 (Hamilton invariant).
 """
 function symuluj_krok!(stan::StanSymulacji, params::Parametry, alg::SimAnnealing)
     n = length(stan.trasa)
-    i = rand(stan.rng, 1:(n - 1))
+    # BL-01 fix: 1:(n-2) zamiast 1:(n-1) - i=n-1 dawalo pusty (i+2):n range (ArgumentError)
+    # Shape (i, i+2..n) per D-05/D-06 LOCKED zachowany - usuwamy tylko impossible case.
+    i = rand(stan.rng, 1:(n - 2))
     j = rand(stan.rng, (i + 2):n)
     @assert 1 <= i < j <= n "i, j out of range"
 
