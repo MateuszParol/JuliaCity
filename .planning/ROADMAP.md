@@ -71,8 +71,8 @@
 - [x] 02-10-PLAN.md — BL-04 fix: canonical chunked-threading pattern (`collect(chunks(...))` + `eachindex`) in `oblicz_energie` 3-arg
 
 **Wave 9** *(gap-closure: parallel — WR-01 NaN guard, WR-08 dynamic threads)*
-- [ ] 02-11-PLAN.md — WR-01 fix: `kalibruj_T0` 3-way length dispatch (length>=2 / ==1 / ==0) + degenerate-path test
-- [ ] 02-12-PLAN.md — WR-08 fix: dynamic `max(2, Sys.CPU_THREADS)` in TEST-04 subprocess + single-core skip gate
+- [x] 02-11-PLAN.md — WR-01 fix: `kalibruj_T0` 3-way length dispatch (length>=2 / ==1 / ==0) + degenerate-path test
+- [x] 02-12-PLAN.md — WR-08 fix: dynamic `max(2, Sys.CPU_THREADS)` in TEST-04 subprocess + single-core skip gate
 
 **Wave 10** *(gap-closure: empirical verification — REQUIRES JULIA TOOLCHAIN)*
 - [ ] 02-13-PLAN.md *(autonomous: false)* — Manifest.toml regen + TEST-08 placeholder removal + `Pkg.test()` exit 0 evidence
