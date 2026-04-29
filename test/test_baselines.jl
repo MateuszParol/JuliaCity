@@ -86,8 +86,12 @@ using Random: Xoshiro
     # 4. TEST-05 NN-baseline-beat (KRYTYCZNY)
     # ─────────────────────────────────────────────────────────────────────────
     @testset "TEST-05: NN-baseline-beat - SA ≥10% pod NN (N=1000 seed=42)" begin
-        # Pitfall G: start z liczba_krokow=20_000; jezeli failuje na CI - podnies do 50_000.
-        # Single-seed deterministic - binary outcome, brak flakiness.
+        # Pitfall G level 2 activated (gap-closure 02-13 / Task 3):
+        #   - 20_000 krokow: ratio 9.63 (SA znacznie gorszy niz NN — za malo eksploracji)
+        #   - 50_000 krokow: ratio 4.04 (SA wciaz gorszy — late-phase greedy nie zdarza sie wracac)
+        #   - 200_000 krokow: T(200k) = 1.03 * 0.9999^200000 ≈ 2e-9 (full greedy descent),
+        #     dla N=1000 (C(N,2) = 499_500 par) zapewnia ~40% pokrycie samples.
+        # Single-seed deterministic — binary outcome, brak flakiness. ~30s na typowym CPU.
         punkty = generuj_punkty(1000; seed=42)
 
         # NN baseline (pure - bez Stana)
@@ -112,7 +116,7 @@ using Random: Xoshiro
         inicjuj_nn!(stan)
         alg = SimAnnealing(stan)
         stan.temperatura = alg.T_zero
-        params = Parametry(liczba_krokow=20_000)
+        params = Parametry(liczba_krokow=200_000)
         for _ in 1:params.liczba_krokow
             symuluj_krok!(stan, params, alg)
         end

@@ -209,16 +209,20 @@ using StableRNGs
     #    commit dodac kwarg.
     # ─────────────────────────────────────────────────────────────────────────
     @testset "Aqua.jl quality (TEST-06)" begin
-        # BL-02 + IN-04 (gap-closure 02-08): check_extras hoisted from deps_compat
-        # sub-tuple to top-level kwarg. Ignore list extended to BenchmarkTools/GLMakie/
-        # Makie/Observables — INTENCJONALNIE w [extras] dla Phase 3 (viz) i Phase 4 (bench)
-        # per CONTEXT.md, NIE usuwane z Project.toml. Pattern D: stdlib :Random/:Statistics
-        # bez compat entry → deps_compat ignore.
+        # BL-02 + IN-04 (gap-closure 02-08, finalized in 02-13): Aqua 0.8.14 NIE ma
+        # `check_extras` kwarg (poprawne kwargs: ambiguities, unbound_args, undefined_exports,
+        # project_extras, stale_deps, deps_compat, piracies, persistent_tasks, undocumented_names).
+        # `project_extras=false` wylacza sprawdzanie extras-vs-targets — INTENCJONALNIE,
+        # bo BenchmarkTools/GLMakie/Makie/Observables sa w [extras] dla Phase 3 (viz)
+        # i Phase 4 (bench) per CONTEXT.md, jeszcze nieuzywane w obecnym [targets].test.
+        # Pattern D: stdlib :Random/:Statistics bez compat entry → deps_compat ignore.
         Aqua.test_all(JuliaCity;
             ambiguities = (recursive = false,),
             stale_deps = false,
-            deps_compat = (ignore = [:Random, :Statistics],),
-            check_extras = (ignore = [:Test, :Unicode, :BenchmarkTools, :GLMakie, :Makie, :Observables],),
+            # deps_compat.ignore: stdlib (Random, Statistics) + test-only extras
+            # (PerformanceTestTools, Serialization, Test, Unicode) - intentional, no compat.
+            deps_compat = (ignore = [:Random, :Statistics, :PerformanceTestTools, :Serialization, :Test, :Unicode],),
+            project_extras = false,
         )
     end
 

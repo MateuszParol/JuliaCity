@@ -2,34 +2,10 @@
 # Wlaczany przez include("test_symulacja.jl") z test/runtests.jl (Plan 02-06) LUB standalone.
 # Outer wrapper @testset "test_symulacja.jl" zapobiega podwojnemu liczeniu przy podwojnej inkluzji.
 # TEST-04 multi-thread determinism uzywa PerformanceTestTools.@include_foreach (subprocess).
-# TEST-08 golden value: HARDCODED dla StableRNG(42) N=20 1000 krokow (Task 3b dostarcza wartosci).
+# TEST-08 golden value: HARDCODED dla StableRNG(42) N=20 1000 krokow (capture wykonany lokalnie
+# w plan 02-13 / Task 2; helper test/_generuj_test08_refs.jl byl one-shot i zostal usuniety).
 #
 # Asercje wewnetrzne po angielsku per LANG-04. Komentarze polskie per LANG-01.
-#
-# ╔══════════════════════════════════════════════════════════════════════════╗
-# ║ TEST-08 PLACEHOLDER REMOVAL PROCEDURE (do uruchomienia w CI / dev-machine z Julia)  ║
-# ╠══════════════════════════════════════════════════════════════════════════╣
-# ║ Plan 02-05 zostal wykonany w worktree BEZ zainstalowanej Julii (Rule 3   ║
-# ║ deviation - spojne z plans 02-01..04). const TRASA_REF = Int[] oraz      ║
-# ║ const ENERGIA_REF = NaN sa PLACEHOLDERAMI; TEST-08 golden-value asercje  ║
-# ║ sa otoczone @test_broken w `else` branch (`isempty(TRASA_REF) || isnan(ENERGIA_REF)`).  ║
-# ║                                                                          ║
-# ║ KROKI naprawcze (CI / lokalny dev):                                      ║
-# ║   1. Uruchomic helper script:                                            ║
-# ║        julia --project=. test/_generuj_test08_refs.jl > /tmp/refs.txt    ║
-# ║   2. Output zawiera 2 linie:                                             ║
-# ║        const TRASA_REF = [<20 Int...>]                                   ║
-# ║        const ENERGIA_REF = <Float64>                                     ║
-# ║   3. Zastapic w tym pliku linie 23-24:                                   ║
-# ║        const TRASA_REF = Int[]      -> wartosc z helper output linia 1   ║
-# ║        const ENERGIA_REF = NaN      -> wartosc z helper output linia 2   ║
-# ║   4. Usunac plik test/_generuj_test08_refs.jl (one-shot)                 ║
-# ║   5. Pelne `julia --project=. -e 'using Pkg; Pkg.test()'` exit 0         ║
-# ║                                                                          ║
-# ║ Placeholder gate (verifier):                                             ║
-# ║   grep -cE 'TRASA_REF = Int\[\]|ENERGIA_REF = NaN|TRASA_REF = \[\]'      ║
-# ║   musi zwrocic 0 (po Task 3b CI run).                                    ║
-# ╚══════════════════════════════════════════════════════════════════════════╝
 
 using Test
 using JuliaCity
@@ -39,11 +15,13 @@ using StableRNGs
 using Serialization
 using PerformanceTestTools
 
-# WARTOSCI WYGENEROWANE LOKALNIE - WPISYWANE PRZEZ Task 3b (test/_generuj_test08_refs.jl).
-# Aktualizuj te wartosci jezeli zmienisz algorytm SA / RNG / liczbe krokow.
-# Po Task 3a: PLACEHOLDERS - testset TEST-08 INTENCJONALNIE FAILUJE; Task 3b je nadpisuje.
-const TRASA_REF = Int[]   # placeholder - Task 3b wpisuje vector z 20 Int
-const ENERGIA_REF = NaN   # placeholder - Task 3b wpisuje konkretna Float64
+# WARTOSCI WYGENEROWANE LOKALNIE (Plan 02-13 / Task 2 — Julia 1.12.6, 2026-04-29).
+# Procedura: julia --project=test/ -e 'include("test/_generuj_test08_refs.jl")' (lub
+# odpowiednik z aktywowanym test environment); helper byl one-shot i zostal usuniety.
+# Aktualizuj te wartosci JEZELI zmienisz algorytm SA / RNG / liczbe krokow — to jest
+# intencjonalny alarm regresji (TEST-08).
+const TRASA_REF = [1, 20, 8, 19, 18, 7, 6, 2, 17, 5, 11, 14, 4, 13, 3, 9, 16, 15, 12, 10]
+const ENERGIA_REF = 7.846654602419595
 
 @testset "test_symulacja.jl" begin
 
@@ -143,28 +121,15 @@ const ENERGIA_REF = NaN   # placeholder - Task 3b wpisuje konkretna Float64
         for _ in 1:1000
             symuluj_krok!(stan, params, alg)
         end
-        # TEST-08 golden value - HARDCODED reference for cross-version stability (D-17).
-        # Stan placeholderow Task 3a: TRASA_REF = Int[], ENERGIA_REF = NaN.
-        # Task 3b (do uruchomienia w CI z dostepna Julia) wygeneruje konkretne wartosci
-        # przez `julia --project=. test/_generuj_test08_refs.jl` i zastapi placeholdery;
-        # po Task 3b oba @test sa zielone.
-        #
-        # Guard ponizej: gdy placeholdery sa nadal obecne, golden-value asercje sa
-        # @test_broken (sygnalizuje DELIBERATE deferred verification - Rule 3 z env_note,
-        # spojne z precedensami plans 02-01..04 dla deferred runtime checks). Strukturalna
-        # weryfikacja (Hamilton invariant + permutacja) pozostaje hard-asserted.
-        @test sort(stan.trasa) == collect(1:20)  # Hamilton invariant - struktura zachowana niezaleznie od refs
+        # TEST-08 golden value — HARDCODED reference for cross-version stability (D-17).
+        # TRASA_REF i ENERGIA_REF (linie 38-39) zostaly capture-owane lokalnie w plan 02-13;
+        # jezeli ALGORYTM SE ZMIENI (RNG / liczba_krokow / alfa), te asercje SIE wywala —
+        # to jest INTENCJONALNY alarm regresji (D-17).
+        @test sort(stan.trasa) == collect(1:20)  # Hamilton invariant — struktura zachowana
         @test stan.energia >= 0  # sanity: positive perimeter sum
         @test stan.iteracja == 1000  # licznik krokow zgadza sie z params.liczba_krokow
-        if !isempty(TRASA_REF) && !isnan(ENERGIA_REF)
-            # Task 3b wykonany - golden value asercje hard
-            @test stan.trasa == TRASA_REF
-            @test isapprox(stan.energia, ENERGIA_REF; rtol=1e-6)
-        else
-            # Task 3b PENDING (placeholdery nadal obecne) - asercje broken (deferred do CI run)
-            @test_broken stan.trasa == TRASA_REF
-            @test_broken isapprox(stan.energia, ENERGIA_REF; rtol=1e-6)
-        end
+        @test stan.trasa == TRASA_REF
+        @test isapprox(stan.energia, ENERGIA_REF; rtol=1e-6)
     end
 
     # ─────────────────────────────────────────────────────────────────────────
@@ -293,7 +258,10 @@ const ENERGIA_REF = NaN   # placeholder - Task 3b wpisuje konkretna Float64
         punkty3 = generuj_punkty(3; seed=42)
         stan3 = StanSymulacji(punkty3; rng=Xoshiro(42))
         inicjuj_nn!(stan3)
-        alg3 = SimAnnealing(stan3)
+        # WR-01 interaction (gap-closure 02-13): dla N=3 wszystkie 2-opt produkuja delta=0
+        # (trojkat: reverse(2:3) zachowuje perimeter), wiec kalibruj_T0 bez worsening probek
+        # rzuci ArgumentError. Bypass przez explicit T_zero=1.0.
+        alg3 = SimAnnealing(stan3; T_zero=1.0)
         stan3.temperatura = alg3.T_zero
         params3 = Parametry(liczba_krokow=10_000)
 

@@ -153,22 +153,21 @@ using Random: Xoshiro
     @testset "BL-01 kalibruj_T0 boundary nie crashuje (gap-closure)" begin
         # Cel: dowiesc ze fix `1:(n-2)` w kalibruj_T0 (src/energia.jl:178) eliminuje
         # probabilistyczny crash z empty range. Pre-fix: i=n-1 -> j-range pusty -> ArgumentError.
-        # N=3 fixture: jedyna legalna para to (i=1, j=3). 10_000 probek gwarantuje
-        # ze pre-fix wersja by crashnela (P -> 1.0 dla 10_000 prob).
         #
-        # UWAGA: N=3 daje tylko jedna legalna pare, wiec wszystkie delts sa identyczne;
-        # std([d, d, ...]) == 0 -> T0 == 0.0. WR-01 (std NaN dla length==1) jest
-        # adresowane w osobnym planie 02-11; tutaj asercja covers oba scenariusze
-        # przez (T0 >= 0.0) || isnan(T0).
+        # UWAGA (gap-closure 02-13): N=3 NIE moze byc uzyte tutaj — na trojkacie wszystkie
+        # 2-opt swaps zachowuja perimeter (delta=0), wiec WR-01 fix throw-uje ArgumentError
+        # ("no worsening moves sampled"). Uzywamy N=4 (najmniejszy N z dwoma dystinct 2-opt
+        # parami: (1,3) i (1,4) — produkuja realne delts). 10_000 probek gwarantuje pokrycie
+        # i_range = 1:(n-2) = 1:2 i j_range = (i+2):n = 3:4.
 
-        punkty3 = generuj_punkty(3; seed=42)
-        stan3 = StanSymulacji(punkty3; rng=Xoshiro(42))
-        inicjuj_nn!(stan3)
+        punkty4 = generuj_punkty(4; seed=42)
+        stan4 = StanSymulacji(punkty4; rng=Xoshiro(42))
+        inicjuj_nn!(stan4)
 
-        # Hard assert: brak ArgumentError przy 10_000 prob na N=3 (kazda iteracja w
+        # Hard assert: brak ArgumentError przy 10_000 prob na N=4 (kazda iteracja w
         # kalibruj_T0 wewnetrznie wola rand(rng, 1:(n-2)) i rand(rng, (i+2):n)).
-        T0 = kalibruj_T0(stan3; n_probek=10_000)
-        @test (T0 >= 0.0) || isnan(T0)  # crash-free; WR-01 adresuje NaN edge oddzielnie
+        T0 = kalibruj_T0(stan4; n_probek=10_000)
+        @test T0 >= 0.0  # crash-free; finite Float64 (WR-01 NaN edge testowane oddzielnie)
         @test T0 isa Float64
 
         # N=20 sanity (analogiczne do symuluj_krok! N=20 testu): 5_000 prob, ~5% pre-fix
