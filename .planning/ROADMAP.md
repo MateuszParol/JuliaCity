@@ -57,7 +57,7 @@
 - [x] 02-04-PLAN.md — `src/algorytmy/simulowane_wyzarzanie.jl`: `SimAnnealing <: Algorytm` + `symuluj_krok!` (zero-alloc) + `uruchom_sa!` (ALG-06 stagnation-patience stop, D-04)
 
 **Wave 5** *(blocked on Wave 4)*
-- [ ] 02-05-PLAN.md — `test/test_energia.jl` + `test/test_baselines.jl` + `test/test_symulacja.jl` (każdy w outer `@testset`); TEST-01/03/04/05/08; ALG-06 patience early-stop test; TEST-08 golden-value via Task 3a placeholder + Task 3b helper-script generation
+- [x] 02-05-PLAN.md — `test/test_energia.jl` + `test/test_baselines.jl` + `test/test_symulacja.jl` (każdy w outer `@testset`); TEST-01/03/04/05/08; ALG-06 patience early-stop test; TEST-08 golden-value via Task 3a placeholder + Task 3b helper-script generation
 
 **Wave 6** *(blocked on Wave 5)*
 - [ ] 02-06-PLAN.md — `test/runtests.jl` integration: 3 `include`s + Aqua TEST-06 (deps_compat ignore [Random, Statistics]) + JET TEST-07 (`@test_opt target_modules=(JuliaCity,)`)
