@@ -42,6 +42,6 @@ export Punkt2D, StanSymulacji, Algorytm, generuj_punkty,
        Parametry, SimAnnealing,
        oblicz_macierz_dystans!, oblicz_energie, delta_energii, kalibruj_T0,
        trasa_nn, inicjuj_nn!,
-       symuluj_krok!
+       symuluj_krok!, uruchom_sa!
 
 end # module

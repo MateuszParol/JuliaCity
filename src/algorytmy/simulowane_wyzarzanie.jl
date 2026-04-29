@@ -119,3 +119,57 @@ function symuluj_krok!(stan::StanSymulacji, params::Parametry, alg::SimAnnealing
     stan.iteracja += 1
     return nothing
 end
+
+"""
+    uruchom_sa!(stan::StanSymulacji, params::Parametry, alg::SimAnnealing) -> Int
+
+Outer-loop helper realizujacy kryterium stopu z REQ ALG-06 / D-04:
+
+  - licznik `licznik_bez_poprawy` startuje od 0 (lokalny, NIE pole Stan - Phase 1
+    D-06 shape LOCKED; cierpliwosc zyje LOKALNIE w tej funkcji)
+  - po kazdym `symuluj_krok!` sprawdzamy: czy `stan.energia` faktycznie zmalalo
+    wzgledem ostatniego best-known minimum? jezeli TAK (strict Δ < 0) ->
+    reset licznika do 0 (D-04: "reset tylko przy Δ < 0"); akceptacja worsening
+    przez Metropolis NIE resetuje (to eksploracja, nie postep)
+  - stop gdy `licznik_bez_poprawy >= alg.cierpliwosc` LUB
+    `stan.iteracja >= params.liczba_krokow` (OR-of, D-04)
+
+Caller MUSI wywolac `inicjuj_nn!(stan)` i ustawic `stan.temperatura = alg.T_zero`
+PRZED wywolaniem (analogicznie do `symuluj_krok!`). Funkcja nie sprawdza tego
+defensywnie - niezainicjowana stan.temperatura == 0 spowoduje exp(-Inf) = 0
+i greedy zachowanie (Metropolis nigdy nie zaakceptuje worsening), ale Hamilton
+invariant pozostanie zachowany.
+
+Zwraca liczbe wykonanych krokow rowna `stan.iteracja - iteracja_start`. Type-stable
+::Int. Zero-alloc po rozgrzewce (3 lokalne zmienne Int/Float64 + symuluj_krok!
+zero-alloc per Task 1).
+
+Pokrywa REQ ALG-06 (stagnation patience stop substantywnie - NIE odraczane do
+Phase 4; konkretne kryterium dwu-warunkowe OR z reset only-on-strict-improvement).
+
+# Argumenty
+- `stan::StanSymulacji` - mutowany in-place (przez symuluj_krok!)
+- `params::Parametry`   - hard cap przez `params.liczba_krokow`
+- `alg::SimAnnealing`   - konsumuje `alg.cierpliwosc` i (przez symuluj_krok!) `alg.alfa`
+"""
+function uruchom_sa!(stan::StanSymulacji, params::Parametry, alg::SimAnnealing)::Int
+    iteracja_start = stan.iteracja
+    # Snapshot best-known energy at entry; aktualizowane tylko gdy delta < 0
+    # zostanie zaakceptowane i stan.energia spadnie ponizej tej wartosci.
+    energia_min = stan.energia
+    licznik_bez_poprawy = 0
+
+    while stan.iteracja < params.liczba_krokow && licznik_bez_poprawy < alg.cierpliwosc
+        symuluj_krok!(stan, params, alg)
+        # D-04: reset TYLKO przy strict improvement (delta < 0).
+        # Akceptacja Metropolis przy delta >= 0 NIE resetuje - to eksploracja,
+        # nie postep wobec best-known minimum.
+        if stan.energia < energia_min
+            energia_min = stan.energia
+            licznik_bez_poprawy = 0
+        else
+            licznik_bez_poprawy += 1
+        end
+    end
+    return stan.iteracja - iteracja_start
+end
