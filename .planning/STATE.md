@@ -8,8 +8,8 @@ progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 27
-  completed_plans: 24
-  percent: 89
+  completed_plans: 25
+  percent: 93
 ---
 
 # State: JuliaCity
@@ -31,10 +31,10 @@ Plan: 3 of 7
 | Phase | 3 (of 4) |
 | Phase Name | Visualization & Export |
 | Plan | 7 plans (waves 0-6, sequential): `03-00-PLAN.md` .. `03-06-PLAN.md` |
-| Status | Phase 3 EXECUTING — 03-04 COMPLETE (_export_loop + eksport isa String branch); 5/7 planow wykonanych |
-| Progress | `[████████░░] 89% (24/27 plans; Phase 3 — 5/7 wykonane)` |
-| Last Action | `03-04-PLAN.md` wykonany — _export_loop (Makie.record() blocking + ProgressMeter + isfile() hard-fail D-10 + freeze-last-frame sa_zakonczono Ref D-12 + polski @info D-09), eksport isa String branch wywoluje _export_loop, Pkg.test 226/226 PASS |
-| Next Action | `03-05-PLAN.md` — hardening: try/catch hard-fail wrapper (D-13), GOTOWE overlay (D-06), TTFP @info D-08 |
+| Status | Phase 3 EXECUTING — 03-05 COMPLETE (D-13 hard-fail wrapper + D-08 TTFP @info + D-06 GOTOWE overlay); 6/7 planow wykonanych |
+| Progress | `[█████████░] 93% (25/27 plans; Phase 3 — 6/7 wykonane)` |
+| Last Action | `03-05-PLAN.md` wykonany — refaktor wizualizuj() do _wizualizuj_impl (Pitfall E: try/catch na zewnatrz with_theme), _dodaj_gotowe_overlay! z ratio energia/energia_nn (D-06), TTFP @info Ladowanie GLMakie + Wizualizacja gotowa (D-08), D-13 hard-fail: catch GLFW/OpenGL/X11/display/GLMakie + InitError -> polski error; passive event loop po GOTOWE; Pkg.test 226/226 PASS |
+| Next Action | `03-06-PLAN.md` — grep guard test (grep -l "using GLMakie" src/ w runtests.jl, VIZ-06 finalizacja) |
 
 ## Roadmap Snapshot
 
@@ -58,6 +58,7 @@ Plan: 3 of 7
 | Phase 03 P02 | 8min | 1 task | 1 file |
 | Phase 03 P03 | 4min | 1 task | 1 file |
 | Phase 03 P04 | 8min | 1 task | 1 file |
+| Phase 03 P05 | 12min | 1 task | 1 file |
 
 ## Accumulated Context
 
@@ -81,6 +82,8 @@ Plan: 3 of 7
 | _ACC_WIN jako module-level const (NIE local const) | Kompatybilnosc z Julia 1.10+ bez ostrzezen; type-stable bez boxing captured var | Phase 3 plan 03 |
 | FPS: instantaneous dt (NIE rolling-60-window) | Uproszczenie wystarczajace dla edukacyjnego overlay; rolling window YAGNI dla v1 | Phase 3 plan 03 |
 | accept detection: (stan.energia <= energia_przed) przed symuluj_krok! | symuluj_krok! zwraca nothing — jedyna opcja bez refactoring | Phase 3 plan 03 |
+| try/catch NA ZEWNATRZ with_theme (Pitfall E) | wymagalo wydzielenia _wizualizuj_impl z wizualizuj() body; wizualizuj() staje sie cienkim wrapperem | Phase 3 plan 05 |
+| GOTOWE passive event loop zamiast wait(fig.scene) | prostsze i pewniejsze na roznych platformach (Windows + Linux); sleep(1/fps) yielding GLMakie event loop | Phase 3 plan 05 |
 
 ### Open Questions
 
@@ -122,4 +125,4 @@ Plan: 3 of 7
 
 ---
 *State initialized: 2026-04-28 after roadmap creation*
-*Last updated: 2026-04-30T10:30:00Z — Phase 3 EXECUTING: plan 03-04 COMPLETE (_export_loop helper + eksport isa String branch: blocking Makie.record() z ProgressMeter dt=0.5s, isfile() hard-fail polski error D-10/EKS-04, sa_zakonczono Ref freeze-last-frame D-12, polski @info D-09, n_klatek=liczba_krokow div kroki_na_klatke, format auto-detect z extensji, Pkg.test 226/226 PASS); kolejny: 03-05 hardening + GOTOWE overlay*
+*Last updated: 2026-04-30T09:55:17Z — Phase 3 EXECUTING: plan 03-05 COMPLETE (refaktor wizualizuj() do _wizualizuj_impl + _dodaj_gotowe_overlay! + D-08 TTFP @info: Ladowanie GLMakie / Wizualizacja gotowa + D-13 hard-fail try/catch: sprint(showerror,e) string-match GLFW/OpenGL/X11/display/GLMakie + isa(e,InitError) -> polski error + rethrow dla nie-GLMakie; D-06 GOTOWE overlay text! z ratio + passive event loop; Pkg.test 226/226 PASS; 15/15 CONTEXT decisions D-01..D-15 zaimplementowane); kolejny: 03-06 grep guard test VIZ-06*

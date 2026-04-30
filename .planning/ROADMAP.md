@@ -116,7 +116,7 @@
 - [x] 03-04-PLAN.md — `_export_loop` z `Makie.record(fig, sciezka, 1:n_klatek; framerate=fps) do frame_i ... end`, ProgressMeter (EKS-03), isfile() hard-fail (D-10/EKS-04), freeze last frame (D-12), polski @info/error (LANG-02). Branch eksport isa String wywoluje _export_loop. Pkg.test 226/226 PASS.
 
 **Wave 5** *(blocked on Wave 4 — finalize: hard-fail wrapper + TTFP + GOTOWE)*
-- [ ] 03-05-PLAN.md — Refactor wizualizuj() na try/catch wrapper (D-13 polish hard-fail dla GLMakie/OpenGL/X11/display); `_wizualizuj_impl` jako internal; `_dodaj_gotowe_overlay!` (D-06 GOTOWE z ratio energia/energia_nn po SA stop); dwa @info TTFP messages (D-08).
+- [x] 03-05-PLAN.md — Refactor wizualizuj() na try/catch wrapper (D-13 polish hard-fail dla GLMakie/OpenGL/X11/display); `_wizualizuj_impl` jako internal; `_dodaj_gotowe_overlay!` (D-06 GOTOWE z ratio energia/energia_nn po SA stop); dwa @info TTFP messages (D-08). Pkg.test 226/226 PASS. 15/15 CONTEXT decisions D-01..D-15 zaimplementowane.
 
 **Wave 6** *(blocked on Wave 5 — VIZ-06 grep guard test)*
 - [ ] 03-06-PLAN.md — `@testset "VIZ-06: GLMakie isolation"` w test/runtests.jl — grep-level (read+per-line) sprawdza ze tylko src/wizualizacja.jl ma `using GLMakie`. Pure headless (D-14, D-15), bezpieczne dla CI.
@@ -149,7 +149,7 @@
 |-------|----------------|--------|-----------|
 | 1. Bootstrap, Core Types & Points | 6/6 | Complete | 2026-04-28 |
 | 2. Energy, SA Algorithm & Test Suite | 14/14 | Complete | 2026-04-30 |
-| 3. Visualization & Export | 5/7 | In Progress|  |
+| 3. Visualization & Export | 6/7 | In Progress|  |
 | 4. Demo, Benchmarks & Documentation | 0/0 | Not started | - |
 
 ## Coverage Summary
