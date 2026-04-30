@@ -259,10 +259,11 @@ From PROJECT.md Core Value (do skopiowania DOSŁOWNIE w README header):
 
     *(NOTA executor — Warning #2: jeśli `bench/wyniki.md` pokazuje `std_ratio > 0.02`, podstaw `{HEADLINE_PERCENT}` z DOKŁADNĄ średnią z bench/wyniki.md zaokrągloną do 1 miejsca po przecinku — NIE shipuj placeholdera „~6%" jeśli pomiar disagrees. Jeśli `std_ratio ≤ 0.02`, zaokrąglenie do najbliższej liczby całkowitej OK.)*
 
-    Reprodukcja:
+    Reprodukcja (wrapper — załatwia BenchmarkTools w `[targets].test`, patrz `bench/uruchom.{sh,ps1}`):
 
     ```bash
-    julia --project=. --threads=auto bench/run_all.jl
+    bash bench/uruchom.sh        # POSIX (Linux/macOS/WSL)
+    pwsh bench/uruchom.ps1       # PowerShell (Windows)
     ```
 
     Suite zawiera:
