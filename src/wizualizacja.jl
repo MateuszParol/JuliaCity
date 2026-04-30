@@ -316,6 +316,80 @@ function _export_loop(fig, stan::StanSymulacji, params::Parametry, alg::Algorytm
 end
 
 # ---------------------------------------------------------------------------
+# Helpery finalizujace (D-06 GOTOWE overlay + refactor na _wizualizuj_impl)
+# ---------------------------------------------------------------------------
+
+# Dodaje GOTOWE overlay na srodku ax_trasa po zakonczeniu SA (D-06).
+# Wywolane gdy SA hits liczba_krokow i okno jest jeszcze otwarte.
+# Zolty kolor dla widocznosci na dark theme; position w data coordinates [0,1]².
+function _dodaj_gotowe_overlay!(ax_trasa::Axis, stan::StanSymulacji, energia_nn::Float64)
+    ratio = round(stan.energia / energia_nn; digits=4)
+    text!(ax_trasa, "GOTOWE — ratio: $ratio";
+          position = Point2f(0.5, 0.5),
+          align    = (:center, :center),
+          fontsize = 24,
+          color    = :yellow,
+          space    = :data)
+    return nothing
+end
+
+# Core implementation — wydzielona z wizualizuj() aby try/catch byl na zewnatrz
+# with_theme (RESEARCH Pitfall E: with_theme musi byc wewnatrz impl, try/catch
+# NA ZEWNATRZ — with_theme uzywa try/finally wewnetrznie, co jest zgodne z naszym
+# outer catch nie interferuje).
+function _wizualizuj_impl(stan::StanSymulacji, params::Parametry, alg::Algorytm;
+                          liczba_krokow::Int, fps::Int, kroki_na_klatke::Int,
+                          eksport::Union{Nothing,String})
+    # Walidacja argumentow internal (LANG-04 — asserty po angielsku).
+    @assert liczba_krokow > 0 "liczba_krokow must be positive"
+    @assert fps > 0 "fps must be positive"
+    @assert kroki_na_klatke > 0 "kroki_na_klatke must be positive"
+
+    # NN baseline: trasa + energia. energia_nn uzywana w GOTOWE overlay (D-06 ratio).
+    # Liczona raz, deterministycznie (D-15 start=1). Phase 2 oblicz_energie 3-arg signature.
+    nn_trasa   = trasa_nn(stan.D; start=1)
+    bufor      = zeros(Float64, Threads.nthreads())
+    energia_nn = oblicz_energie(stan.D, nn_trasa, bufor)
+
+    # Motyw dark scoped — auto-reset po wyjsciu nawet przy throw (RESEARCH Pattern 7).
+    # Pitfall E: with_theme uzywa try/finally wewnetrznie — nie koliduje z outer try/catch
+    # w wizualizuj(). try/catch jest NA ZEWNATRZ with_theme (hierarchia: outer try →
+    # with_theme do → display → loop).
+    with_theme(theme_dark()) do
+        fig, ax_trasa, ax_energia = _setup_figure(stan, nn_trasa)
+        obs = _init_observables(stan, alg, ax_trasa, ax_energia)
+
+        # Branching live vs eksport (D-09) — plan 03-03 = live, plan 03-04 = eksport.
+        if eksport === nothing
+            # Live mode: otworz okno + uruchom renderloop (blokujace az user zamknie lub SA stop).
+            # display(fig) MUSI byc PRZED _live_loop — isopen(fig) zwraca true dopiero po display.
+            display(fig)
+            # D-08: drugi @info PO display(fig) — uzytkownik widzi ze okno sie zaladowalo.
+            @info "Wizualizacja gotowa, rozpoczynam symulację..."
+            _live_loop(fig, stan, params, alg, obs.obs_trasa, obs.obs_historia, obs.obs_overlay;
+                       liczba_krokow=liczba_krokow, fps=fps, kroki_na_klatke=kroki_na_klatke)
+            # D-06: GOTOWE overlay — tylko gdy SA dobiegl konca I okno jest jeszcze otwarte.
+            # Gdy user zamknie okno przed SA stop, isopen(fig) == false — pomijamy overlay.
+            if isopen(fig) && stan.iteracja >= liczba_krokow
+                _dodaj_gotowe_overlay!(ax_trasa, stan, energia_nn)
+                # Pasywny event loop — czekamy az user zamknie okno recznie (D-06: brak auto-close).
+                # sleep(1/fps) yielding GLMakie event loopowi (RESEARCH Q2).
+                while isopen(fig)
+                    sleep(1 / fps)
+                end
+            end
+        else
+            # Export mode: blocking Makie.record() do pliku eksport (D-09, D-10, D-12).
+            # NIE wywolujemy display(fig) — record() automatycznie sluzy do off-screen renderu.
+            _export_loop(fig, stan, params, alg, obs.obs_trasa, obs.obs_historia, obs.obs_overlay,
+                         eksport;
+                         liczba_krokow=liczba_krokow, fps=fps, kroki_na_klatke=kroki_na_klatke)
+        end
+    end
+    return nothing
+end
+
+# ---------------------------------------------------------------------------
 # Publiczny API entry point (D-09)
 # ---------------------------------------------------------------------------
 
@@ -360,38 +434,31 @@ function wizualizuj(stan::StanSymulacji, params::Parametry, alg::Algorytm;
                     fps::Int=30,
                     kroki_na_klatke::Int=50,
                     eksport::Union{Nothing,String}=nothing)::Nothing
-    # Walidacja argumentow wejsciowych (LANG-04 — asserty po angielsku)
-    @assert liczba_krokow > 0 "liczba_krokow must be positive"
-    @assert fps > 0 "fps must be positive"
-    @assert kroki_na_klatke > 0 "kroki_na_klatke must be positive"
+    # D-08: TTFP grace overlay — pierwszy @info PRZED with_theme/display.
+    # Pitfall 14: czystego REPL TTFP GLMakie 60-150s; precompile cache 5-15s.
+    # Uzytkownik nie mysli ze program sie zawisl podczas JIT-kompilacji.
+    @info "Ładowanie GLMakie (pierwsze uruchomienie może trwać 60+ s — kompilacja JIT)..."
 
-    # TTFP @info przed otwarciem okna — mierzy czas ladowania GLMakie (D-08).
-    @info "Inicjalizacja wizualizacji TSP — ładowanie GLMakie..."
-
-    # NN baseline trasa — uzywana dla overlay (D-02). Liczona raz (deterministyczne D-15).
-    # Plan 03-05 pokaze ratio energia/energia_nn w overlay "GOTOWE".
-    nn_trasa = trasa_nn(stan.D; start=1)
-
-    # Motyw dark scoped — auto-reset po wyjsciu nawet przy throw (RESEARCH Pattern 7).
-    # NIE uzywamy alternatywnego globalnego API — zanieczyszczaloby stan Makie po
-    # powrocie z wizualizuj() (Pitfall E). Zakres try/finally wewnetrznie.
-    with_theme(theme_dark()) do
-        fig, ax_trasa, ax_energia = _setup_figure(stan, nn_trasa)
-        obs = _init_observables(stan, alg, ax_trasa, ax_energia)
-
-        # Branching live vs eksport (D-09) — plan 03-03 = live, plan 03-04 = eksport.
-        if eksport === nothing
-            # Live mode: otworz okno + uruchom renderloop (blokujace az user zamknie lub SA stop).
-            # display(fig) MUSI byc PRZED _live_loop — isopen(fig) zwraca true dopiero po display.
-            display(fig)
-            _live_loop(fig, stan, params, alg, obs.obs_trasa, obs.obs_historia, obs.obs_overlay;
-                       liczba_krokow=liczba_krokow, fps=fps, kroki_na_klatke=kroki_na_klatke)
+    # D-13: Hard-fail wrapper dla GLMakie/OpenGL/X11/display errors.
+    # Pitfall E: try/catch NA ZEWNATRZ with_theme — with_theme musi byc w _wizualizuj_impl
+    # zeby auto-reset dzialal nawet przy throw wewnatrz with_theme block'u.
+    try
+        _wizualizuj_impl(stan, params, alg;
+                         liczba_krokow=liczba_krokow, fps=fps,
+                         kroki_na_klatke=kroki_na_klatke, eksport=eksport)
+    catch e
+        # Q10: GLMakie rzuca GLFW.GLFWError lub InitError przy braku OpenGL/displayu.
+        # Sprawdzamy po stringu (GLFW nie eksportowane do scope'u) ORAZ typie InitError.
+        msg = sprint(showerror, e)
+        if contains(msg, "GLFW") || contains(msg, "OpenGL") || contains(msg, "display") ||
+           contains(msg, "X11") || contains(msg, "GLMakie") || isa(e, InitError)
+            # D-13: doslowny polish error (CONTEXT.md). Diakrytyki: "Spróbuj", "Linuksie".
+            error("GLMakie wymaga aktywnego kontekstu OpenGL. Brak displayu? " *
+                  "Spróbuj `xvfb-run -a julia ...` na Linuksie albo uruchom lokalnie z GUI. " *
+                  "Headless cloud (CI, Docker bez X) NIE jest wspierany w wersji v1.")
         else
-            # Export mode: blocking Makie.record() do pliku eksport (D-09, D-10, D-12).
-            # NIE wywolujemy display(fig) — record() automatycznie sluzy do off-screen renderu.
-            _export_loop(fig, stan, params, alg, obs.obs_trasa, obs.obs_historia, obs.obs_overlay,
-                         eksport;
-                         liczba_krokow=liczba_krokow, fps=fps, kroki_na_klatke=kroki_na_klatke)
+            # Inny blad (np. ArgumentError z @assert, BoundsError) — propagujemy bez zmian.
+            rethrow(e)
         end
     end
     return nothing
