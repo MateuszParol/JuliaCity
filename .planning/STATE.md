@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
-status: Phase 2 complete; Phase 3 ready to start
-last_updated: "2026-04-30T07:14:17.630Z"
+status: Phase 3 planned (7 plans); ready to execute
+last_updated: "2026-04-30T08:23:06.454Z"
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 20
+  total_plans: 27
   completed_plans: 19
-  percent: 95
+  percent: 70
 ---
 
 # State: JuliaCity
@@ -20,20 +20,20 @@ progress:
 
 **Name:** JuliaCity
 **Core Value:** Wizualnie przekonująca, fizycznie umotywowana heurystyka TSP w idiomatycznej Julii — jeśli wszystko inne zawiedzie, użytkownik musi zobaczyć, jak trasa „bańki mydlanej" zaciska się wokół 1000 punktów w czasie rzeczywistym i otrzymać krótszą trasę niż naiwny baseline.
-**Current Focus:** Phase 03 — visualization-export (CONTEXT gathered, ready for `/gsd-plan-phase 3`)
+**Current Focus:** Phase 03 — visualization-export (PLANNED: 7 plans / 7 waves, ready for `/gsd-execute-phase 3`)
 
 ## Current Position
 
-Phase: 03 (visualization-export) — READY TO START
+Phase: 03 (visualization-export) — PLANNED, READY TO EXECUTE
 | Field | Value |
 |-------|-------|
 | Phase | 3 (of 4) |
 | Phase Name | Visualization & Export |
-| Plan | brak (CONTEXT gathered — `03-CONTEXT.md` written 2026-04-30) |
-| Status | Phase 2 COMPLETE; Phase 3 CONTEXT gathered, ready for `/gsd-plan-phase 3` |
-| Progress | `[██████████░░░░░░░░░░] 50% (2/4 phases complete; Phase 3 CONTEXT done)` |
-| Last Action | `/gsd-discuss-phase 3` zakończone — 4 areas omówione (layout/overlay, rytm/UX, eksport, headless), 15 decyzji D-01..D-15 + Claude's discretion zapisane w `03-CONTEXT.md` |
-| Next Action | `/gsd-plan-phase 3` — researcher + planner + plan-checker (RESEARCH.md, PATTERNS.md, plan-y waveowe dla 11 REQ-ID-ów VIZ-01..07 + EKS-01..04) |
+| Plan | 7 plans (waves 0-6, sequential): `03-00-PLAN.md` .. `03-06-PLAN.md` |
+| Status | Phase 3 PLANNED — RESEARCH.md + PATTERNS.md + 7 PLAN.md zweryfikowane przez plan-checker (0 blockers, 3 warnings zaadresowane inline: usuniete LANG-01/LANG-02 z frontmatter Phase 3 — nalezą do Phase 1/4) |
+| Progress | `[██████████░░░░░░░░░░] 50% (2/4 phases complete; Phase 3 PLANNED — 0/7 wykonane)` |
+| Last Action | `/gsd-plan-phase 3` zakończone — researcher wykrył krytyczny bug compat `GLMakie="0.24"`→`"0.13"` (zaadresowany w wave 0 `03-00-PLAN.md`); pattern-mapper zmapował 5 plików; planner stworzył 7 plan-ów; plan-checker PASSED |
+| Next Action | `/gsd-execute-phase 3` (auto-advance enabled w yolo mode) — start od wave 0 (Project.toml fix + Manifest regeneracja) |
 
 ## Roadmap Snapshot
 
@@ -110,4 +110,4 @@ Phase: 03 (visualization-export) — READY TO START
 
 ---
 *State initialized: 2026-04-28 after roadmap creation*
-*Last updated: 2026-04-29 — Phase 2 plans verified (21/21 REQs, iter 2/3 PASSED), ready to execute*
+*Last updated: 2026-04-30 — Phase 3 PLANNED: 7 plan-ów / 7 wave (sequential — single-file edit chain on `src/wizualizacja.jl`), 11/11 REQ-IDs (VIZ-01..07, EKS-01..04) covered, GLMakie compat bug `"0.24"`→`"0.13"` wykryty przez researcher i zaadresowany w wave 0*

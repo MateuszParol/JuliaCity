@@ -98,7 +98,36 @@
   3. Aktualizacje Observables są throttlowane (parametr `KROKI_NA_KLATKE`, default ≥ 10) — okno pozostaje responsywne na laptopie przez całą animację, brak update storm.
   4. `wizualizacja.jl` jest jedynym plikiem w `src/` importującym GLMakie — uruchomienie testów rdzenia w `test/runtests.jl` nie wymaga OpenGL (potwierdzone `grep -l "using GLMakie" src/` zwraca tylko `wizualizacja.jl`).
   5. Wywołanie `wizualizuj(...; eksport="demo.mp4")` lub `eksport="demo.gif"` produkuje plik wideo/GIF (rozszerzenie wykrywane z extensji ścieżki), z widocznym paskiem postępu (`ProgressMeter` lub odpowiednik) i bezpieczną obsługą istniejących plików (jawna polityka nadpisania lub błąd).
-**Plans**: TBD
+**Plans**: 7 plans in 7 waves (Wave 0 BLOKER: Project.toml GLMakie compat fix; Waves 1-5 sequential — `src/wizualizacja.jl` file conflict; Wave 6 testing guard)
+
+**Wave 0** *(pre-flight BLOKER — Project.toml + Manifest)*
+- [ ] 03-00-PLAN.md — Project.toml fix `GLMakie = "0.13"` (NIE "0.24"), przeniesienie GLMakie/Makie/Observables do [deps], dodanie ProgressMeter, regeneracja Manifest.toml przez Pkg.add. Bez tego `using GLMakie` rzuca Unsatisfiable.
+
+**Wave 1** *(blocked on Wave 0 — module skeleton + integration)*
+- [ ] 03-01-PLAN.md — `src/wizualizacja.jl` skeleton (header + using GLMakie/ProgressMeter/Point2f + sygnatura `wizualizuj(...)::Nothing` z polish docstring + placeholder body) + wireing do `src/JuliaCity.jl` (include + export wizualizuj)
+
+**Wave 2** *(blocked on Wave 1 — figure setup + Observables)*
+- [ ] 03-02-PLAN.md — 4 internal helpery: `_trasa_do_punkty` (Point2f + cycle closure), `_zbuduj_overlay_string` (7-pol overlay D-04), `_setup_figure` (dual-panel D-01 + dark theme D-03 + NN baseline D-02), `_init_observables` (Observable{Vector{Point2f}} + Observable{String} typed). Body wizualizuj() z with_theme(theme_dark()) do ... end.
+
+**Wave 3** *(blocked on Wave 2 — live renderloop)*
+- [ ] 03-03-PLAN.md — `_live_loop` z throttled `while isopen(fig)` + sleep(1/fps), kroki_na_klatke SA stepów per Observable update (D-05/VIZ-05), rolling FPS/ETA/accept-rate, branch eksport===nothing wywoluje display(fig) + _live_loop.
+
+**Wave 4** *(blocked on Wave 3 — eksport branch)*
+- [ ] 03-04-PLAN.md — `_export_loop` z `Makie.record(fig, sciezka, 1:n_klatek; framerate=fps) do frame_i ... end`, ProgressMeter (EKS-03), isfile() hard-fail (D-10/EKS-04), freeze last frame (D-12), polski @info/error (LANG-02). Branch eksport isa String wywoluje _export_loop.
+
+**Wave 5** *(blocked on Wave 4 — finalize: hard-fail wrapper + TTFP + GOTOWE)*
+- [ ] 03-05-PLAN.md — Refactor wizualizuj() na try/catch wrapper (D-13 polish hard-fail dla GLMakie/OpenGL/X11/display); `_wizualizuj_impl` jako internal; `_dodaj_gotowe_overlay!` (D-06 GOTOWE z ratio energia/energia_nn po SA stop); dwa @info TTFP messages (D-08).
+
+**Wave 6** *(blocked on Wave 5 — VIZ-06 grep guard test)*
+- [ ] 03-06-PLAN.md — `@testset "VIZ-06: GLMakie isolation"` w test/runtests.jl — grep-level (read+per-line) sprawdza ze tylko src/wizualizacja.jl ma `using GLMakie`. Pure headless (D-14, D-15), bezpieczne dla CI.
+
+**Cross-cutting constraints** *(must_haves shared across plans):*
+- `src/wizualizacja.jl` jest JEDYNYM plikiem w src/ z `using GLMakie` (VIZ-06 LOCKED — formal test w plan 03-06)
+- BRAK modyfikacji w src/{punkty.jl, energia.jl, baselines.jl, algorytmy/, typy.jl} (Phase 1+2 PHASE COMPLETE preserved)
+- Polish UI strings (overlay, @info, error msg) z poprawnymi diakrytykami; ASCII identyfikatory (LANG-01/02 + BOOT-04)
+- Manifest.toml regenerowany i commitowany (PROJECT D-25 — to aplikacja, nie biblioteka)
+- All 15 CONTEXT decisions D-01..D-15 zaimplementowane (mapowanie w plan 03-05 SUMMARY)
+
 **UI hint**: yes
 
 ### Phase 4: Demo, Benchmarks & Documentation
@@ -120,7 +149,7 @@
 |-------|----------------|--------|-----------|
 | 1. Bootstrap, Core Types & Points | 6/6 | Complete | 2026-04-28 |
 | 2. Energy, SA Algorithm & Test Suite | 14/14 | Complete | 2026-04-30 |
-| 3. Visualization & Export | 0/0 | Not started | - |
+| 3. Visualization & Export | 0/7 | Planned (waves 0-6) | - |
 | 4. Demo, Benchmarks & Documentation | 0/0 | Not started | - |
 
 ## Coverage Summary
