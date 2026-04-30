@@ -24,17 +24,17 @@ progress:
 
 ## Current Position
 
-Phase: 04 (demo-benchmarks-documentation) — EXECUTING (Wave 1+2 done, 6/8 plans)
-Plan: 6 of 8
+Phase: 04 (demo-benchmarks-documentation) — EXECUTING (Wave 1+2 done, Wave 3 partial: 04-06 Tasks 0+1 done; Task 2 awaiting human)
+Plan: 6 of 8 (+ 04-06 Tasks 0+1 of 3)
 | Field | Value |
 |-------|-------|
 | Phase | 4 (of 4) |
 | Phase Name | Demo, Benchmarks & Documentation |
 | Plan | 8 plans in 4 waves: `04-01-PLAN.md` .. `04-08-PLAN.md` |
-| Status | Wave 1+2 COMPLETE (04-01..04-05, 04-07 merged); Wave 3 next (04-06 orchestrator — autonomous: false checkpoint) |
-| Progress | `[█████████▓] 94% (33/35 plans; Phase 4 — 6/8 wykonane)` |
-| Last Action | Wave 2 wykonany — 04-04 (bench_energia.jl + bench_krok.jl @benchmark + fresh-fixture setup=), 04-05 (bench_jakosc.jl 5 seedów × 50k SA z T_zero=0.001 → NamedTuple mean/std/min/max ratio), 04-07 (examples/podstawowy.jl live + eksport_mp4.jl GIF z pre-rm BLOCKER #1 fix). Worktrees zmergowane, parse-check 5/5 PASS. |
-| Next Action | Wave 3 — 04-06 (bench/run_all.jl orchestrator + uruchom.sh/.ps1 + wyniki.md) — wymaga lokalnego toolchainu Julia (autonomous: false) |
+| Status | Wave 1+2 COMPLETE; Wave 3 PARTIAL — 04-06 Tasks 0+1 (uruchom.sh, uruchom.ps1, run_all.jl) merged; Task 2 (regen wyniki.md) wymaga uruchomienia `bash bench/uruchom.sh` lokalnie (~5-10 min) i commita |
+| Progress | `[█████████▓] 94% (33/35 plans + 04-06 częściowy)` |
+| Last Action | Plan 04-06 częściowo: bench/uruchom.sh (chmod +x), bench/uruchom.ps1, bench/run_all.jl (5 helperów, Module isolation BLOCKER #3, alfabetyczna kolejność Warning #3) zmergowane. SUMMARY.md NIE napisany (agent stopped). |
+| Next Action | RĘCZNIE na nowym komputerze: `bash bench/uruchom.sh` → produkuje bench/wyniki.md → `git add bench/wyniki.md && git commit` → kontynuuj z `/gsd-execute-phase 4` (Wave 4 — plan 04-08 README+demo.gif) |
 
 ## Roadmap Snapshot
 
