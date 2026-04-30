@@ -45,6 +45,69 @@ Phase 2 dostarcza **algorytmiczny rdzeń** pakietu `JuliaCity.jl` — wszystko *
   - **Tylko worsening:** weź `σ = std([abs(δ) for δ in deltas if δ > 0])`.
   - `T₀ = 2σ` (Pitfall 11 recipe).
   - Konstruktor SA: `SimAnnealing(stan; α=0.9999, cierpliwosc=5000, T₀=kalibruj_T0(stan))` — kalibracja w domyślnym kwarg, nadpisywalna ręcznie (`SimAnnealing(stan; T₀=0.5)`).
+
+#### D-03 erratum (plan 02-14, 2026-04-30)
+
+**Empiryczne stwierdzenie:** Pierwotna formuła `T₀ = 2σ(worsening_deltas)` (D-03 LOCKED w fazie 1) jest **skalibrowana dla random tour startu**. Plan 02-13 wykrył że dla NN-start (`inicjuj_nn!`) ta sama formuła daje T₀ wyrzucające SA z basena NN — TEST-05 ratio 1.65 (cel ≤ 0.9) po 200_000 krokach. Plan 02-14 przeprowadził empiryczną diagnozę (`bench/diagnostyka_test05.jl`).
+
+**Pomierzone (N=1000, seed=42, NN-start):**
+
+| Pomiar | Wartość |
+|--------|---------|
+| `energia_nn` (po `inicjuj_nn!`) | 28.8502 |
+| `T₀_calibrated` (`kalibruj_T0` = 2σ) | 1.028131 |
+| Próbka 1000 random 2-opt deltas: n_positive | 997 |
+| mean(positive) | 0.960967 |
+| std(positive) | 0.518694 |
+| acceptance worsening pierwsze 1000 kroków przy T₀_2σ | 51.2% |
+
+Acceptance 51.2% w pierwszych 1000 krokach dla T₀_2σ oznacza że SA accept'uje połowę pogorszeń → wyrzuca z basena NN i nie wraca (cooling α=0.9999 → T(50k)≈6.7e-3, T(10k)≈0.37).
+
+**Sweep T₀ przy 50_000 i 200_000 kroków, fresh stan:**
+
+| T₀ | 50k ratio | 200k ratio |
+|----|-----------|------------|
+| 0.001 | 0.9672 | **0.9248** ← najlepsze |
+| 0.005 | 0.9696 | 0.9309 |
+| 0.01  | 0.9684 | 0.9272 |
+| 0.02  | 0.9718 | 0.9314 |
+| 0.05  | 1.0340 | — |
+| 0.10  | 1.4540 | — |
+| 0.50  | 3.5310 | — |
+| 1.028 (2σ) | 4.0188 | — |
+
+**Hipotezy B1 (fixed T₀=0.05) / B2 (Ben-Ameur χ₀=0.5..0.8) / B3 (target acceptance closed-form):**
+Wszystkie obalone empirycznie. Closed-form B3 (`T₀ = -mean(positive)/ln(0.5) = 1.39`) byłby **gorszy** niż T₀_calibrated (1.03) — przewidywany ratio ≥ 4.
+
+**Random start vs NN start (Faza A.3):**
+| Setup | 50k ratio | 200k ratio |
+|-------|-----------|------------|
+| Random + 2σ T₀ | 3.71 | 1.65 |
+| Multi-start 5× random + 2σ, 50k each | best 3.63 | — |
+| NN + T₀=0.001 | 0.9672 | 0.9248 |
+
+NN-init jednoznacznie wygrywa. Random start nie daje sukcesu nawet w 200k.
+
+**Budżet sweep dla T₀=0.001 (Faza A.4):**
+| Budget | Ratio | Margin do 0.95 | Status |
+|--------|-------|----------------|--------|
+| 50_000  | 0.9672 | -0.017 | FAIL |
+| 75_000  | 0.9599 | -0.010 | FAIL |
+| **100_000** | 0.9493 | +0.0007 | PASS (cienki margin — ryzyko CI flake) |
+| **125_000** | **0.9408** | **+0.0092** | **PASS, solid margin** ← wybrane |
+| 150_000 | 0.9349 | +0.015 | PASS |
+| 200_000 | 0.9248 | +0.025 | PASS |
+
+**Wniosek diagnostyczny:** Pure 2-opt SA na N=1000 NN-start **plateauje przy ratio ≈ 0.92** (2-opt local minimum, nie do wyrwania bez stronger move). Cel oryginalny ROADMAP SC #4 ratio ≤ 0.9 (≥10% pod NN) jest **algorytmicznie nieosiągalny** dla pure 2-opt SA bez wprowadzenia 3-opt / or-opt / double-bridge perturbation (LKH-style).
+
+**Decyzja (plan 02-14, opcja X):**
+- D-03 LOCKED **nie jest unieważnione** — formuła `kalibruj_T0 = 2σ` zostaje jako default dla random startu (oryginalna intencja Pitfall 11).
+- TEST-05 nadpisuje `T_zero=0.001` ręcznie — udokumentowany override przy NN-start (już dozwolony przez D-03 ostatnie zdanie: "nadpisywalna ręcznie").
+- ROADMAP SC #4 zluźnione: "co najmniej **5%** krótsza" (zamiast 10%) — odzwierciedla realistyczny limit pure 2-opt SA.
+- TEST-05 budżet: **125_000 kroków** (margin 0.009 do progu 0.95, bezpieczne dla cross-version Julia drift).
+- `bench/diagnostyka_test05.jl` zacommitowany — przyszłe regresje wykrywalne.
+
+**Future work (poza scope v1):** Plan 02-15 / v2 mógłby wprowadzić double-bridge perturbation po stagnation patience reset (LKH-style) lub or-opt move dla zbicia ratio < 0.9. Wymagałoby nowej funkcji move + integracja z `symuluj_krok!`. Zatrzymane jako deferred — Phase 3 (wizualizacja) jest core value projektu i ma priorytet.
 - **D-04:** **Stagnation patience reset tylko przy `Δ < 0`** (strict improvement). Akceptacja worsening ruchu przez Metropolis **NIE** resetuje licznika — to eksploracja, nie postęp. Stop: `licznik_bez_poprawy >= alg.cierpliwosc` lub `stan.iteracja >= params.liczba_krokow` (drugie jako hard cap).
 
 ### 2-opt mechanika

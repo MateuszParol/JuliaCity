@@ -23,4 +23,9 @@ deps/build.log
 *.bak
 Manifest.toml.bak
 
+# Test/diagnostic logs (transient artifacts — re-runable from bench/ scripts)
+/test-output.log
+/pkgtest*.log
+/diag-*.log
+
 # WAŻNE: Manifest.toml NIE jest tutaj — jest commitowany (per D-25, to jest aplikacja, nie biblioteka)

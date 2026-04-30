@@ -117,8 +117,9 @@ grep -cE 'TRASA_REF = Int\[\]|ENERGIA_REF = NaN|TRASA_REF = \[\]' test/test_symu
 |------|----------|--------------------|--------|
 | 2-opt edge case `i = n-1` empty `j` range | Low (probabilistic crash) | Plan 02-05 or 02-06 | RESOLVED in plan 02-07 (gap-closure) |
 | TEST-08 placeholder removal | Low (test broken until CI run) | First CI run with Julia | RESOLVED in plan 02-13 (gap-closure) |
-| TEST-05 SA ≥ 10% better than NN (N=1000, seed=42) | High (Roadmap SC #4 unmet) | Plan 02-14 follow-up | OPEN — see "Plan 02-13 WIP handoff" below |
-| Aqua extras compat entries | Low (Aqua passes if compat declared) | Plan 02-13 same commit | LIKELY RESOLVED — compat entries added to Project.toml; needs CI re-run to confirm |
+| TEST-05 SA ≥ 10% better than NN (N=1000, seed=42) | High (Roadmap SC #4 unmet) | Plan 02-14 | RESOLVED in plan 02-14 (Roadmap SC #4 zluźnione 10%→5% po empirycznej diagnozie 2-opt local minimum; ratio 0.9408 PASS) |
+| Aqua extras compat entries | Low (Aqua passes if compat declared) | Plan 02-13 same commit | RESOLVED — `PerformanceTestTools` compat fixed `0.4`→`0.1` w plan 02-14 (commit 8af8cfd); Aqua 9/9 PASS empirycznie |
+| Stronger move (3-opt / or-opt / double-bridge) dla ratio < 0.9 | Low (deferred — v2; Phase 3 priorytet) | Plan 02-15 (deferred) | OPEN — udokumentowane w 02-CONTEXT.md D-03 erratum future work |
 
 ## Plan 02-13 WIP handoff (machine switch — 2026-04-29)
 
@@ -165,4 +166,20 @@ grep -cE 'TRASA_REF = Int\[\]|ENERGIA_REF = NaN|TRASA_REF = \[\]' test/test_symu
 - `deferred-items.md` — ten handoff entry.
 
 ---
-*Last updated: 2026-04-29 by Plan 02-13 (WIP, machine switch) — handoff in progress.*
+*Last updated: 2026-04-30 by Plan 02-14 — TEST-05 RESOLVED via opcja X (ratio ≤ 0.95). Phase 2 COMPLETE.*
+
+## Plan 02-14 resolution (2026-04-30)
+
+**TEST-05 NN-baseline-beat — domknięte przez decyzję projektową, nie technical fix.**
+
+Empirical diagnosis (`bench/diagnostyka_test05*.jl` + `02-CONTEXT.md` D-03 erratum) wykazała że pure 2-opt SA na N=1000 NN-start plateauje przy ratio ≈ 0.92 (2-opt local minimum). Hipotezy techniczne B1/B2/B3 z planu 02-14-PLAN.md (fixed T₀ kwarg / Ben-Ameur / closed-form) wszystkie obalone.
+
+**Decyzja (user opcja X):** zluźnić ROADMAP SC #4 z "≥10%" na "**≥5%**" (ratio ≤ 0.95).
+- TEST-05 zaktualizowany: `T_zero=0.001`, `liczba_krokow=125_000`, `<= 0.95`.
+- Empirical result: ratio **0.9408** (margin +0.009).
+- `Pkg.test()` exit 0, **222/222 PASS**, 0 FAIL/ERROR/BROKEN, 1m33s.
+- Test Summary, decision, fix details w `02-14-SUMMARY.md` + `02-14-DECISION.md`.
+
+**Future work zatrzymane na v2:** double-bridge perturbation / or-opt move dla ratio < 0.9 (LKH-style stronger move). Estymacja 1–2 dni roboczych. Phase 3 (visualization, core value) ma priorytet.
+
+*Plan 02-14 zamyka Phase 2 — wszystkie 21 REQ-IDs runtime-verified, 5/5 ROADMAP success criteria met (SC #4 z erratum).*

@@ -70,7 +70,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **TEST-02**: `@testset` dla type stability — `@inferred` na każdej publicznej funkcji
 - [ ] **TEST-03**: `@testset` dla zerowej alokacji — `@allocated == 0` na `symuluj_krok!` po rozgrzewce
 - [ ] **TEST-04**: `@testset` dla determinizmu — same seed + różne `JULIA_NUM_THREADS` → identyczna trasa końcowa
-- [ ] **TEST-05**: `@testset` dla wymagania jakości — wynikowa trasa SA krótsza niż NN baseline o co najmniej 10%
+- [ ] **TEST-05**: `@testset` dla wymagania jakości — wynikowa trasa SA krótsza niż NN baseline o co najmniej **5%** (zluźnione z 10% w plan 02-14; zob. ROADMAP SC #4 + 02-CONTEXT.md D-03 erratum: pure 2-opt SA na N=1000 NN-start plateauje przy ratio ≈ 0.92, cel ≤0.9 wymaga stronger move poza scope v1)
 - [ ] **TEST-06**: `@testset` Aqua.jl (`Aqua.test_all`) bez naruszeń (lub z udokumentowanymi suppressions)
 - [ ] **TEST-07**: `@testset` JET — `@report_opt` clean na publicznym API
 - [ ] **TEST-08**: Golden-value test używa `StableRNG(42)` (nie `Xoshiro`) dla stabilnych przebiegów między wersjami Julii

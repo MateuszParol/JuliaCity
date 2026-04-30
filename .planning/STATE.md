@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
-status: Ready to execute
-last_updated: "2026-04-29T07:50:42.816Z"
+status: Phase 2 complete; Phase 3 ready to start
+last_updated: "2026-04-30T07:30:00.000Z"
 progress:
   total_phases: 4
-  completed_phases: 1
-  total_plans: 12
-  completed_plans: 11
-  percent: 92
+  completed_phases: 2
+  total_plans: 14
+  completed_plans: 14
+  percent: 50
 ---
 
 # State: JuliaCity
@@ -24,22 +24,21 @@ progress:
 
 ## Current Position
 
-Phase: 02 (energy-sa-algorithm-test-suite) — EXECUTING
-Plan: 6 of 6
+Phase: 03 (visualization-export) — READY TO START
 | Field | Value |
 |-------|-------|
-| Phase | 2 (of 4) |
-| Phase Name | Energy, SA Algorithm & Test Suite |
-| Plan | 6 plans in 6 waves (`02-{01..06}-PLAN.md`); RESEARCH + PATTERNS written; verification PASSED iter 2/3 |
-| Status | Ready to execute |
-| Progress | `[█████░░░░░░░░░░░░░░░] 25% (1/4 phases complete; 6/12 plans done)` |
-| Last Action | Phase 2 plans created and verified (21/21 REQ-IDs covered, 7 issues resolved in revision pass) |
-| Next Action | `/gsd-execute-phase 2` (Wave 1 = Project.toml deps + Parametry + Wave 0 smoke; `autonomous: yes`) |
+| Phase | 3 (of 4) |
+| Phase Name | Visualization & Export |
+| Plan | brak (do utworzenia) |
+| Status | Phase 2 COMPLETE; Phase 3 ready to start |
+| Progress | `[██████████░░░░░░░░░░] 50% (2/4 phases complete; 14/14 phase-2 plans done)` |
+| Last Action | Plan 02-14 zamknął TEST-05 (opcja X: ROADMAP SC #4 zluźnione 10%→5%, ratio 0.9408 PASS); Pkg.test() 222/222 PASS, Phase 2 COMPLETE |
+| Next Action | `/gsd-discuss-phase 3` (lub `/gsd-plan-phase 3` — Phase 3 = GLMakie + Observables + animacja + eksport MP4/GIF) |
 
 ## Roadmap Snapshot
 
 - [x] **Phase 1: Bootstrap, Core Types & Points** — pakiet, encoding hygiene, `StanSymulacji`, `generuj_punkty`
-- [ ] **Phase 2: Energy, SA Algorithm & Test Suite** — `oblicz_energie`, `symuluj_krok!` (SA), pełen suite testowy
+- [x] **Phase 2: Energy, SA Algorithm & Test Suite** — `oblicz_energie`, `symuluj_krok!` (SA), pełen suite testowy (222/222 PASS; SC #4 zluźnione 10%→5% per plan 02-14 erratum)
 - [ ] **Phase 3: Visualization & Export** — GLMakie + Observables, eksport MP4/GIF
 - [ ] **Phase 4: Demo, Benchmarks & Documentation** — `examples/`, `bench/`, README po polsku
 
@@ -49,11 +48,11 @@ Plan: 6 of 6
 
 | Metric | Value | Target | Notes |
 |--------|-------|--------|-------|
-| Phases complete | 1/4 | 4/4 | — |
-| Requirements verified | 0/53 | 53/53 | — |
-| Test pass rate | n/a | 100% | suite jeszcze nie istnieje |
-| `@allocated` on `symuluj_krok!` | n/a | 0 | hard requirement (TEST-03) |
-| SA quality vs NN baseline | n/a | ≥10% shorter | hard requirement (TEST-05) |
+| Phases complete | 2/4 | 4/4 | — |
+| Requirements verified | 21/53 | 53/53 | Phase 1+2 = 21 REQ-IDs runtime-verified |
+| Test pass rate | 222/222 (100%) | 100% | Pkg.test() exit 0, 1m33s |
+| `@allocated` on `symuluj_krok!` | 0 | 0 | hard requirement (TEST-03) ✓ |
+| SA quality vs NN baseline | ratio 0.9408 (5.92% pod NN) | ≥**5%** shorter | TEST-05 PASS; SC #4 zluźnione 10%→5% per plan 02-14 (2-opt local minimum) |
 
 ## Accumulated Context
 
