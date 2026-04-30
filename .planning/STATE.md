@@ -8,8 +8,8 @@ progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 27
-  completed_plans: 25
-  percent: 93
+  completed_plans: 26
+  percent: 96
 ---
 
 # State: JuliaCity
@@ -31,16 +31,16 @@ Plan: 3 of 7
 | Phase | 3 (of 4) |
 | Phase Name | Visualization & Export |
 | Plan | 7 plans (waves 0-6, sequential): `03-00-PLAN.md` .. `03-06-PLAN.md` |
-| Status | Phase 3 EXECUTING — 03-05 COMPLETE (D-13 hard-fail wrapper + D-08 TTFP @info + D-06 GOTOWE overlay); 6/7 planow wykonanych |
-| Progress | `[█████████░] 93% (25/27 plans; Phase 3 — 6/7 wykonane)` |
-| Last Action | `03-05-PLAN.md` wykonany — refaktor wizualizuj() do _wizualizuj_impl (Pitfall E: try/catch na zewnatrz with_theme), _dodaj_gotowe_overlay! z ratio energia/energia_nn (D-06), TTFP @info Ladowanie GLMakie + Wizualizacja gotowa (D-08), D-13 hard-fail: catch GLFW/OpenGL/X11/display/GLMakie + InitError -> polski error; passive event loop po GOTOWE; Pkg.test 226/226 PASS |
-| Next Action | `03-06-PLAN.md` — grep guard test (grep -l "using GLMakie" src/ w runtests.jl, VIZ-06 finalizacja) |
+| Status | Phase 3 COMPLETE — 03-06 COMPLETE (VIZ-06 grep guard @testset); 7/7 planow wykonanych |
+| Progress | `[█████████░] 96% (26/27 plans; Phase 3 — 7/7 wykonane COMPLETE)` |
+| Last Action | `03-06-PLAN.md` wykonany — @testset "VIZ-06: GLMakie isolation" dodany do runtests.jl: grep-level walkdir+per-line scan sprawdza ze tylko src/wizualizacja.jl ma `using GLMakie`; headless-safe (D-14, D-15); Pkg.test 230/230 PASS; Phase 3 COMPLETE: 11/11 REQ-IDow (VIZ-01..07, EKS-01..04) zaimplementowane lub testowo-pokryte |
+| Next Action | Phase 4 — Demo, Benchmarks & Documentation |
 
 ## Roadmap Snapshot
 
 - [x] **Phase 1: Bootstrap, Core Types & Points** — pakiet, encoding hygiene, `StanSymulacji`, `generuj_punkty`
 - [x] **Phase 2: Energy, SA Algorithm & Test Suite** — `oblicz_energie`, `symuluj_krok!` (SA), pełen suite testowy (222/222 PASS; SC #4 zluźnione 10%→5% per plan 02-14 erratum)
-- [ ] **Phase 3: Visualization & Export** — GLMakie + Observables, eksport MP4/GIF
+- [x] **Phase 3: Visualization & Export** — GLMakie + Observables, eksport MP4/GIF
 - [ ] **Phase 4: Demo, Benchmarks & Documentation** — `examples/`, `bench/`, README po polsku
 
 ## Performance Metrics
@@ -59,6 +59,7 @@ Plan: 3 of 7
 | Phase 03 P03 | 4min | 1 task | 1 file |
 | Phase 03 P04 | 8min | 1 task | 1 file |
 | Phase 03 P05 | 12min | 1 task | 1 file |
+| Phase 03 P06 | 3min | 1 task | 1 file |
 
 ## Accumulated Context
 
@@ -125,4 +126,4 @@ Plan: 3 of 7
 
 ---
 *State initialized: 2026-04-28 after roadmap creation*
-*Last updated: 2026-04-30T09:55:17Z — Phase 3 EXECUTING: plan 03-05 COMPLETE (refaktor wizualizuj() do _wizualizuj_impl + _dodaj_gotowe_overlay! + D-08 TTFP @info: Ladowanie GLMakie / Wizualizacja gotowa + D-13 hard-fail try/catch: sprint(showerror,e) string-match GLFW/OpenGL/X11/display/GLMakie + isa(e,InitError) -> polski error + rethrow dla nie-GLMakie; D-06 GOTOWE overlay text! z ratio + passive event loop; Pkg.test 226/226 PASS; 15/15 CONTEXT decisions D-01..D-15 zaimplementowane); kolejny: 03-06 grep guard test VIZ-06*
+*Last updated: 2026-04-30T — Phase 3 COMPLETE: plan 03-06 COMPLETE (@testset "VIZ-06: GLMakie isolation" dodany do runtests.jl; grep-level walkdir+per-line scan, pkgdir anchor; 230/230 PASS; Phase 3 11/11 REQ-IDow VIZ-01..07 EKS-01..04 pokryte; wszystkie 5 ROADMAP SC Phase 3 osiagniete); nastepna: Phase 4*

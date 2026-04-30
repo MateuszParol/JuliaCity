@@ -8,7 +8,7 @@
 
 - [ ] **Phase 1: Bootstrap, Core Types & Points** — Pakiet startuje, encoding hygiene jest na miejscu, parametryczny `StanSymulacji` skompilowany, `generuj_punkty(1000)` zwraca deterministyczny `Vector{Punkt2D}`.
 - [ ] **Phase 2: Energy, SA Algorithm & Test Suite** — `oblicz_energie` i `symuluj_krok!` (SA + 2-opt + NN init + Metropolis) działają headlessly, type-stable, zero-alloc, zwalidowane suitem testowym (Hamilton, JET, Aqua, NN-baseline-beat).
-- [ ] **Phase 3: Visualization & Export** — Okno GLMakie z animacją „zaciągania trasy", polskie etykiety, opcjonalny eksport MP4/GIF.
+- [x] **Phase 3: Visualization & Export** — Okno GLMakie z animacją „zaciągania trasy", polskie etykiety, opcjonalny eksport MP4/GIF.
 - [ ] **Phase 4: Demo, Benchmarks & Documentation** — Skrypty `examples/`, suite benchmarków w `bench/`, README po polsku z demo GIF i liczbami benchmarków.
 
 ## Phase Details
@@ -119,7 +119,7 @@
 - [x] 03-05-PLAN.md — Refactor wizualizuj() na try/catch wrapper (D-13 polish hard-fail dla GLMakie/OpenGL/X11/display); `_wizualizuj_impl` jako internal; `_dodaj_gotowe_overlay!` (D-06 GOTOWE z ratio energia/energia_nn po SA stop); dwa @info TTFP messages (D-08). Pkg.test 226/226 PASS. 15/15 CONTEXT decisions D-01..D-15 zaimplementowane.
 
 **Wave 6** *(blocked on Wave 5 — VIZ-06 grep guard test)*
-- [ ] 03-06-PLAN.md — `@testset "VIZ-06: GLMakie isolation"` w test/runtests.jl — grep-level (read+per-line) sprawdza ze tylko src/wizualizacja.jl ma `using GLMakie`. Pure headless (D-14, D-15), bezpieczne dla CI.
+- [x] 03-06-PLAN.md — `@testset "VIZ-06: GLMakie isolation"` w test/runtests.jl — grep-level (read+per-line) sprawdza ze tylko src/wizualizacja.jl ma `using GLMakie`. Pure headless (D-14, D-15), bezpieczne dla CI. Pkg.test 230/230 PASS. Phase 3 COMPLETE: 11/11 REQ-IDow.
 
 **Cross-cutting constraints** *(must_haves shared across plans):*
 - `src/wizualizacja.jl` jest JEDYNYM plikiem w src/ z `using GLMakie` (VIZ-06 LOCKED — formal test w plan 03-06)
@@ -149,7 +149,7 @@
 |-------|----------------|--------|-----------|
 | 1. Bootstrap, Core Types & Points | 6/6 | Complete | 2026-04-28 |
 | 2. Energy, SA Algorithm & Test Suite | 14/14 | Complete | 2026-04-30 |
-| 3. Visualization & Export | 6/7 | In Progress|  |
+| 3. Visualization & Export | 7/7 | Complete | 2026-04-30 |
 | 4. Demo, Benchmarks & Documentation | 0/0 | Not started | - |
 
 ## Coverage Summary
