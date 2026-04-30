@@ -198,6 +198,53 @@ using StableRNGs
     include("test_symulacja.jl")
 
     # ─────────────────────────────────────────────────────────────────────────
+    # 9b. VIZ-06: GLMakie isolation guard — Phase 3.
+    #     Sprawdza ze src/wizualizacja.jl jest JEDYNYM plikiem w src/ z `using GLMakie`.
+    #     Test jest grep-level (czyta pliki jako String) — NIE wymaga OpenGL, bezpieczny
+    #     dla headless CI (D-14, D-15). Pattern mirror encoding hygiene testset (linie 25-88):
+    #     pkgdir(JuliaCity) jako anchor (Pkg.test sandbox env w innym katalogu).
+    #     Per-line iteration eliminuje false-positives w docstringach lub komentarzach.
+    # ─────────────────────────────────────────────────────────────────────────
+    @testset "VIZ-06: GLMakie isolation" begin
+        repo_root = pkgdir(JuliaCity)
+        src_dir = joinpath(repo_root, "src")
+        @test isdir(src_dir)   # sanity: anchor poprawnie znalezione
+
+        # Walka po wszystkich .jl w src/ (+ podkatalogi typu algorytmy/)
+        pliki_jl = String[]
+        for (root, _, files) in walkdir(src_dir)
+            for f in files
+                endswith(f, ".jl") && push!(pliki_jl, joinpath(root, f))
+            end
+        end
+        @test !isempty(pliki_jl)   # sanity: znaleziono pliki
+
+        # Zlicz pliki z `using GLMakie` top-level (per-line match — unika false-positive
+        # w komentarzach/docstringach typu "VIZ-06: only file with `using GLMakie`")
+        pliki_z_glmakie = String[]
+        for plik in pliki_jl
+            tresc = read(plik, String)
+            for linia in eachline(IOBuffer(tresc))
+                if startswith(strip(linia), "using GLMakie")
+                    push!(pliki_z_glmakie, plik)
+                    break  # jeden match per plik wystarczy
+                end
+            end
+        end
+
+        # Hard assertion: dokladnie 1 plik z `using GLMakie` w src/ — i jest to wizualizacja.jl
+        @test length(pliki_z_glmakie) == 1
+        if length(pliki_z_glmakie) == 1
+            @test endswith(pliki_z_glmakie[1], "wizualizacja.jl")
+        else
+            # Diagnostyka: pokaz wszystkie pliki ktore lamia VIZ-06 invariant
+            for p in pliki_z_glmakie
+                @info "VIZ-06 violation: $p zawiera `using GLMakie`"
+            end
+        end
+    end
+
+    # ─────────────────────────────────────────────────────────────────────────
     # 9. Aqua.jl quality gate (TEST-06) — rozszerzony z Phase 1 stub.
     #    Phase 2 dodaje :Statistics do deps_compat ignore (stdlib bez compat
     #    entry per Pattern D — analogiczne do :Random z Phase 1). Trzymamy
