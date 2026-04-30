@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: Ready to execute
-last_updated: "2026-04-30T09:26:11Z"
+last_updated: "2026-04-30T10:00:00Z"
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 27
-  completed_plans: 22
-  percent: 81
+  completed_plans: 23
+  percent: 85
 ---
 
 # State: JuliaCity
@@ -31,10 +31,10 @@ Plan: 3 of 7
 | Phase | 3 (of 4) |
 | Phase Name | Visualization & Export |
 | Plan | 7 plans (waves 0-6, sequential): `03-00-PLAN.md` .. `03-06-PLAN.md` |
-| Status | Phase 3 EXECUTING — 03-02 COMPLETE (figure setup, Observable arch, dark theme, NN baseline, Polish labels); 3/7 planow wykonanych |
-| Progress | `[████████░░] 81% (22/27 plans; Phase 3 — 3/7 wykonane)` |
-| Last Action | `03-02-PLAN.md` wykonany — _trasa_do_punkty, _zbuduj_overlay_string, _setup_figure, _init_observables + partial body wizualizuj() (with_theme(theme_dark()) + placeholder branching), Pkg.test 226/226 PASS |
-| Next Action | `03-03-PLAN.md` — live renderloop (while isopen(fig) + Observable updates + sleep(1/fps)) |
+| Status | Phase 3 EXECUTING — 03-03 COMPLETE (_live_loop + eksport===nothing branch); 4/7 planow wykonanych |
+| Progress | `[████████░░] 85% (23/27 plans; Phase 3 — 4/7 wykonane)` |
+| Last Action | `03-03-PLAN.md` wykonany — _live_loop (while isopen(fig) + throttled Observable updates + sleep(1/fps) + FPS/ETA/accept-rate), display(fig) + _live_loop w eksport===nothing branchu, Pkg.test 226/226 PASS |
+| Next Action | `03-04-PLAN.md` — eksport branch: _export_loop z Makie.record(), ProgressMeter, isfile() hard-fail |
 
 ## Roadmap Snapshot
 
@@ -56,6 +56,7 @@ Plan: 3 of 7
 | SA quality vs NN baseline | ratio 0.9408 (5.92% pod NN) | ≥**5%** shorter | TEST-05 PASS; SC #4 zluźnione 10%→5% per plan 02-14 (2-opt local minimum) |
 | Phase 03 P01 | 5min | 2 tasks | 2 files |
 | Phase 03 P02 | 8min | 1 task | 1 file |
+| Phase 03 P03 | 4min | 1 task | 1 file |
 
 ## Accumulated Context
 
@@ -76,6 +77,9 @@ Plan: 3 of 7
 | Aqua `persistent_tasks=false` dla GLMakie deps | GLMakie jest biblioteka GUI z celowymi watkami tla (renderloop); false-positive — nie jest bledem paczki | Phase 3 |
 | Observable overlay: jeden Observable{String} (Opcja B) zamiast 7 | 1 Makie notify/klatka zamiast 7; uproszczony update pattern w live loop | Phase 3 plan 02 |
 | with_theme(theme_dark()) scoped (NIE set_theme!) | Pitfall E: set_theme! zanieczyszcza globalny stan Makie po powrocie z wizualizuj(); with_theme auto-resetuje przez try/finally | Phase 3 plan 02 |
+| _ACC_WIN jako module-level const (NIE local const) | Kompatybilnosc z Julia 1.10+ bez ostrzezen; type-stable bez boxing captured var | Phase 3 plan 03 |
+| FPS: instantaneous dt (NIE rolling-60-window) | Uproszczenie wystarczajace dla edukacyjnego overlay; rolling window YAGNI dla v1 | Phase 3 plan 03 |
+| accept detection: (stan.energia <= energia_przed) przed symuluj_krok! | symuluj_krok! zwraca nothing — jedyna opcja bez refactoring | Phase 3 plan 03 |
 
 ### Open Questions
 
@@ -117,4 +121,4 @@ Plan: 3 of 7
 
 ---
 *State initialized: 2026-04-28 after roadmap creation*
-*Last updated: 2026-04-30T09:26:11Z — Phase 3 EXECUTING: plan 03-02 COMPLETE (figure setup + Observable arch: _trasa_do_punkty, _zbuduj_overlay_string, _setup_figure, _init_observables, with_theme(theme_dark()), dual-panel, NN baseline, Polish labels, Pkg.test 226/226 PASS); kolejny: 03-03 live renderloop*
+*Last updated: 2026-04-30T10:00:00Z — Phase 3 EXECUTING: plan 03-03 COMPLETE (_live_loop helper + eksport===nothing branch: while isopen(fig) throttled renderloop, 50 SA krokow per klatka, FPS/ETA/accept-rate rolling metrics, sleep(1/fps) GLMakie yield, display(fig) + _live_loop call, Pkg.test 226/226 PASS); kolejny: 03-04 eksport branch*

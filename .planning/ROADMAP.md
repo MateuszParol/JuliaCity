@@ -110,7 +110,7 @@
 - [x] 03-02-PLAN.md — 4 internal helpery: `_trasa_do_punkty` (Point2f + cycle closure), `_zbuduj_overlay_string` (7-pol overlay D-04), `_setup_figure` (dual-panel D-01 + dark theme D-03 + NN baseline D-02), `_init_observables` (Observable{Vector{Point2f}} + Observable{String} typed). Body wizualizuj() z with_theme(theme_dark()) do ... end.
 
 **Wave 3** *(blocked on Wave 2 — live renderloop)*
-- [ ] 03-03-PLAN.md — `_live_loop` z throttled `while isopen(fig)` + sleep(1/fps), kroki_na_klatke SA stepów per Observable update (D-05/VIZ-05), rolling FPS/ETA/accept-rate, branch eksport===nothing wywoluje display(fig) + _live_loop.
+- [x] 03-03-PLAN.md — `_live_loop` z throttled `while isopen(fig)` + sleep(1/fps), kroki_na_klatke SA stepów per Observable update (D-05/VIZ-05), rolling FPS/ETA/accept-rate, branch eksport===nothing wywoluje display(fig) + _live_loop.
 
 **Wave 4** *(blocked on Wave 3 — eksport branch)*
 - [ ] 03-04-PLAN.md — `_export_loop` z `Makie.record(fig, sciezka, 1:n_klatek; framerate=fps) do frame_i ... end`, ProgressMeter (EKS-03), isfile() hard-fail (D-10/EKS-04), freeze last frame (D-12), polski @info/error (LANG-02). Branch eksport isa String wywoluje _export_loop.
@@ -149,7 +149,7 @@
 |-------|----------------|--------|-----------|
 | 1. Bootstrap, Core Types & Points | 6/6 | Complete | 2026-04-28 |
 | 2. Energy, SA Algorithm & Test Suite | 14/14 | Complete | 2026-04-30 |
-| 3. Visualization & Export | 2/7 | In Progress|  |
+| 3. Visualization & Export | 3/7 | In Progress|  |
 | 4. Demo, Benchmarks & Documentation | 0/0 | Not started | - |
 
 ## Coverage Summary

@@ -46,7 +46,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **VIZ-02**: Trasa renderowana jako linia łącząca punkty w kolejności permutacji `stan.trasa`, z domknięciem cyklu — używa `Observable{Vector{Point2f}}`
 - [x] **VIZ-03**: Punkty renderowane jako scatter (rozmiar wystarczająco czytelny dla N=1000)
 - [x] **VIZ-04**: Tytuł, etykiety osi i overlay tekstowy (numer iteracji + bieżąca energia) — wszystko po polsku
-- [ ] **VIZ-05**: Aktualizacja Observables jest throttled (parametr `KROKI_NA_KLATKE`, default ≥ 10) — brak update storm zalewającego renderloop
+- [x] **VIZ-05**: Aktualizacja Observables jest throttled (parametr `KROKI_NA_KLATKE`, default ≥ 10) — brak update storm zalewającego renderloop
 - [x] **VIZ-06**: Plik `wizualizacja.jl` jest jedynym w `src/` importującym GLMakie — core jest testowalny headlessly bez OpenGL
 - [x] **VIZ-07**: Diakrytyki polskie (ąęłńóśźż) renderują się poprawnie w Makie (potwierdzone wizualnie i/lub testem render-and-pixel)
 
@@ -155,7 +155,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | VIZ-02 | Phase 3 | Complete |
 | VIZ-03 | Phase 3 | Complete |
 | VIZ-04 | Phase 3 | Complete |
-| VIZ-05 | Phase 3 | Pending |
+| VIZ-05 | Phase 3 | Complete |
 | VIZ-06 | Phase 3 | Complete |
 | VIZ-07 | Phase 3 | Complete |
 | EKS-01 | Phase 3 | Pending |
