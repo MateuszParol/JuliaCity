@@ -107,7 +107,7 @@
 - [x] 03-01-PLAN.md — `src/wizualizacja.jl` skeleton (header + using GLMakie/ProgressMeter/Point2f + sygnatura `wizualizuj(...)::Nothing` z polish docstring + placeholder body) + wireing do `src/JuliaCity.jl` (include + export wizualizuj)
 
 **Wave 2** *(blocked on Wave 1 — figure setup + Observables)*
-- [ ] 03-02-PLAN.md — 4 internal helpery: `_trasa_do_punkty` (Point2f + cycle closure), `_zbuduj_overlay_string` (7-pol overlay D-04), `_setup_figure` (dual-panel D-01 + dark theme D-03 + NN baseline D-02), `_init_observables` (Observable{Vector{Point2f}} + Observable{String} typed). Body wizualizuj() z with_theme(theme_dark()) do ... end.
+- [x] 03-02-PLAN.md — 4 internal helpery: `_trasa_do_punkty` (Point2f + cycle closure), `_zbuduj_overlay_string` (7-pol overlay D-04), `_setup_figure` (dual-panel D-01 + dark theme D-03 + NN baseline D-02), `_init_observables` (Observable{Vector{Point2f}} + Observable{String} typed). Body wizualizuj() z with_theme(theme_dark()) do ... end.
 
 **Wave 3** *(blocked on Wave 2 — live renderloop)*
 - [ ] 03-03-PLAN.md — `_live_loop` z throttled `while isopen(fig)` + sleep(1/fps), kroki_na_klatke SA stepów per Observable update (D-05/VIZ-05), rolling FPS/ETA/accept-rate, branch eksport===nothing wywoluje display(fig) + _live_loop.
