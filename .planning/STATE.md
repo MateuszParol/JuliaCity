@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
-status: Phase 3 executing (7 plans); 1/7 complete (03-00 DONE)
-last_updated: "2026-04-30T09:03:16Z"
+status: Ready to execute
+last_updated: "2026-04-30T09:15:01.811Z"
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 27
-  completed_plans: 20
-  percent: 74
+  completed_plans: 21
+  percent: 78
 ---
 
 # State: JuliaCity
@@ -25,16 +25,16 @@ progress:
 ## Current Position
 
 Phase: 3 (Visualization & Export) — EXECUTING
-Plan: 2 of 7
+Plan: 3 of 7
 | Field | Value |
 |-------|-------|
 | Phase | 3 (of 4) |
 | Phase Name | Visualization & Export |
 | Plan | 7 plans (waves 0-6, sequential): `03-00-PLAN.md` .. `03-06-PLAN.md` |
-| Status | Phase 3 EXECUTING — 03-00 COMPLETE (GLMakie deps fix + Manifest regeneracja); 1/7 planow wykonanych |
-| Progress | `[██████████░░░░░░░░░░] 74% (20/27 plans; Phase 3 — 1/7 wykonane)` |
-| Last Action | `03-00-PLAN.md` wykonany — GLMakie compat fix 0.24→0.13, Project.toml reorganizacja [deps/compat/extras], Pkg.add GLMakie 0.13.10/Makie 0.24.10/Observables 0.5.5/ProgressMeter 1.11.0, Manifest.toml zregenerowany (255 pakietow), Pkg.test 221/221 PASS |
-| Next Action | `03-01-PLAN.md` — wizualizacja.jl skeleton + wire do JuliaCity.jl |
+| Status | Phase 3 EXECUTING — 03-01 COMPLETE (wizualizacja.jl szkielet + VIZ-06 LOCKED); 2/7 planow wykonanych |
+| Progress | `[████████░░] 78% (21/27 plans; Phase 3 — 2/7 wykonane)` |
+| Last Action | `03-01-PLAN.md` wykonany — src/wizualizacja.jl szkielet (using GLMakie/ProgressMeter/GeometryBasics, polski docstring, sygnatura wizualizuj() per CONTEXT D-Discretion, placeholder body), src/JuliaCity.jl rozszerzony (include + export wizualizuj), VIZ-06 LOCKED, Pkg.test 226/226 PASS |
+| Next Action | `03-02-PLAN.md` — figure setup (dual-panel layout, dark theme, NN baseline overlay) |
 
 ## Roadmap Snapshot
 
@@ -54,6 +54,7 @@ Plan: 2 of 7
 | Test pass rate | 222/222 (100%) | 100% | Pkg.test() exit 0, 1m33s |
 | `@allocated` on `symuluj_krok!` | 0 | 0 | hard requirement (TEST-03) ✓ |
 | SA quality vs NN baseline | ratio 0.9408 (5.92% pod NN) | ≥**5%** shorter | TEST-05 PASS; SC #4 zluźnione 10%→5% per plan 02-14 (2-opt local minimum) |
+| Phase 03 P01 | 5min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -113,4 +114,4 @@ Plan: 2 of 7
 
 ---
 *State initialized: 2026-04-28 after roadmap creation*
-*Last updated: 2026-04-30T09:03:16Z — Phase 3 EXECUTING: plan 03-00 COMPLETE (GLMakie compat fix 0.24→0.13, Manifest.toml zregenerowany 255 pakietow, Pkg.test 221/221 PASS); decyzja: Aqua persistent_tasks=false dla GLMakie-zaleznych pakietow*
+*Last updated: 2026-04-30T09:12:42Z — Phase 3 EXECUTING: plan 03-01 COMPLETE (src/wizualizacja.jl szkielet VIZ-06 LOCKED + wire do JuliaCity.jl, Pkg.test 226/226 PASS); decyzja: komentarz VIZ-06 w JuliaCity.jl przepisany bez literalnego 'using GLMakie' by grep guard pozostal czysty*

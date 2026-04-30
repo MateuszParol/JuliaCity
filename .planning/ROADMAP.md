@@ -104,7 +104,7 @@
 - [x] 03-00-PLAN.md — Project.toml fix `GLMakie = "0.13"` (NIE "0.24"), przeniesienie GLMakie/Makie/Observables do [deps], dodanie ProgressMeter, regeneracja Manifest.toml przez Pkg.add. GLMakie 0.13.10, Makie 0.24.10, Observables 0.5.5, ProgressMeter 1.11.0 zainstalowane. Pkg.test 221/221 PASS.
 
 **Wave 1** *(blocked on Wave 0 — module skeleton + integration)*
-- [ ] 03-01-PLAN.md — `src/wizualizacja.jl` skeleton (header + using GLMakie/ProgressMeter/Point2f + sygnatura `wizualizuj(...)::Nothing` z polish docstring + placeholder body) + wireing do `src/JuliaCity.jl` (include + export wizualizuj)
+- [x] 03-01-PLAN.md — `src/wizualizacja.jl` skeleton (header + using GLMakie/ProgressMeter/Point2f + sygnatura `wizualizuj(...)::Nothing` z polish docstring + placeholder body) + wireing do `src/JuliaCity.jl` (include + export wizualizuj)
 
 **Wave 2** *(blocked on Wave 1 — figure setup + Observables)*
 - [ ] 03-02-PLAN.md — 4 internal helpery: `_trasa_do_punkty` (Point2f + cycle closure), `_zbuduj_overlay_string` (7-pol overlay D-04), `_setup_figure` (dual-panel D-01 + dark theme D-03 + NN baseline D-02), `_init_observables` (Observable{Vector{Point2f}} + Observable{String} typed). Body wizualizuj() z with_theme(theme_dark()) do ... end.
@@ -149,7 +149,7 @@
 |-------|----------------|--------|-----------|
 | 1. Bootstrap, Core Types & Points | 6/6 | Complete | 2026-04-28 |
 | 2. Energy, SA Algorithm & Test Suite | 14/14 | Complete | 2026-04-30 |
-| 3. Visualization & Export | 0/7 | Planned (waves 0-6) | - |
+| 3. Visualization & Export | 2/7 | In Progress|  |
 | 4. Demo, Benchmarks & Documentation | 0/0 | Not started | - |
 
 ## Coverage Summary

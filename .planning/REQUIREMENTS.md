@@ -42,12 +42,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Wizualizacja (VIZ)
 
-- [ ] **VIZ-01**: Funkcja `wizualizuj(stan, params, alg; liczba_krokow, fps=30, eksport=nothing)` otwiera okno GLMakie i animuje proces zaciągania trasy w czasie rzeczywistym
+- [x] **VIZ-01**: Funkcja `wizualizuj(stan, params, alg; liczba_krokow, fps=30, eksport=nothing)` otwiera okno GLMakie i animuje proces zaciągania trasy w czasie rzeczywistym
 - [ ] **VIZ-02**: Trasa renderowana jako linia łącząca punkty w kolejności permutacji `stan.trasa`, z domknięciem cyklu — używa `Observable{Vector{Point2f}}`
 - [ ] **VIZ-03**: Punkty renderowane jako scatter (rozmiar wystarczająco czytelny dla N=1000)
-- [ ] **VIZ-04**: Tytuł, etykiety osi i overlay tekstowy (numer iteracji + bieżąca energia) — wszystko po polsku
+- [x] **VIZ-04**: Tytuł, etykiety osi i overlay tekstowy (numer iteracji + bieżąca energia) — wszystko po polsku
 - [ ] **VIZ-05**: Aktualizacja Observables jest throttled (parametr `KROKI_NA_KLATKE`, default ≥ 10) — brak update storm zalewającego renderloop
-- [ ] **VIZ-06**: Plik `wizualizacja.jl` jest jedynym w `src/` importującym GLMakie — core jest testowalny headlessly bez OpenGL
+- [x] **VIZ-06**: Plik `wizualizacja.jl` jest jedynym w `src/` importującym GLMakie — core jest testowalny headlessly bez OpenGL
 - [ ] **VIZ-07**: Diakrytyki polskie (ąęłńóśźż) renderują się poprawnie w Makie (potwierdzone wizualnie i/lub testem render-and-pixel)
 
 ### Eksport (EKS)
@@ -151,12 +151,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ALG-06 | Phase 2 | Pending |
 | ALG-07 | Phase 2 | Pending |
 | ALG-08 | Phase 2 | Pending |
-| VIZ-01 | Phase 3 | Pending |
+| VIZ-01 | Phase 3 | Complete |
 | VIZ-02 | Phase 3 | Pending |
 | VIZ-03 | Phase 3 | Pending |
-| VIZ-04 | Phase 3 | Pending |
+| VIZ-04 | Phase 3 | Complete |
 | VIZ-05 | Phase 3 | Pending |
-| VIZ-06 | Phase 3 | Pending |
+| VIZ-06 | Phase 3 | Complete |
 | VIZ-07 | Phase 3 | Pending |
 | EKS-01 | Phase 3 | Pending |
 | EKS-02 | Phase 3 | Pending |
