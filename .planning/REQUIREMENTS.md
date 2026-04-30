@@ -52,10 +52,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Eksport (EKS)
 
-- [ ] **EKS-01**: Argument `eksport::Union{Nothing,String}` w `wizualizuj()` — gdy podana ścieżka, animacja jest zapisywana do pliku przez `Makie.record(...)`
-- [ ] **EKS-02**: Obsługa rozszerzeń `.mp4` i `.gif` — wykrywane z extensji ścieżki
-- [ ] **EKS-03**: Eksport używa `ProgressMeter.jl` lub równoważnego wskaźnika postępu — użytkownik widzi że proces żyje
-- [ ] **EKS-04**: Bezpieczna obsługa nazw plików (brak nadpisywania bez ostrzeżenia, lub jawna polityka nadpisania)
+- [x] **EKS-01**: Argument `eksport::Union{Nothing,String}` w `wizualizuj()` — gdy podana ścieżka, animacja jest zapisywana do pliku przez `Makie.record(...)`
+- [x] **EKS-02**: Obsługa rozszerzeń `.mp4` i `.gif` — wykrywane z extensji ścieżki
+- [x] **EKS-03**: Eksport używa `ProgressMeter.jl` lub równoważnego wskaźnika postępu — użytkownik widzi że proces żyje
+- [x] **EKS-04**: Bezpieczna obsługa nazw plików (brak nadpisywania bez ostrzeżenia, lub jawna polityka nadpisania)
 
 ### Demo (DEMO)
 
@@ -158,10 +158,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | VIZ-05 | Phase 3 | Complete |
 | VIZ-06 | Phase 3 | Complete |
 | VIZ-07 | Phase 3 | Complete |
-| EKS-01 | Phase 3 | Pending |
-| EKS-02 | Phase 3 | Pending |
-| EKS-03 | Phase 3 | Pending |
-| EKS-04 | Phase 3 | Pending |
+| EKS-01 | Phase 3 | Complete |
+| EKS-02 | Phase 3 | Complete |
+| EKS-03 | Phase 3 | Complete |
+| EKS-04 | Phase 3 | Complete |
 | DEMO-01 | Phase 4 | Pending |
 | DEMO-02 | Phase 4 | Pending |
 | DEMO-03 | Phase 4 | Pending |

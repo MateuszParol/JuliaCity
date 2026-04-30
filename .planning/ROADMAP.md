@@ -113,7 +113,7 @@
 - [x] 03-03-PLAN.md — `_live_loop` z throttled `while isopen(fig)` + sleep(1/fps), kroki_na_klatke SA stepów per Observable update (D-05/VIZ-05), rolling FPS/ETA/accept-rate, branch eksport===nothing wywoluje display(fig) + _live_loop.
 
 **Wave 4** *(blocked on Wave 3 — eksport branch)*
-- [ ] 03-04-PLAN.md — `_export_loop` z `Makie.record(fig, sciezka, 1:n_klatek; framerate=fps) do frame_i ... end`, ProgressMeter (EKS-03), isfile() hard-fail (D-10/EKS-04), freeze last frame (D-12), polski @info/error (LANG-02). Branch eksport isa String wywoluje _export_loop.
+- [x] 03-04-PLAN.md — `_export_loop` z `Makie.record(fig, sciezka, 1:n_klatek; framerate=fps) do frame_i ... end`, ProgressMeter (EKS-03), isfile() hard-fail (D-10/EKS-04), freeze last frame (D-12), polski @info/error (LANG-02). Branch eksport isa String wywoluje _export_loop. Pkg.test 226/226 PASS.
 
 **Wave 5** *(blocked on Wave 4 — finalize: hard-fail wrapper + TTFP + GOTOWE)*
 - [ ] 03-05-PLAN.md — Refactor wizualizuj() na try/catch wrapper (D-13 polish hard-fail dla GLMakie/OpenGL/X11/display); `_wizualizuj_impl` jako internal; `_dodaj_gotowe_overlay!` (D-06 GOTOWE z ratio energia/energia_nn po SA stop); dwa @info TTFP messages (D-08).
@@ -149,7 +149,7 @@
 |-------|----------------|--------|-----------|
 | 1. Bootstrap, Core Types & Points | 6/6 | Complete | 2026-04-28 |
 | 2. Energy, SA Algorithm & Test Suite | 14/14 | Complete | 2026-04-30 |
-| 3. Visualization & Export | 3/7 | In Progress|  |
+| 3. Visualization & Export | 5/7 | In Progress|  |
 | 4. Demo, Benchmarks & Documentation | 0/0 | Not started | - |
 
 ## Coverage Summary

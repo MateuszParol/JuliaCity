@@ -8,8 +8,8 @@ progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 27
-  completed_plans: 23
-  percent: 85
+  completed_plans: 24
+  percent: 89
 ---
 
 # State: JuliaCity
@@ -31,10 +31,10 @@ Plan: 3 of 7
 | Phase | 3 (of 4) |
 | Phase Name | Visualization & Export |
 | Plan | 7 plans (waves 0-6, sequential): `03-00-PLAN.md` .. `03-06-PLAN.md` |
-| Status | Phase 3 EXECUTING — 03-03 COMPLETE (_live_loop + eksport===nothing branch); 4/7 planow wykonanych |
-| Progress | `[████████░░] 85% (23/27 plans; Phase 3 — 4/7 wykonane)` |
-| Last Action | `03-03-PLAN.md` wykonany — _live_loop (while isopen(fig) + throttled Observable updates + sleep(1/fps) + FPS/ETA/accept-rate), display(fig) + _live_loop w eksport===nothing branchu, Pkg.test 226/226 PASS |
-| Next Action | `03-04-PLAN.md` — eksport branch: _export_loop z Makie.record(), ProgressMeter, isfile() hard-fail |
+| Status | Phase 3 EXECUTING — 03-04 COMPLETE (_export_loop + eksport isa String branch); 5/7 planow wykonanych |
+| Progress | `[████████░░] 89% (24/27 plans; Phase 3 — 5/7 wykonane)` |
+| Last Action | `03-04-PLAN.md` wykonany — _export_loop (Makie.record() blocking + ProgressMeter + isfile() hard-fail D-10 + freeze-last-frame sa_zakonczono Ref D-12 + polski @info D-09), eksport isa String branch wywoluje _export_loop, Pkg.test 226/226 PASS |
+| Next Action | `03-05-PLAN.md` — hardening: try/catch hard-fail wrapper (D-13), GOTOWE overlay (D-06), TTFP @info D-08 |
 
 ## Roadmap Snapshot
 
@@ -57,6 +57,7 @@ Plan: 3 of 7
 | Phase 03 P01 | 5min | 2 tasks | 2 files |
 | Phase 03 P02 | 8min | 1 task | 1 file |
 | Phase 03 P03 | 4min | 1 task | 1 file |
+| Phase 03 P04 | 8min | 1 task | 1 file |
 
 ## Accumulated Context
 
@@ -121,4 +122,4 @@ Plan: 3 of 7
 
 ---
 *State initialized: 2026-04-28 after roadmap creation*
-*Last updated: 2026-04-30T10:00:00Z — Phase 3 EXECUTING: plan 03-03 COMPLETE (_live_loop helper + eksport===nothing branch: while isopen(fig) throttled renderloop, 50 SA krokow per klatka, FPS/ETA/accept-rate rolling metrics, sleep(1/fps) GLMakie yield, display(fig) + _live_loop call, Pkg.test 226/226 PASS); kolejny: 03-04 eksport branch*
+*Last updated: 2026-04-30T10:30:00Z — Phase 3 EXECUTING: plan 03-04 COMPLETE (_export_loop helper + eksport isa String branch: blocking Makie.record() z ProgressMeter dt=0.5s, isfile() hard-fail polski error D-10/EKS-04, sa_zakonczono Ref freeze-last-frame D-12, polski @info D-09, n_klatek=liczba_krokow div kroki_na_klatke, format auto-detect z extensji, Pkg.test 226/226 PASS); kolejny: 03-05 hardening + GOTOWE overlay*
