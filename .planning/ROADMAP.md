@@ -143,17 +143,17 @@
 **Plans**: 8 plans in 4 waves (Wave 1 parallel: 04-01..04-03 prep; Wave 2 parallel: 04-04..04-05 microbenchmarks + 04-07 examples; Wave 3: 04-06 orchestrator+wyniki.md; Wave 4: 04-08 demo.gif+README rewrite)
 
 **Wave 1** *(independent prep — parallel)*
-- [ ] 04-01-PLAN.md — Project.toml [targets].test += BenchmarkTools (D-10) + .gitignore assets rules (D-05) + assets/.gitkeep
+- [ ] 04-01-PLAN.md — Project.toml [targets].test += BenchmarkTools (D-10) + .gitignore assets rules (D-05 EXACTLY: `assets/*` + `!assets/demo.gif`, nic więcej)
 - [ ] 04-02-PLAN.md — bench/historyczne/ archive move (D-16) — 3 diagnostyka_test05*.jl + README.md
 - [ ] 04-03-PLAN.md — CONTRIBUTING.md §4 Typografia polska (D-18) + renumber §4→§5, §5→§6
 
 **Wave 2** *(parallel — blocked on 04-01)*
-- [ ] 04-04-PLAN.md — bench/bench_energia.jl + bench/bench_krok.jl (BENCH-01,02 + BENCH-04 $ interpolacja + setup=)
+- [ ] 04-04-PLAN.md — bench/bench_energia.jl + bench/bench_krok.jl (BENCH-01,02 + BENCH-04 $ interpolacja + fresh-fixture setup=, evals=1, samples=200)
 - [ ] 04-05-PLAN.md — bench/bench_jakosc.jl (BENCH-03 — 5 seedów × N=1000 × 50_000 SA z T_zero=0.001)
-- [ ] 04-07-PLAN.md — examples/podstawowy.jl + examples/eksport_mp4.jl (DEMO-01..04, D-04 pre-rm, D-11 hardcoded)
+- [ ] 04-07-PLAN.md — examples/podstawowy.jl + examples/eksport_mp4.jl (DEMO-01..04, D-04 pre-rm + mkpath defensive, D-11 hardcoded)
 
 **Wave 3** *(blocked on Wave 2 + 04-02)*
-- [ ] 04-06-PLAN.md — bench/run_all.jl orchestrator (D-06) + initial bench/wyniki.md generation (autonomous: false — wymaga toolchainu Julia)
+- [ ] 04-06-PLAN.md — bench/run_all.jl orchestrator (D-06) + bench/uruchom.{sh,ps1} wrappers (Pkg.activate(temp=true) recipe — odblokowuje BenchmarkTools z [targets].test) + Module(:_BenchSandbox) izolacja per-bench `main()` + initial bench/wyniki.md (autonomous: false — wymaga toolchainu Julia)
 
 **Wave 4** *(blocked on Wave 3 + 04-07)*
 - [ ] 04-08-PLAN.md — assets/demo.gif (autonomous: false — wymaga lokalnego GLMakie GUI) + README.md rewrite 9 sekcji (D-15, D-18)
@@ -175,7 +175,7 @@
 | 1. Bootstrap, Core Types & Points | 6/6 | Complete | 2026-04-28 |
 | 2. Energy, SA Algorithm & Test Suite | 14/14 | Complete | 2026-04-30 |
 | 3. Visualization & Export | 7/7 | Complete | 2026-04-30 |
-| 4. Demo, Benchmarks & Documentation | 0/0 | Not started | - |
+| 4. Demo, Benchmarks & Documentation | 0/8 | Planned (4 waves) | - |
 
 ## Coverage Summary
 
