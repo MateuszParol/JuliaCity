@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: Phase 2 complete; Phase 3 ready to start
-last_updated: "2026-04-30T07:30:00.000Z"
+last_updated: "2026-04-30T07:14:17.630Z"
 progress:
   total_phases: 4
-  completed_phases: 2
-  total_plans: 14
-  completed_plans: 14
-  percent: 50
+  completed_phases: 1
+  total_plans: 20
+  completed_plans: 19
+  percent: 95
 ---
 
 # State: JuliaCity
@@ -20,7 +20,7 @@ progress:
 
 **Name:** JuliaCity
 **Core Value:** Wizualnie przekonująca, fizycznie umotywowana heurystyka TSP w idiomatycznej Julii — jeśli wszystko inne zawiedzie, użytkownik musi zobaczyć, jak trasa „bańki mydlanej" zaciska się wokół 1000 punktów w czasie rzeczywistym i otrzymać krótszą trasę niż naiwny baseline.
-**Current Focus:** Phase 02 — energy-sa-algorithm-test-suite
+**Current Focus:** Phase 03 — visualization-export (CONTEXT gathered, ready for `/gsd-plan-phase 3`)
 
 ## Current Position
 
@@ -29,11 +29,11 @@ Phase: 03 (visualization-export) — READY TO START
 |-------|-------|
 | Phase | 3 (of 4) |
 | Phase Name | Visualization & Export |
-| Plan | brak (do utworzenia) |
-| Status | Phase 2 COMPLETE; Phase 3 ready to start |
-| Progress | `[██████████░░░░░░░░░░] 50% (2/4 phases complete; 14/14 phase-2 plans done)` |
-| Last Action | Plan 02-14 zamknął TEST-05 (opcja X: ROADMAP SC #4 zluźnione 10%→5%, ratio 0.9408 PASS); Pkg.test() 222/222 PASS, Phase 2 COMPLETE |
-| Next Action | `/gsd-discuss-phase 3` (lub `/gsd-plan-phase 3` — Phase 3 = GLMakie + Observables + animacja + eksport MP4/GIF) |
+| Plan | brak (CONTEXT gathered — `03-CONTEXT.md` written 2026-04-30) |
+| Status | Phase 2 COMPLETE; Phase 3 CONTEXT gathered, ready for `/gsd-plan-phase 3` |
+| Progress | `[██████████░░░░░░░░░░] 50% (2/4 phases complete; Phase 3 CONTEXT done)` |
+| Last Action | `/gsd-discuss-phase 3` zakończone — 4 areas omówione (layout/overlay, rytm/UX, eksport, headless), 15 decyzji D-01..D-15 + Claude's discretion zapisane w `03-CONTEXT.md` |
+| Next Action | `/gsd-plan-phase 3` — researcher + planner + plan-checker (RESEARCH.md, PATTERNS.md, plan-y waveowe dla 11 REQ-ID-ów VIZ-01..07 + EKS-01..04) |
 
 ## Roadmap Snapshot
 
