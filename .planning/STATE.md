@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: Executing Phase 04
-last_updated: "2026-04-30T14:00:00.000Z"
+last_updated: "2026-04-30T14:30:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 35
-  completed_plans: 30
-  percent: 86
+  completed_plans: 33
+  percent: 94
 ---
 
 # State: JuliaCity
@@ -24,17 +24,17 @@ progress:
 
 ## Current Position
 
-Phase: 04 (demo-benchmarks-documentation) — EXECUTING (Wave 1 done, 3/8 plans)
-Plan: 3 of 8
+Phase: 04 (demo-benchmarks-documentation) — EXECUTING (Wave 1+2 done, 6/8 plans)
+Plan: 6 of 8
 | Field | Value |
 |-------|-------|
 | Phase | 4 (of 4) |
 | Phase Name | Demo, Benchmarks & Documentation |
 | Plan | 8 plans in 4 waves: `04-01-PLAN.md` .. `04-08-PLAN.md` |
-| Status | Wave 1 COMPLETE (04-01, 04-02, 04-03 merged); Wave 2 next (04-04, 04-05, 04-07) |
-| Progress | `[█████████▒] 86% (30/35 plans; Phase 4 — 3/8 wykonane)` |
-| Last Action | Wave 1 wykonany — 04-01 (Project.toml [targets].test += BenchmarkTools + .gitignore D-05), 04-02 (bench/historyczne/ archive 3 diagnostyka_test05*.jl + README.md), 04-03 (CONTRIBUTING.md §4 Typografia polska + renumber). Worktrees zmergowane do master, smoke `using JuliaCity` PASS. |
-| Next Action | Wave 2 — 04-04 (bench_energia/krok), 04-05 (bench_jakosc), 04-07 (examples/podstawowy + eksport_mp4) parallel |
+| Status | Wave 1+2 COMPLETE (04-01..04-05, 04-07 merged); Wave 3 next (04-06 orchestrator — autonomous: false checkpoint) |
+| Progress | `[█████████▓] 94% (33/35 plans; Phase 4 — 6/8 wykonane)` |
+| Last Action | Wave 2 wykonany — 04-04 (bench_energia.jl + bench_krok.jl @benchmark + fresh-fixture setup=), 04-05 (bench_jakosc.jl 5 seedów × 50k SA z T_zero=0.001 → NamedTuple mean/std/min/max ratio), 04-07 (examples/podstawowy.jl live + eksport_mp4.jl GIF z pre-rm BLOCKER #1 fix). Worktrees zmergowane, parse-check 5/5 PASS. |
+| Next Action | Wave 3 — 04-06 (bench/run_all.jl orchestrator + uruchom.sh/.ps1 + wyniki.md) — wymaga lokalnego toolchainu Julia (autonomous: false) |
 
 ## Roadmap Snapshot
 

@@ -148,9 +148,9 @@
 - [x] 04-03-PLAN.md — CONTRIBUTING.md §4 Typografia polska (D-18) + renumber §4→§5, §5→§6
 
 **Wave 2** *(parallel — blocked on 04-01)*
-- [ ] 04-04-PLAN.md — bench/bench_energia.jl + bench/bench_krok.jl (BENCH-01,02 + BENCH-04 $ interpolacja + fresh-fixture setup=, evals=1, samples=200)
-- [ ] 04-05-PLAN.md — bench/bench_jakosc.jl (BENCH-03 — 5 seedów × N=1000 × 50_000 SA z T_zero=0.001)
-- [ ] 04-07-PLAN.md — examples/podstawowy.jl + examples/eksport_mp4.jl (DEMO-01..04, D-04 pre-rm + mkpath defensive, D-11 hardcoded)
+- [x] 04-04-PLAN.md — bench/bench_energia.jl + bench/bench_krok.jl (BENCH-01,02 + BENCH-04 $ interpolacja + fresh-fixture setup=, evals=1, samples=200)
+- [x] 04-05-PLAN.md — bench/bench_jakosc.jl (BENCH-03 — 5 seedów × N=1000 × 50_000 SA z T_zero=0.001)
+- [x] 04-07-PLAN.md — examples/podstawowy.jl + examples/eksport_mp4.jl (DEMO-01..04, D-04 pre-rm + mkpath defensive, D-11 hardcoded)
 
 **Wave 3** *(blocked on Wave 2 + 04-02)*
 - [ ] 04-06-PLAN.md — bench/run_all.jl orchestrator (D-06) + bench/uruchom.{sh,ps1} wrappers (Pkg.activate(temp=true) recipe — odblokowuje BenchmarkTools z [targets].test) + Module(:_BenchSandbox) izolacja per-bench `main()` + initial bench/wyniki.md (autonomous: false — wymaga toolchainu Julia)
