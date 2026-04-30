@@ -246,6 +246,76 @@ function _live_loop(fig, stan::StanSymulacji, params::Parametry, alg::Algorytm,
 end
 
 # ---------------------------------------------------------------------------
+# Eksport renderloop (D-09 branch eksport isa String)
+# ---------------------------------------------------------------------------
+
+# Eksport renderloop (D-09 branch eksport isa String): blocking Makie.record()
+# z ProgressMeter (EKS-03). Sprawdza isfile(sciezka) PRZED record() i rzuca polski
+# error per D-10/EKS-04 (twardy error, brak overwrite). Liczy n_klatek = liczba_krokow
+# div kroki_na_klatke (D-12). Format pliku auto-detect z extensji .mp4/.gif/.webm
+# (RESEARCH Q9, EKS-02). Freeze ostatniej klatki gdy SA hits liczba_krokow przed
+# wyczerpaniem n_klatek (D-12 — sa_zakonczono Ref).
+#
+# Throttling identyczne jak _live_loop: kroki_na_klatke SA krokow per record callback,
+# 1 notify per Observable per klatke (VIZ-05 + Pitfall 5). Brak rolling FPS — overlay
+# pokazuje tylko stan + alg metryki (FPS/ETA bez sensu w blocking record).
+function _export_loop(fig, stan::StanSymulacji, params::Parametry, alg::Algorytm,
+                      obs_trasa::Observable{Vector{Point2f}},
+                      obs_historia::Observable{Vector{Point2f}},
+                      obs_overlay::Observable{String},
+                      sciezka::String;
+                      liczba_krokow::Int, fps::Int, kroki_na_klatke::Int)
+    # D-10 / EKS-04: file-exists hard error (Pitfall D mitigation).
+    # Polski user-facing error (LANG-02). Diakrytyki: "już", "Usuń", "ręcznie", "nazwę".
+    isfile(sciezka) && error(
+        "Plik '$sciezka' już istnieje. Usuń go ręcznie lub wybierz inną nazwę pliku."
+    )
+
+    # D-12: n_klatek = liczba_krokow / kroki_na_klatke (integer division).
+    n_klatek = liczba_krokow ÷ kroki_na_klatke
+    @assert n_klatek > 0 "n_klatek must be positive (liczba_krokow >= kroki_na_klatke required)"
+
+    # D-12: gdy SA konczy sie wczesniej, pozostale klatki freeze ostatni stan.
+    sa_zakonczono = Ref(false)
+
+    # D-09: polski @info PRZED record() (Pitfall 6 mitigation — record() blokuje terminal).
+    @info "Eksport do $sciezka — może potrwać kilka minut, terminal nie reaguje, postęp poniżej:"
+
+    # EKS-03: ProgressMeter z dt=0.5s (RESEARCH Q4 — bez dt kazde next! emituje linie).
+    prog = Progress(n_klatek; desc="Eksport animacji: ", dt=0.5)
+
+    # EKS-01 + EKS-02: Makie.record(fig, sciezka, 1:n_klatek; framerate=fps) do i ... end.
+    # Format wykrywany z extensji sciezka (RESEARCH Q9). FFMPEG_jll transitive via Makie.
+    Makie.record(fig, sciezka, 1:n_klatek; framerate=fps) do frame_i
+        if !sa_zakonczono[]
+            for _ in 1:kroki_na_klatke
+                if stan.iteracja >= liczba_krokow
+                    sa_zakonczono[] = true
+                    break
+                end
+                symuluj_krok!(stan, params, alg)
+            end
+        end
+        # Update Observables (1 per Observable per klatke — VIZ-05 / Pitfall 5).
+        # Gdy sa_zakonczono, stan nie zmienia sie -> Observable wartosc identyczna ->
+        # klatka renderowana jako FREEZE poprzedniego stanu (D-12).
+        obs_trasa[] = _trasa_do_punkty(stan)
+        push!(obs_historia.val, Point2f(Float32(stan.iteracja), Float32(stan.energia)))
+        notify(obs_historia)
+
+        # Overlay update (D-04) — bez fps_est/eta_sec/accept_rate (NaN — w eksport
+        # te metryki nie maja sensu: blocking record, brak rolling window dla swiezych
+        # delta).
+        obs_overlay[] = _zbuduj_overlay_string(stan, alg, NaN, NaN, NaN)
+
+        next!(prog)
+    end
+    finish!(prog)
+
+    return nothing
+end
+
+# ---------------------------------------------------------------------------
 # Publiczny API entry point (D-09)
 # ---------------------------------------------------------------------------
 
@@ -317,8 +387,11 @@ function wizualizuj(stan::StanSymulacji, params::Parametry, alg::Algorytm;
             _live_loop(fig, stan, params, alg, obs.obs_trasa, obs.obs_historia, obs.obs_overlay;
                        liczba_krokow=liczba_krokow, fps=fps, kroki_na_klatke=kroki_na_klatke)
         else
-            # Eksport branch — wypelnione w planie 03-04.
-            error("Eksport nie jest jeszcze zaimplementowany — wypelnienie w planie 03-04.")
+            # Export mode: blocking Makie.record() do pliku eksport (D-09, D-10, D-12).
+            # NIE wywolujemy display(fig) — record() automatycznie sluzy do off-screen renderu.
+            _export_loop(fig, stan, params, alg, obs.obs_trasa, obs.obs_historia, obs.obs_overlay,
+                         eksport;
+                         liczba_krokow=liczba_krokow, fps=fps, kroki_na_klatke=kroki_na_klatke)
         end
     end
     return nothing
