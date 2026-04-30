@@ -37,11 +37,16 @@ include("baselines.jl")
 # Algorytmy <:Algorytm (Holy-traits dispatch) — REQ ALG-01..03, ALG-06..08
 include("algorytmy/simulowane_wyzarzanie.jl")
 
+# Wizualizacja GLMakie + eksport MP4/GIF (REQ VIZ-01..07, EKS-01..04) — Phase 3
+# WAZNE: import GLMakie zyje wewnatrz wizualizacja.jl (VIZ-06 LOCKED)
+include("wizualizacja.jl")
+
 # Eksport publicznego API
 export Punkt2D, StanSymulacji, Algorytm, generuj_punkty,
        Parametry, SimAnnealing,
        oblicz_macierz_dystans!, oblicz_energie, delta_energii, kalibruj_T0,
        trasa_nn, inicjuj_nn!,
-       symuluj_krok!, uruchom_sa!
+       symuluj_krok!, uruchom_sa!,
+       wizualizuj
 
 end # module
