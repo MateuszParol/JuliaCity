@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
-status: Phase 3 planned (7 plans); ready to execute
-last_updated: "2026-04-30T08:23:06.454Z"
+status: Phase 3 executing (7 plans); 1/7 complete (03-00 DONE)
+last_updated: "2026-04-30T09:03:16Z"
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 27
-  completed_plans: 19
-  percent: 70
+  completed_plans: 20
+  percent: 74
 ---
 
 # State: JuliaCity
@@ -20,20 +20,21 @@ progress:
 
 **Name:** JuliaCity
 **Core Value:** Wizualnie przekonująca, fizycznie umotywowana heurystyka TSP w idiomatycznej Julii — jeśli wszystko inne zawiedzie, użytkownik musi zobaczyć, jak trasa „bańki mydlanej" zaciska się wokół 1000 punktów w czasie rzeczywistym i otrzymać krótszą trasę niż naiwny baseline.
-**Current Focus:** Phase 03 — visualization-export (PLANNED: 7 plans / 7 waves, ready for `/gsd-execute-phase 3`)
+**Current Focus:** Phase 3 — Visualization & Export
 
 ## Current Position
 
-Phase: 03 (visualization-export) — PLANNED, READY TO EXECUTE
+Phase: 3 (Visualization & Export) — EXECUTING
+Plan: 2 of 7
 | Field | Value |
 |-------|-------|
 | Phase | 3 (of 4) |
 | Phase Name | Visualization & Export |
 | Plan | 7 plans (waves 0-6, sequential): `03-00-PLAN.md` .. `03-06-PLAN.md` |
-| Status | Phase 3 PLANNED — RESEARCH.md + PATTERNS.md + 7 PLAN.md zweryfikowane przez plan-checker (0 blockers, 3 warnings zaadresowane inline: usuniete LANG-01/LANG-02 z frontmatter Phase 3 — nalezą do Phase 1/4) |
-| Progress | `[██████████░░░░░░░░░░] 50% (2/4 phases complete; Phase 3 PLANNED — 0/7 wykonane)` |
-| Last Action | `/gsd-plan-phase 3` zakończone — researcher wykrył krytyczny bug compat `GLMakie="0.24"`→`"0.13"` (zaadresowany w wave 0 `03-00-PLAN.md`); pattern-mapper zmapował 5 plików; planner stworzył 7 plan-ów; plan-checker PASSED |
-| Next Action | `/gsd-execute-phase 3` (auto-advance enabled w yolo mode) — start od wave 0 (Project.toml fix + Manifest regeneracja) |
+| Status | Phase 3 EXECUTING — 03-00 COMPLETE (GLMakie deps fix + Manifest regeneracja); 1/7 planow wykonanych |
+| Progress | `[██████████░░░░░░░░░░] 74% (20/27 plans; Phase 3 — 1/7 wykonane)` |
+| Last Action | `03-00-PLAN.md` wykonany — GLMakie compat fix 0.24→0.13, Project.toml reorganizacja [deps/compat/extras], Pkg.add GLMakie 0.13.10/Makie 0.24.10/Observables 0.5.5/ProgressMeter 1.11.0, Manifest.toml zregenerowany (255 pakietow), Pkg.test 221/221 PASS |
+| Next Action | `03-01-PLAN.md` — wizualizacja.jl skeleton + wire do JuliaCity.jl |
 
 ## Roadmap Snapshot
 
@@ -69,6 +70,8 @@ Phase: 03 (visualization-export) — PLANNED, READY TO EXECUTE
 | Public API surface: 4 mandated functions (`generuj_punkty`, `oblicz_energie`, `symuluj_krok!`, `wizualizuj`) plus minimum internal helpers | Explicit user contract | Roadmap creation |
 | Test golden-value RNG: `StableRNG(42)` (NOT `Xoshiro`/`MersenneTwister`) | Stream stability across Julia minor versions (PITFALLS Pitfall 8) | Phase 2 |
 | Compat floor: `julia = "1.10"` LTS | Broad ecosystem reach; develop on 1.11/1.12 | Phase 1 |
+| GLMakie compat `"0.13"` (NIE `"0.24"`) | GLMakie 0.13.x paruje z Makie 0.24.x w monorepo; "0.24" blokowalo Pkg resolver (Unsatisfiable requirements) | Phase 3 |
+| Aqua `persistent_tasks=false` dla GLMakie deps | GLMakie jest biblioteka GUI z celowymi watkami tla (renderloop); false-positive — nie jest bledem paczki | Phase 3 |
 
 ### Open Questions
 
@@ -83,7 +86,7 @@ Phase: 03 (visualization-export) — PLANNED, READY TO EXECUTE
 
 *Carry across phases when relevant.*
 
-- [ ] Confirm `Manifest.toml` is committed (this is an application, not a library — pins reproducibility for demo) [Phase 1 D-25 — verify after execute]
+- [x] Confirm `Manifest.toml` is committed (this is an application, not a library — pins reproducibility for demo) [Phase 1 D-25 — DONE in 03-00: 255 packages pinned, committed at 0de24af]
 - [ ] Add encoding-validation CI guard test (UTF-8 well-formed, NFC-normalized, no BOM) [Phase 1 D-21 — folded into runtests.jl]
 - [ ] Document Polish-typography convention (proper „..." quotes in user-facing strings) before README polish [Phase 4 — deferred]
 
@@ -110,4 +113,4 @@ Phase: 03 (visualization-export) — PLANNED, READY TO EXECUTE
 
 ---
 *State initialized: 2026-04-28 after roadmap creation*
-*Last updated: 2026-04-30 — Phase 3 PLANNED: 7 plan-ów / 7 wave (sequential — single-file edit chain on `src/wizualizacja.jl`), 11/11 REQ-IDs (VIZ-01..07, EKS-01..04) covered, GLMakie compat bug `"0.24"`→`"0.13"` wykryty przez researcher i zaadresowany w wave 0*
+*Last updated: 2026-04-30T09:03:16Z — Phase 3 EXECUTING: plan 03-00 COMPLETE (GLMakie compat fix 0.24→0.13, Manifest.toml zregenerowany 255 pakietow, Pkg.test 221/221 PASS); decyzja: Aqua persistent_tasks=false dla GLMakie-zaleznych pakietow*

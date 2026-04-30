@@ -101,7 +101,7 @@
 **Plans**: 7 plans in 7 waves (Wave 0 BLOKER: Project.toml GLMakie compat fix; Waves 1-5 sequential — `src/wizualizacja.jl` file conflict; Wave 6 testing guard)
 
 **Wave 0** *(pre-flight BLOKER — Project.toml + Manifest)*
-- [ ] 03-00-PLAN.md — Project.toml fix `GLMakie = "0.13"` (NIE "0.24"), przeniesienie GLMakie/Makie/Observables do [deps], dodanie ProgressMeter, regeneracja Manifest.toml przez Pkg.add. Bez tego `using GLMakie` rzuca Unsatisfiable.
+- [x] 03-00-PLAN.md — Project.toml fix `GLMakie = "0.13"` (NIE "0.24"), przeniesienie GLMakie/Makie/Observables do [deps], dodanie ProgressMeter, regeneracja Manifest.toml przez Pkg.add. GLMakie 0.13.10, Makie 0.24.10, Observables 0.5.5, ProgressMeter 1.11.0 zainstalowane. Pkg.test 221/221 PASS.
 
 **Wave 1** *(blocked on Wave 0 — module skeleton + integration)*
 - [ ] 03-01-PLAN.md — `src/wizualizacja.jl` skeleton (header + using GLMakie/ProgressMeter/Point2f + sygnatura `wizualizuj(...)::Nothing` z polish docstring + placeholder body) + wireing do `src/JuliaCity.jl` (include + export wizualizuj)
