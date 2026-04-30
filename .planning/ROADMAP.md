@@ -140,7 +140,32 @@
   3. Folder `bench/` zawiera trzy reprodukowalne skrypty: `bench_energia.jl` (czas + alokacje `oblicz_energie`), `bench_krok.jl` (czas + alokacje `symuluj_krok!`), `bench_jakosc.jl` (długość trasy SA vs NN na N=1000, uśrednienie po seedach); wszystkie używają `BenchmarkTools` z `$` interpolacją i `setup=` discipline.
   4. Po uruchomieniu suite'u benchmarków plik `bench/wyniki.md` zawiera czasy, alokacje i jakość trasy w formie tabelarycznej.
   5. `README.md` jest w pełni po polsku, zawiera Core Value, instrukcje instalacji, quickstart, osadzony demo GIF z `assets/`, sekcję benchmarków z aktualnymi liczbami vs NN baseline; wszystkie napisy UI w pakiecie (tytuły, osie, overlay, komunikaty postępu) są po polsku.
-**Plans**: TBD
+**Plans**: 8 plans in 4 waves (Wave 1 parallel: 04-01..04-03 prep; Wave 2 parallel: 04-04..04-05 microbenchmarks + 04-07 examples; Wave 3: 04-06 orchestrator+wyniki.md; Wave 4: 04-08 demo.gif+README rewrite)
+
+**Wave 1** *(independent prep — parallel)*
+- [ ] 04-01-PLAN.md — Project.toml [targets].test += BenchmarkTools (D-10) + .gitignore assets rules (D-05) + assets/.gitkeep
+- [ ] 04-02-PLAN.md — bench/historyczne/ archive move (D-16) — 3 diagnostyka_test05*.jl + README.md
+- [ ] 04-03-PLAN.md — CONTRIBUTING.md §4 Typografia polska (D-18) + renumber §4→§5, §5→§6
+
+**Wave 2** *(parallel — blocked on 04-01)*
+- [ ] 04-04-PLAN.md — bench/bench_energia.jl + bench/bench_krok.jl (BENCH-01,02 + BENCH-04 $ interpolacja + setup=)
+- [ ] 04-05-PLAN.md — bench/bench_jakosc.jl (BENCH-03 — 5 seedów × N=1000 × 50_000 SA z T_zero=0.001)
+- [ ] 04-07-PLAN.md — examples/podstawowy.jl + examples/eksport_mp4.jl (DEMO-01..04, D-04 pre-rm, D-11 hardcoded)
+
+**Wave 3** *(blocked on Wave 2 + 04-02)*
+- [ ] 04-06-PLAN.md — bench/run_all.jl orchestrator (D-06) + initial bench/wyniki.md generation (autonomous: false — wymaga toolchainu Julia)
+
+**Wave 4** *(blocked on Wave 3 + 04-07)*
+- [ ] 04-08-PLAN.md — assets/demo.gif (autonomous: false — wymaga lokalnego GLMakie GUI) + README.md rewrite 9 sekcji (D-15, D-18)
+
+**Cross-cutting constraints** *(must_haves shared across plans):*
+- BRAK modyfikacji w src/{punkty,energia,baselines,algorytmy/,typy,JuliaCity,wizualizacja}.jl (Phase 1+2+3 PHASE COMPLETE preserved — Phase 4 czysto additive)
+- ASCII-only filenames (Phase 1 D-23): examples/podstawowy.jl, examples/eksport_mp4.jl, bench/bench_energia.jl, bench/bench_krok.jl, bench/bench_jakosc.jl, bench/run_all.jl, bench/historyczne/
+- Polski docstring + komentarze + @info/@error (LANG-01, LANG-02); ASCII identyfikatory (BOOT-04 + Phase 1 D-23)
+- function main(); ...; end; main() wrapper w examples (DEMO-03 + D-12 LOCKED)
+- BenchmarkTools $ interpolacja + setup= discipline + evals=1 (BENCH-04)
+- Polska typografia w user-facing markdown (cudzysłowy „...", em-dash —, NFC) per D-18 / CONTRIBUTING §4
+- Encoding hygiene NFC + BOM-free + LF + final newline (Phase 1 D-21 — guard test waliduje)
 **UI hint**: yes
 
 ## Progress
