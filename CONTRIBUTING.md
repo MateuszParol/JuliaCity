@@ -77,14 +77,34 @@ function StanSymulacji(punkty::Vector{Punkt2D}; rng=Xoshiro(42))
 end
 ```
 
-## 4. Style przed commit
+## 4. Typografia polska
+
+User-facing strings (`README.md`, overlay w `wizualizacja.jl`, `@info`/`@error` po polsku) używają
+**poprawnej polskiej typografii**:
+
+| Znak | Kod | Użycie |
+|------|-----|--------|
+| `„` | U+201E | Otwierający cudzysłów dolny (rozpoczyna cytat) |
+| `”` | U+201D | Zamykający cudzysłów górny (kończy cytat) |
+| `—` | U+2014 | Em-dash (myślnik wprost — bez spacji wokół, jak tu) |
+| `–` | U+2013 | En-dash (zakresy, np. „1–10”) |
+
+**NIE używamy:** prostych ASCII `"..."` w prozie, `--` (podwójny minus) zamiast `—`.
+
+**Normalizacja:** wszystkie pliki tekstowe w **NFC** (composed). `.editorconfig` + encoding-guard
+test w `test/runtests.jl` walidują dla `.jl`; konwencja obejmuje również `.md` (sprawdzane manualnie
+w PR review — patrz §1).
+
+**Zasada „BOM-free”:** brak sygnatury 0xEF 0xBB 0xBF na początku — zgodnie z §1.
+
+## 5. Style przed commit
 
 Przed commit:
 1. Uruchom `julia --project=. test/runtests.jl` — encoding guard test musi przejść.
 2. Sprawdź `git diff --check` — brak whitespace conflicts.
 3. Sprawdź `git status` — brak nieoczekiwanych plików (np. `.DS_Store`, `*.bak`).
 
-## 5. Workflow GSD
+## 6. Workflow GSD
 
 Repo używa GSD (`/gsd-execute-phase`, `/gsd-quick`) — patrz `CLAUDE.md` § "GSD Workflow Enforcement".
 Nie commituj zmian do `src/`/`test/` poza GSD workflow.
