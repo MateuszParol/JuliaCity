@@ -165,6 +165,8 @@ From PROJECT.md Core Value (do skopiowania DOSŁOWNIE w README header):
     - .planning/phases/04-demo-benchmarks-documentation/04-PATTERNS.md (sekcja "README.md REWRITE — 9 sekcji" — exact skeleton)
     - assets/demo.gif (właśnie scommitowany w Task 1 — dla `![](assets/demo.gif)` embed)
     - .planning/codebase/STRUCTURE.md (jeśli istnieje — drzewko top-level dla sekcji "Struktura projektu")
+    - **src/algorytmy/simulowane_wyzarzanie.jl** (BLOCKER #5 fix — verify actual `alfa` default w `SimAnnealing` constructor; sekcja "Algorytm" README MUSI używać DOKŁADNIE tej wartości z polskim przecinkiem dziesiętnym)
+    - **src/energia.jl** (BLOCKER #5 — verify `kalibruj_T0` formula: jeśli `2σ(Δ-energii)` to phrasing "T₀ = 2σ(Δ-energii)" OK; jeśli inna — zaktualizować)
   </read_first>
   <action>
     Nadpisać `README.md` w pełni nową polską 9-sekcyjną treścią. Każda sekcja jest WYMAGANA per D-15 (kolejność LOCKED).
@@ -237,9 +239,15 @@ From PROJECT.md Core Value (do skopiowania DOSŁOWNIE w README header):
 
     ## Algorytm
 
-    Symulowane wyżarzanie z ruchami 2-opt i metropolis acceptance, startujące od trasy nearest-neighbor (NN), z geometrycznym chłodzeniem (α ≈ 0,9999) i auto-kalibrowaną temperaturą początkową `T₀ = 2σ(Δ-energii)`.
+    Symulowane wyżarzanie z ruchami 2-opt i metropolis acceptance, startujące od trasy nearest-neighbor (NN), z geometrycznym chłodzeniem (α = {ALFA_VERIFIED}) i auto-kalibrowaną temperaturą początkową `T₀ = {T_ZERO_VERIFIED}`.
 
     Metafora błony mydlanej: krawędzie trasy zachowują się jak elastyczne membrany pod napięciem powierzchniowym — w każdej iteracji algorytm „zaciska" jedną z par krawędzi (ruch 2-opt) i akceptuje nową trasę z prawdopodobieństwem `exp(−Δ/T)`. W trakcie chłodzenia (`T → 0`) akceptowane są tylko ulepszenia, więc trasa zbiega do minimum lokalnego 2-opt.
+
+    **NOTA dla executora (BLOCKER #5):** PRZED zapisaniem README, executor MUSI:
+    1. Odczytać `src/algorytmy/simulowane_wyzarzanie.jl` i znaleźć linię `alfa::Float64=0.9999` w konstruktorze `SimAnnealing`. Podstawić ZWERYFIKOWANĄ wartość zamiast `{ALFA_VERIFIED}` — z polskim przecinkiem dziesiętnym (`0,9999` jeśli wynosi 0.9999).
+    2. Odczytać `src/energia.jl::kalibruj_T0` i zweryfikować formułę. Jeśli zwraca `2 * std(deltas)` lub równoważne `2σ(Δ-energii)` — podstawić `2σ(Δ-energii)` zamiast `{T_ZERO_VERIFIED}`. Jeśli formuła jest inna, użyć tej z podpisem matematycznym po polsku.
+    3. Verify CLI: `julia --project=. -e 'using JuliaCity; punkty = generuj_punkty(100; seed=1); stan = StanSymulacji(punkty); inicjuj_nn!(stan); println(SimAnnealing(stan).alfa)'` — output musi pasować do liczby w README.
+    Brak placeholderów `{...}` w shipping README.
 
     Architektura jest rozszerzalna — `abstract type Algorytm` + Holy-traits dispatch pozwala dodać warianty `ForceDirected` i `Hybryda` w v2 bez zmiany API.
 
@@ -247,7 +255,9 @@ From PROJECT.md Core Value (do skopiowania DOSŁOWNIE w README header):
 
     Pełne wyniki (czas, alokacje, jakość trasy): [`bench/wyniki.md`](bench/wyniki.md).
 
-    **Headline:** SA znajduje trasę średnio ~6% krótszą niż NN baseline (5 seedów × N=1000 × 50 000 kroków).
+    **Headline:** SA znajduje trasę średnio ~{HEADLINE_PERCENT}% krótszą niż NN baseline (5 seedów × N=1000 × 50 000 kroków).
+
+    *(NOTA executor — Warning #2: jeśli `bench/wyniki.md` pokazuje `std_ratio > 0.02`, podstaw `{HEADLINE_PERCENT}` z DOKŁADNĄ średnią z bench/wyniki.md zaokrągloną do 1 miejsca po przecinku — NIE shipuj placeholdera „~6%" jeśli pomiar disagrees. Jeśli `std_ratio ≤ 0.02`, zaokrąglenie do najbliższej liczby całkowitej OK.)*
 
     Reprodukcja:
 
@@ -311,10 +321,18 @@ From PROJECT.md Core Value (do skopiowania DOSŁOWNIE w README header):
 
     Sprawdzenie liczby h2 sekcji: `grep -c '^## ' README.md` MUSI zwrócić DOKŁADNIE 7 (Wymagania, Instalacja, Quickstart, Algorytm, Benchmarki, Struktura projektu, Licencja — bez header'a `# JuliaCity` h1 i bez GIF embed który nie ma h2).
 
-    KRYTYCZNE — empiryczny headline:
-    - Po Task 1 (assets/demo.gif) i plan 04-06 Task 2 (bench/wyniki.md regenerated), executor MUSI sprawdzić rzeczywistą wartość `mean_ratio` w `bench/wyniki.md` i podstawić procent w sekcji „Benchmarki".
-    - Domyślny tekst „~6% krótszą" zakłada `mean_ratio ≈ 0.94`. Jeśli empiryczny `mean_ratio` jest np. 0.937 → headline „~6% krótszą"; jeśli 0.952 → „~5% krótszą". Zaokrąglenie do najbliższej liczby całkowitej.
+    KRYTYCZNE — empiryczny headline (Warning #2):
+    - Po Task 1 (assets/demo.gif) i plan 04-06 Task 2 (bench/wyniki.md regenerated), executor MUSI sprawdzić rzeczywistą wartość `mean_ratio` ORAZ `std_ratio` w `bench/wyniki.md` i podstawić procent w sekcji „Benchmarki".
+    - Domyślny tekst „~6% krótszą" zakłada `mean_ratio ≈ 0.94`. Jeśli empiryczny `mean_ratio` jest np. 0.937 → headline „~6% krótszą"; jeśli 0.952 → „~5% krótszą".
+    - **Warning #2 guard:** jeśli `std_ratio > 0.02`, NIE zaokrąglaj do całkowitej — użyj średniej z 1 miejscem po przecinku (np. „~6,3% krótszą" jeśli mean_ratio=0.937, std=0.025).
+    - Jeśli `std_ratio ≤ 0.02`, zaokrąglenie do całkowitej OK (np. „~6%").
     - Jeśli `mean_ratio > 1.0` (REGRESJA — SA gorsza niż NN): NIE WRITE README, zatrzymaj się i zgłoś jako bloker (sprawdzić czy bench_jakosc.jl użył T_zero=0.001).
+
+    KRYTYCZNE — algorithm constants verification (BLOCKER #5):
+    - Executor MUSI zastąpić placeholdery `{ALFA_VERIFIED}` i `{T_ZERO_VERIFIED}` w sekcji „Algorytm" zweryfikowanymi wartościami z `src/algorytmy/simulowane_wyzarzanie.jl` i `src/energia.jl` (kalibruj_T0).
+    - Verify command: `julia --project=. -e 'using JuliaCity; punkty = generuj_punkty(100; seed=1); stan = StanSymulacji(punkty); inicjuj_nn!(stan); println(SimAnnealing(stan).alfa)'` — wartość zwrócona MUSI pasować do liczby w README (z polskim przecinkiem dziesiętnym).
+    - Jeśli kalibruj_T0 implementuje 2σ(Δ-energii) — phrase pozostaje. Jeśli implementuje inną formułę, README użyje tej formuły.
+    - **NIE shipuj README z literalnymi placeholderami `{ALFA_VERIFIED}`, `{T_ZERO_VERIFIED}`, `{HEADLINE_PERCENT}`** — wszystkie 3 muszą być zastąpione zweryfikowanymi wartościami.
 
     KRYTYCZNE — ścieżki w drzewku struktury:
     - Drzewko ASCII musi być zgodne z rzeczywistą strukturą po Phase 4. Sprawdź `ls src/`, `ls bench/`, `ls examples/` przed napisaniem.
@@ -344,7 +362,16 @@ From PROJECT.md Core Value (do skopiowania DOSŁOWNIE w README header):
     - Empiryczny headline: zawiera literalny znak `%` w sekcji `## Benchmarki` z procentem (np. `~6%`, `~5%`, etc.) — sprawdzona zgodność z `bench/wyniki.md` mean_ratio.
     - 3 quickstart fragmenty: zawiera literały `**(a)`, `**(b)`, `**(c)` (markdown bold labels).
     - Drzewko struktury: zawiera `JuliaCity/`, `src/`, `test/`, `examples/`, `bench/`, `assets/`, `.planning/`, `Project.toml`, `Manifest.toml`, `CONTRIBUTING.md`, `LICENSE`.
-    - Zawiera komendę reprodukcji benchmarków: `julia --project=. --threads=auto bench/run_all.jl`.
+    - Zawiera komendę reprodukcji benchmarków (BLOCKER #4 — wrapper, NIE direct julia): `bash bench/uruchom.sh` LUB `pwsh bench/uruchom.ps1`. Verify: `grep -E 'bash bench/uruchom\.sh|pwsh bench/uruchom\.ps1' README.md` zwraca exit 0.
+    - **BLOCKER #5 — algorithm constants verified:**
+      - Sekcja „Algorytm" zawiera DOKŁADNĄ wartość `alfa` z `src/algorytmy/simulowane_wyzarzanie.jl` (kwarg default `alfa::Float64=0.9999`). Verify CLI: `julia --project=. -e 'using JuliaCity; punkty = generuj_punkty(100; seed=1); stan = StanSymulacji(punkty); inicjuj_nn!(stan); println(SimAnnealing(stan).alfa)'` produkuje wartość pasującą do liczby w README (z polskim przecinkiem `0,9999` zamiast `0.9999`).
+      - Sekcja „Algorytm" `T₀` phrasing pasuje do faktycznej formuły w `src/energia.jl::kalibruj_T0` (jeśli `2σ(Δ-energii)` → phrase OK; inaczej zaktualizować).
+      - **README NIE zawiera literalnych stringów `{ALFA_VERIFIED}`, `{T_ZERO_VERIFIED}`, `{HEADLINE_PERCENT}`** (placeholdery zostały zastąpione): `grep -cE '\{ALFA_VERIFIED\}|\{T_ZERO_VERIFIED\}|\{HEADLINE_PERCENT\}' README.md` zwraca 0.
+    - **WARNING #2 — headline matches bench/wyniki.md:**
+      - README headline number dla SA/NN ratio pasuje do `mean_ratio` w `bench/wyniki.md` w obrębie ±1 punktu procentowego.
+    - **WARNING #4 — struktura tree drift guard:**
+      - Każdy plik `src/*.jl` (top-level i `src/algorytmy/*.jl`) wyświetlony przez `find src -maxdepth 2 -name "*.jl"` MUSI pojawić się w drzewku „Struktura projektu" w README. Verify (manual + CLI): output `find src -maxdepth 2 -name "*.jl"` porównać z linijkami w sekcji README po `## Struktura projektu`. Standard kontrakt na czas Phase 4: `JuliaCity.jl, typy.jl, punkty.jl, energia.jl, baselines.jl, wizualizacja.jl, algorytmy/simulowane_wyzarzanie.jl`.
+    - Zawiera komendę uruchomienia demo: `julia --project=. --threads=auto examples/podstawowy.jl`.
     - Zawiera komendę uruchomienia demo: `julia --project=. --threads=auto examples/podstawowy.jl`.
     - BOM-free: `head -c3 README.md | xxd` NIE zawiera `efbbbf`.
     - Final newline: `tail -c1 README.md | xxd` zawiera `0a`.

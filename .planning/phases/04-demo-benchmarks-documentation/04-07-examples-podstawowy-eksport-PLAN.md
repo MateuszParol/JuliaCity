@@ -18,7 +18,7 @@ requirements:
 must_haves:
   truths:
     - "examples/podstawowy.jl uruchamia generuj_punkty + inicjuj_nn! + SimAnnealing + wizualizuj (live, eksport=nothing)"
-    - "examples/eksport_mp4.jl uruchamia ten sam pipeline z eksport=\"assets/demo.gif\" i pre-rm istniejącego pliku"
+    - "examples/eksport_mp4.jl uruchamia ten sam pipeline z eksport=\"assets/demo.gif\", mkpath(dirname) defensywnie + pre-rm istniejącego pliku (BLOCKER #1)"
     - "Oba pliki mają function main() wrapper i kończą się main() top-level call (DEMO-03 LOCKED)"
     - "Oba pliki używają hardcoded sensible defaults (D-11) — bez ENV/ARGS"
     - "Banner @info na starcie + summary @info po wizualizuj() (D-13)"
@@ -233,6 +233,11 @@ UWAGA: examples używają DEFAULT 2σ kalibracji (`SimAnnealing(stan)` bez kwarg
 
         @info "JuliaCity eksport GIF — N=$N, seed=$SEED, threads=$(Threads.nthreads())"
 
+        # Checker iteracja 1 BLOCKER #1: katalog `assets/` NIE jest commitowany w repo
+        # (D-05 EXACT — brak `.gitkeep`). Defensywnie tworzymy parent dir przed pre-rm/eksport.
+        # Idempotent (force=true): bez bledu jezeli juz istnieje.
+        mkpath(dirname(SCIEZKA_GIF))
+
         # D-04: pre-rm istniejacego pliku (swiadoma regeneracja, NIE accident overwrite).
         # Phase 3 D-10 hard-fail (src/wizualizacja.jl ~line 270) chroni API users przed
         # przypadkowym nadpisaniem; demo skrypt = explicit regen, wiec usuwamy plik PRZED
@@ -275,15 +280,18 @@ UWAGA: examples używają DEFAULT 2σ kalibracji (`SimAnnealing(stan)` bez kwarg
     - Komentarz polski wyjaśniający D-04 obejście Phase 3 D-10 (audit trail w pliku, żeby przyszły reader rozumiał celowość).
     - LANG-02: `@info` po polsku.
     - ASCII identyfikatory: `SCIEZKA_GIF`, `LICZBA_KROKOW`, `KROKI_NA_KLATKE` — bez diakrytyków.
-    - Plan 04-01 dostarcza katalog `assets/` z `.gitkeep` (Wave 1) — ten skrypt może go pisać do `assets/demo.gif` bez `mkdir`.
+    - Plan 04-01 (revised per checker iteracja 1 BLOCKER #1): NIE dostarcza już katalogu `assets/` ani `.gitkeep` — D-05 EXACT (`assets/*` + `!assets/demo.gif`, nic więcej). Ten skrypt MUSI sam tworzyć katalog przez `mkpath(dirname(SCIEZKA_GIF))` PRZED `isfile/rm/wizualizuj` — defensywnie i idempotentnie. Bez `mkpath` na fresh checkout (gdzie `assets/` nigdy nie zostało utworzone) `Makie.record` rzuca błąd I/O.
+    - Kolejność operacji: `mkpath(dirname(SCIEZKA_GIF))` → `isfile(SCIEZKA_GIF) && rm(SCIEZKA_GIF)` → `wizualizuj(...; eksport=SCIEZKA_GIF)`. Wszystkie 3 kroki MUSZĄ być w tej kolejności.
   </action>
   <verify>
-    <automated>test -f examples/eksport_mp4.jl &amp;&amp; grep -q 'function main()' examples/eksport_mp4.jl &amp;&amp; grep -qE '^main\(\)$' examples/eksport_mp4.jl &amp;&amp; grep -q 'isfile(SCIEZKA_GIF) && rm(SCIEZKA_GIF)' examples/eksport_mp4.jl &amp;&amp; grep -q 'eksport=SCIEZKA_GIF' examples/eksport_mp4.jl &amp;&amp; grep -q 'SCIEZKA_GIF = "assets/demo.gif"' examples/eksport_mp4.jl &amp;&amp; grep -q 'LICZBA_KROKOW = 15_000' examples/eksport_mp4.jl</automated>
+    <automated>test -f examples/eksport_mp4.jl &amp;&amp; grep -q 'function main()' examples/eksport_mp4.jl &amp;&amp; grep -qE '^main\(\)$' examples/eksport_mp4.jl &amp;&amp; grep -q 'mkpath(dirname(SCIEZKA_GIF))' examples/eksport_mp4.jl &amp;&amp; grep -q 'isfile(SCIEZKA_GIF) && rm(SCIEZKA_GIF)' examples/eksport_mp4.jl &amp;&amp; grep -q 'eksport=SCIEZKA_GIF' examples/eksport_mp4.jl &amp;&amp; grep -q 'SCIEZKA_GIF = "assets/demo.gif"' examples/eksport_mp4.jl &amp;&amp; grep -q 'LICZBA_KROKOW = 15_000' examples/eksport_mp4.jl</automated>
   </verify>
   <acceptance_criteria>
     - `examples/eksport_mp4.jl` istnieje.
     - Zawiera `function main()` (D-12 LOCKED).
     - Zawiera DOKŁADNIE jedną linię `main()` na top-level (grep `-cE '^main\(\)$'` zwraca 1).
+    - Zawiera literalnie `mkpath(dirname(SCIEZKA_GIF))` (BLOCKER #1 fix — defensywne tworzenie katalogu na fresh checkout).
+    - `mkpath` linia POPRZEDZA `isfile(SCIEZKA_GIF) && rm(SCIEZKA_GIF)` w pliku (numer linii grep `mkpath` < numer linii grep `isfile`).
     - Zawiera literalnie `isfile(SCIEZKA_GIF) && rm(SCIEZKA_GIF)` (D-04 pre-rm).
     - Zawiera literalnie `SCIEZKA_GIF = "assets/demo.gif"` (D-05 + README D-15 embed path).
     - Zawiera `eksport=SCIEZKA_GIF` w wywołaniu `wizualizuj` (Phase 3 D-09 API).

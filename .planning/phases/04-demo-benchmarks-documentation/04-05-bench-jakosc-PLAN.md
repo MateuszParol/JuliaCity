@@ -223,9 +223,11 @@ Brak ASVS L1 controls naruszonych — read-only deterministic compute.
 </threat_model>
 
 <verification>
-- Smoke test (jeśli toolchain): `julia --project=. --threads=auto bench/bench_jakosc.jl` zwraca exit 0, wypisuje 5 per-seed @info i final aggregate.
+- Standalone smoke (BLOCKER #4 zaktualizowane — bench scripts uruchamiane WYŁĄCZNIE przez orchestrator): `include` z Julia REPL z aktywnym `--project=.` (bench_jakosc.jl używa tylko `Statistics` stdlib + `JuliaCity` z `[deps]` — bez BenchmarkTools, więc resolver nie blokuje); weryfikacja: `main()` zwraca `NamedTuple` z polami `:mean_ratio, :std_ratio, :min_ratio, :max_ratio, :ratios, :seeds, :n, :liczba_krokow`.
+- Kanoniczne uruchomienie produkcyjne: `bash bench/uruchom.sh` lub `pwsh bench/uruchom.ps1` (wrapper tworzony w plan 04-06 Task 0; uruchamia całe `bench/run_all.jl` które ładuje bench_jakosc w izolowanym module).
 - Empiryczna weryfikacja: `mean_ratio ≈ 0.94 ± 0.01` (extrapolacja z TEST-05 lock 0.9408). Wszystkie 5 ratios < 1.0 (SA bije NN konsekwentnie).
 - Oczekiwany headline po regen: „SA znajduje trasę średnio ~6% krótszą niż NN baseline" (1 - 0.94 = 0.06).
+- Jeśli `std_ratio > 0.02` po pierwszym regen → README headline w plan 04-08 musi być zaktualizowany do faktycznej średniej z `bench/wyniki.md` zaokrąglonej do 1 miejsca po przecinku (per Warning #2).
 </verification>
 
 <success_criteria>
