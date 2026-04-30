@@ -213,8 +213,11 @@ using StableRNGs
         # `check_extras` kwarg (poprawne kwargs: ambiguities, unbound_args, undefined_exports,
         # project_extras, stale_deps, deps_compat, piracies, persistent_tasks, undocumented_names).
         # `project_extras=false` wylacza sprawdzanie extras-vs-targets — INTENCJONALNIE,
-        # bo BenchmarkTools/GLMakie/Makie/Observables sa w [extras] dla Phase 3 (viz)
-        # i Phase 4 (bench) per CONTEXT.md, jeszcze nieuzywane w obecnym [targets].test.
+        # bo BenchmarkTools jest w [extras] dla Phase 4 (bench) per CONTEXT.md.
+        # `persistent_tasks=false` (dodane w 03-00): GLMakie jest biblioteka GUI i z zalozenia
+        # uruchamia watki tla (renderloop). To jest znane zachowanie dokumentowane przez
+        # autorów GLMakie — Aqua.persistent_tasks nie jest zdolny do rozroznienia watków
+        # celowych (GLMakie) od wycieków (bledy w paczce). Wylaczamy dla tej paczki.
         # Pattern D: stdlib :Random/:Statistics bez compat entry → deps_compat ignore.
         Aqua.test_all(JuliaCity;
             ambiguities = (recursive = false,),
@@ -223,6 +226,9 @@ using StableRNGs
             # (PerformanceTestTools, Serialization, Test, Unicode) - intentional, no compat.
             deps_compat = (ignore = [:Random, :Statistics, :PerformanceTestTools, :Serialization, :Test, :Unicode],),
             project_extras = false,
+            # GLMakie jest biblioteka GUI z celowymi watkami tla — persistent_tasks=false
+            # per standardowa praktyka dla pakietow zalezacych od GLMakie.
+            persistent_tasks = false,
         )
     end
 
