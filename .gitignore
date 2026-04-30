@@ -29,3 +29,8 @@ Manifest.toml.bak
 /diag-*.log
 
 # WAŻNE: Manifest.toml NIE jest tutaj — jest commitowany (per D-25, to jest aplikacja, nie biblioteka)
+
+# Asset binaries (Phase 4 D-05) — commitujemy tylko canonical demo.gif,
+# wszystkie inne lokalne artefakty developera (np. assets/test.mp4) ignorowane.
+assets/*
+!assets/demo.gif
