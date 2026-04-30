@@ -143,9 +143,9 @@
 **Plans**: 8 plans in 4 waves (Wave 1 parallel: 04-01..04-03 prep; Wave 2 parallel: 04-04..04-05 microbenchmarks + 04-07 examples; Wave 3: 04-06 orchestrator+wyniki.md; Wave 4: 04-08 demo.gif+README rewrite)
 
 **Wave 1** *(independent prep — parallel)*
-- [ ] 04-01-PLAN.md — Project.toml [targets].test += BenchmarkTools (D-10) + .gitignore assets rules (D-05 EXACTLY: `assets/*` + `!assets/demo.gif`, nic więcej)
-- [ ] 04-02-PLAN.md — bench/historyczne/ archive move (D-16) — 3 diagnostyka_test05*.jl + README.md
-- [ ] 04-03-PLAN.md — CONTRIBUTING.md §4 Typografia polska (D-18) + renumber §4→§5, §5→§6
+- [x] 04-01-PLAN.md — Project.toml [targets].test += BenchmarkTools (D-10) + .gitignore assets rules (D-05 EXACTLY: `assets/*` + `!assets/demo.gif`, nic więcej)
+- [x] 04-02-PLAN.md — bench/historyczne/ archive move (D-16) — 3 diagnostyka_test05*.jl + README.md
+- [x] 04-03-PLAN.md — CONTRIBUTING.md §4 Typografia polska (D-18) + renumber §4→§5, §5→§6
 
 **Wave 2** *(parallel — blocked on 04-01)*
 - [ ] 04-04-PLAN.md — bench/bench_energia.jl + bench/bench_krok.jl (BENCH-01,02 + BENCH-04 $ interpolacja + fresh-fixture setup=, evals=1, samples=200)

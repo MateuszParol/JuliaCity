@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: Executing Phase 04
-last_updated: "2026-04-30T11:48:40.450Z"
+last_updated: "2026-04-30T14:00:00.000Z"
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 35
-  completed_plans: 26
-  percent: 74
+  completed_plans: 30
+  percent: 86
 ---
 
 # State: JuliaCity
@@ -24,17 +24,17 @@ progress:
 
 ## Current Position
 
-Phase: 04 (demo-benchmarks-documentation) — EXECUTING
-Plan: 1 of 8
+Phase: 04 (demo-benchmarks-documentation) — EXECUTING (Wave 1 done, 3/8 plans)
+Plan: 3 of 8
 | Field | Value |
 |-------|-------|
-| Phase | 3 (of 4) |
-| Phase Name | Visualization & Export |
-| Plan | 7 plans (waves 0-6, sequential): `03-00-PLAN.md` .. `03-06-PLAN.md` |
-| Status | Phase 3 COMPLETE — 03-06 COMPLETE (VIZ-06 grep guard @testset); 7/7 planow wykonanych |
-| Progress | `[█████████░] 96% (26/27 plans; Phase 3 — 7/7 wykonane COMPLETE)` |
-| Last Action | `03-06-PLAN.md` wykonany — @testset "VIZ-06: GLMakie isolation" dodany do runtests.jl: grep-level walkdir+per-line scan sprawdza ze tylko src/wizualizacja.jl ma `using GLMakie`; headless-safe (D-14, D-15); Pkg.test 230/230 PASS; Phase 3 COMPLETE: 11/11 REQ-IDow (VIZ-01..07, EKS-01..04) zaimplementowane lub testowo-pokryte |
-| Next Action | Phase 4 — Demo, Benchmarks & Documentation |
+| Phase | 4 (of 4) |
+| Phase Name | Demo, Benchmarks & Documentation |
+| Plan | 8 plans in 4 waves: `04-01-PLAN.md` .. `04-08-PLAN.md` |
+| Status | Wave 1 COMPLETE (04-01, 04-02, 04-03 merged); Wave 2 next (04-04, 04-05, 04-07) |
+| Progress | `[█████████▒] 86% (30/35 plans; Phase 4 — 3/8 wykonane)` |
+| Last Action | Wave 1 wykonany — 04-01 (Project.toml [targets].test += BenchmarkTools + .gitignore D-05), 04-02 (bench/historyczne/ archive 3 diagnostyka_test05*.jl + README.md), 04-03 (CONTRIBUTING.md §4 Typografia polska + renumber). Worktrees zmergowane do master, smoke `using JuliaCity` PASS. |
+| Next Action | Wave 2 — 04-04 (bench_energia/krok), 04-05 (bench_jakosc), 04-07 (examples/podstawowy + eksport_mp4) parallel |
 
 ## Roadmap Snapshot
 
