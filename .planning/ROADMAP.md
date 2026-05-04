@@ -9,7 +9,7 @@
 - [ ] **Phase 1: Bootstrap, Core Types & Points** — Pakiet startuje, encoding hygiene jest na miejscu, parametryczny `StanSymulacji` skompilowany, `generuj_punkty(1000)` zwraca deterministyczny `Vector{Punkt2D}`.
 - [ ] **Phase 2: Energy, SA Algorithm & Test Suite** — `oblicz_energie` i `symuluj_krok!` (SA + 2-opt + NN init + Metropolis) działają headlessly, type-stable, zero-alloc, zwalidowane suitem testowym (Hamilton, JET, Aqua, NN-baseline-beat).
 - [x] **Phase 3: Visualization & Export** — Okno GLMakie z animacją „zaciągania trasy", polskie etykiety, opcjonalny eksport MP4/GIF.
-- [ ] **Phase 4: Demo, Benchmarks & Documentation** — Skrypty `examples/`, suite benchmarków w `bench/`, README po polsku z demo GIF i liczbami benchmarków.
+- [x] **Phase 4: Demo, Benchmarks & Documentation** — Skrypty `examples/`, suite benchmarków w `bench/`, README po polsku z demo GIF i liczbami benchmarków. *(ukończone 2026-05-04)*
 
 ## Phase Details
 
@@ -153,10 +153,10 @@
 - [x] 04-07-PLAN.md — examples/podstawowy.jl + examples/eksport_mp4.jl (DEMO-01..04, D-04 pre-rm + mkpath defensive, D-11 hardcoded)
 
 **Wave 3** *(blocked on Wave 2 + 04-02)*
-- [ ] 04-06-PLAN.md — bench/run_all.jl orchestrator (D-06) + bench/uruchom.{sh,ps1} wrappers (Pkg.activate(temp=true) recipe — odblokowuje BenchmarkTools z [targets].test) + Module(:_BenchSandbox) izolacja per-bench `main()` + initial bench/wyniki.md (autonomous: false — wymaga toolchainu Julia)
+- [x] 04-06-PLAN.md — bench/run_all.jl orchestrator (D-06) + bench/uruchom.{sh,ps1} wrappers (Pkg.activate(temp=true) recipe — odblokowuje BenchmarkTools z [targets].test) + Module(:_BenchSandbox) izolacja per-bench `main()` + initial bench/wyniki.md (autonomous: false — wymaga toolchainu Julia)
 
 **Wave 4** *(blocked on Wave 3 + 04-07)*
-- [ ] 04-08-PLAN.md — assets/demo.gif (autonomous: false — wymaga lokalnego GLMakie GUI) + README.md rewrite 9 sekcji (D-15, D-18)
+- [x] 04-08-PLAN.md — assets/demo.gif (autonomous: false — wymaga lokalnego GLMakie GUI) + README.md rewrite 9 sekcji (D-15, D-18)
 
 **Cross-cutting constraints** *(must_haves shared across plans):*
 - BRAK modyfikacji w src/{punkty,energia,baselines,algorytmy/,typy,JuliaCity,wizualizacja}.jl (Phase 1+2+3 PHASE COMPLETE preserved — Phase 4 czysto additive)

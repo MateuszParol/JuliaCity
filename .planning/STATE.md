@@ -1,15 +1,15 @@
 ---
-gsd_state_version: 1.0
+gsd-state-version: 1.0
 milestone: v1.1
 milestone_name: milestone
-status: Executing Phase 04
-last_updated: "2026-04-30T14:30:00.000Z"
+status: Phase 04 COMPLETE — milestone v1.1 ready
+last_updated: "2026-05-04T00:00:00.000Z"
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 35
-  completed_plans: 33
-  percent: 94
+  completed_plans: 35
+  percent: 100
 ---
 
 # State: JuliaCity
@@ -20,28 +20,28 @@ progress:
 
 **Name:** JuliaCity
 **Core Value:** Wizualnie przekonująca, fizycznie umotywowana heurystyka TSP w idiomatycznej Julii — jeśli wszystko inne zawiedzie, użytkownik musi zobaczyć, jak trasa „bańki mydlanej" zaciska się wokół 1000 punktów w czasie rzeczywistym i otrzymać krótszą trasę niż naiwny baseline.
-**Current Focus:** Phase 04 — demo-benchmarks-documentation
+**Current Focus:** Milestone v1.1 ukończony — wszystkie 4 phases COMPLETE
 
 ## Current Position
 
-Phase: 04 (demo-benchmarks-documentation) — EXECUTING (Wave 1+2 done, Wave 3 partial: 04-06 Tasks 0+1 done; Task 2 awaiting human)
-Plan: 6 of 8 (+ 04-06 Tasks 0+1 of 3)
+Phase: 04 (demo-benchmarks-documentation) — COMPLETE 2026-05-04
+Plan: 8 of 8
 | Field | Value |
 |-------|-------|
-| Phase | 4 (of 4) |
+| Phase | 4 (of 4) — COMPLETE |
 | Phase Name | Demo, Benchmarks & Documentation |
-| Plan | 8 plans in 4 waves: `04-01-PLAN.md` .. `04-08-PLAN.md` |
-| Status | Wave 1+2 COMPLETE; Wave 3 PARTIAL — 04-06 Tasks 0+1 (uruchom.sh, uruchom.ps1, run_all.jl) merged; Task 2 (regen wyniki.md) wymaga uruchomienia `bash bench/uruchom.sh` lokalnie (~5-10 min) i commita |
-| Progress | `[█████████▓] 94% (33/35 plans + 04-06 częściowy)` |
-| Last Action | Plan 04-06 częściowo: bench/uruchom.sh (chmod +x), bench/uruchom.ps1, bench/run_all.jl (5 helperów, Module isolation BLOCKER #3, alfabetyczna kolejność Warning #3) zmergowane. SUMMARY.md NIE napisany (agent stopped). |
-| Next Action | RĘCZNIE na nowym komputerze: `bash bench/uruchom.sh` → produkuje bench/wyniki.md → `git add bench/wyniki.md && git commit` → kontynuuj z `/gsd-execute-phase 4` (Wave 4 — plan 04-08 README+demo.gif) |
+| Plan | 8 plans in 4 waves: `04-01-PLAN.md` .. `04-08-PLAN.md` — wszystkie z SUMMARY.md |
+| Status | COMPLETE — Wave 1-4 done. Headline: SA ~4% krótsza niż NN (mean_ratio=0.9559, std=0.0179). 230/230 testów PASS (1m42s). |
+| Progress | `[██████████] 100% (35/35 plans)` |
+| Last Action | Plan 04-06 SUMMARY.md (commit ea6c643) + plan 04-08 README rewrite (commit dcacd77) + plan 04-08 SUMMARY.md (commit ce4ca5f). Phase 4 zamknięty. |
+| Next Action | Opcjonalnie: `/gsd-progress` (dashboard), `/gsd-audit-milestone v1.1` (formalna audyt przed archiwum), `/gsd-complete-milestone` (archiwum + nowa wersja). Phase verifier (gsd-verifier) NIE byl spawnowany w tej sesji — manualna inspekcja akceptacyjna OK. |
 
 ## Roadmap Snapshot
 
 - [x] **Phase 1: Bootstrap, Core Types & Points** — pakiet, encoding hygiene, `StanSymulacji`, `generuj_punkty`
 - [x] **Phase 2: Energy, SA Algorithm & Test Suite** — `oblicz_energie`, `symuluj_krok!` (SA), pełen suite testowy (222/222 PASS; SC #4 zluźnione 10%→5% per plan 02-14 erratum)
 - [x] **Phase 3: Visualization & Export** — GLMakie + Observables, eksport MP4/GIF
-- [ ] **Phase 4: Demo, Benchmarks & Documentation** — `examples/`, `bench/`, README po polsku
+- [x] **Phase 4: Demo, Benchmarks & Documentation** — `examples/`, `bench/`, README po polsku (ukończone 2026-05-04; headline ~4% krótsza niż NN, 230/230 testów PASS)
 
 ## Performance Metrics
 
