@@ -356,6 +356,95 @@ function _dodaj_gotowe_overlay!(ax_trasa::Axis, stan::StanSymulacji, energia_nn:
     return nothing
 end
 
+"""
+Inkrementalne budowanie trasy Nearest-Neighbor z yieldem do Observable per `chunk`
+krawedzi (Phase 4.1 D-05 — hybryda GIF, faza 1 NN-construction edge-by-edge).
+
+Reprodukuje algorytm `trasa_nn(D; start=1)` z `src/baselines.jl` (LOCKED Phase 2)
+z dwoma roznicami:
+1. Buduje incremental Vector{Int} (`stan.trasa[1:k]`) zamiast batch zwrocenia n-elementowego.
+2. Po kazdym `chunk` krawedziach mutuje `obs_trasa[]` z aktualna prefix-trasa
+   zamknieta tymczasowo cyklem `[trasa[1:k]..., trasa[1]]` — daje wizualizacje
+   "trasa rosnie" w GIFie zamiast pelnego cyklu od pierwszej klatki.
+
+Po zakonczeniu `stan.trasa` to PELEN cykl Hamiltona identyczny z `trasa_nn(stan.D;
+start=1)` (assertion: `stan.trasa == trasa_nn(stan.D; start=1)` musi zachodzic).
+
+Wywolywane WEWNATRZ bloku `Makie.record(fig, sciezka, 1:n_klatek; ...) do frame_i`
+w `examples/eksport_mp4.jl` (faza 1) — kazda iteracja petli wewnetrznej tej funkcji
+odpowiada JEDNEJ klatce GIFa (po `chunk` krawedziach).
+
+# Argumenty
+- `stan::StanSymulacji` — z wypelnionym `stan.D` (przez `oblicz_macierz_dystans!`),
+  ale `stan.trasa` PRZED wywolaniem ma byc resetowane do `[1]` (start=1, faza 0)
+  przez callera. Helper zaklada: `length(stan.trasa) == 1` i `stan.trasa[1] == 1`.
+- `obs_trasa::Observable{Vector{Point2f}}` — Observable z `_init_observables` ktore
+  bedzie mutowane co `chunk` krawedzi.
+- `n_klatek::Int` — zaplanowana liczba klatek fazy 1 (np. `ceil(N / chunk)`).
+  Helper iteruje DOKLADNIE `n_klatek` razy — caller dba zeby `chunk * n_klatek >= N - 1`
+  (dodanych krawedzi do pustej trasy).
+- `chunk::Int=7` — krawedzi per klatka (D-04: ceil(1000/150) = 7).
+
+Zwraca `Nothing`. Po zakonczeniu `stan.trasa` ma `length == n` (pelen cykl Hamiltona).
+"""
+function _animuj_nn_construction!(stan::StanSymulacji,
+                                   obs_trasa::Observable{Vector{Point2f}},
+                                   n_klatek::Int;
+                                   chunk::Int=7)
+    n = length(stan.punkty)
+    @assert n >= 2 "Wymaga co najmniej 2 punktow"
+    @assert length(stan.trasa) == 1 && stan.trasa[1] == 1 "stan.trasa musi byc zresetowane do [1]"
+    @assert n_klatek >= 1 "n_klatek must be positive"
+    @assert chunk >= 1 "chunk must be positive"
+
+    # Lokalna replika `odwiedzone` z `trasa_nn` — identyczna semantyka, zaczynamy od start=1.
+    odwiedzone = falses(n)
+    odwiedzone[1] = true
+    # Pelny prealoc trasy (jak w `trasa_nn`) — wypelniamy in-place; stan.trasa rosnie.
+    pelna_trasa = Vector{Int}(undef, n)
+    pelna_trasa[1] = 1
+    k = 1   # ile elementow trasy juz wybralismy (1, bo start=1 wstawiony)
+
+    @inbounds for klatka in 1:n_klatek
+        # Dodaj `chunk` krawedzi (lub mniej, jezeli zostalo < chunk)
+        for _ in 1:chunk
+            k >= n && break
+            biezacy = pelna_trasa[k]
+            # argmin po stan.D[biezacy, j] dla j jeszcze nie-odwiedzonego (zgodne z trasa_nn)
+            najblizszy = 0
+            min_dist = Inf
+            for j in 1:n
+                if !odwiedzone[j] && stan.D[biezacy, j] < min_dist
+                    min_dist = stan.D[biezacy, j]
+                    najblizszy = j
+                end
+            end
+            k += 1
+            pelna_trasa[k] = najblizszy
+            odwiedzone[najblizszy] = true
+        end
+
+        # Zaktualizuj stan.trasa do prefix-trasa dlugosci k (wycinek)
+        stan.trasa = pelna_trasa[1:k]
+
+        # Zbuduj snapshot Point2f dla obs_trasa: prefix punkty + (jezeli k >= 2)
+        # tymczasowe domkniecie "wracamy do startu" zeby cykl byl zawsze widoczny
+        # jako linia closed (NIE break w wizualizacji srodek-fazy NN).
+        # Dla k == 1: tylko jeden punkt (lines! nie narysuje krawedzi — co jest pozadane).
+        pts = Vector{Point2f}(undef, k + 1)
+        for i in 1:k
+            pts[i] = Point2f(stan.punkty[stan.trasa[i]])
+        end
+        pts[k + 1] = pts[1]  # tymczasowe domkniecie — dla k=1 da 2 identyczne punkty (degenerate, lines! ignoruje)
+        obs_trasa[] = pts
+    end
+
+    # Po zakonczeniu pelna trasa wpisana do stan.trasa (assertion zgodnosci z trasa_nn)
+    @assert k == n "Helper nie ukonczyl pelnego cyklu Hamiltona — zwiększ n_klatek lub chunk"
+    stan.trasa = pelna_trasa
+    return nothing
+end
+
 # Core implementation — wydzielona z wizualizuj() aby try/catch byl na zewnatrz
 # with_theme (RESEARCH Pitfall E: with_theme musi byc wewnatrz impl, try/catch
 # NA ZEWNATRZ — with_theme uzywa try/finally wewnetrznie, co jest zgodne z naszym
