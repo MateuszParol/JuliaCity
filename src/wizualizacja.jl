@@ -162,6 +162,27 @@ function _init_observables(stan::StanSymulacji, alg::Algorytm,
     return (; obs_trasa, obs_historia, obs_overlay)
 end
 
+"""
+Sprawdza czy okno GLMakie powiązane z `fig` jest nadal otwarte.
+
+Phase 4.1 D-01/D-02 fallback po deprecacji `Base.isopen(::Makie.Figure)` w Makie
+0.24+. Korzystamy z udokumentowanego publicznego API Makie: `events(fig).window_open`
+to `Observable{Bool}` ustawiany przez backend (GLMakie ↔ GLFW callbacks). Zaleta nad
+konwersją do `GLFW.Window`: nie sięgamy do GLMakie internals (lżejszy fallback dla
+przyszłej zmiany backendu na CairoMakie/WGLMakie).
+
+Defensywnie zwracamy `true` gdy odczyt rzuca (np. `fig` nie został jeszcze
+wyświetlony przez `display()` — `events(fig).window_open` może nie być zainicjowany).
+Alternatywą byłoby fałszywe stop przed renderem pierwszej klatki — gorsza UX.
+"""
+function _is_window_open(fig)::Bool
+    try
+        return events(fig).window_open[]
+    catch
+        return true
+    end
+end
+
 # ---------------------------------------------------------------------------
 # Live renderloop (D-09 branch eksport === nothing)
 # ---------------------------------------------------------------------------
