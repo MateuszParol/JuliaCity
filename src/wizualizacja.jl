@@ -88,9 +88,10 @@ Renderuje NN baseline jako szara przerywana linia (raz, statyczne — bez Observ
 Polskie tytuly/etykiety (VIZ-04). RESEARCH Pattern 1 + Q7.
 Uwaga: wywolywane wewnatrz bloku dark-theme (motywy dziedziczone przez Figure).
 """
-function _setup_figure(stan::StanSymulacji, nn_trasa::Vector{Int})
+function _setup_figure(stan::StanSymulacji, nn_trasa::Vector{Int};
+                       figure_size::Tuple{Int,Int}=(1400, 700))
     n_punktow = length(stan.punkty)
-    fig = Figure(size=(1400, 700))
+    fig = Figure(size=figure_size)
 
     # Lewy panel — trasa SA z aspect 1:1 (domena [0,1]² unit square, D-03)
     ax_trasa = Axis(fig[1, 1];
@@ -361,7 +362,8 @@ end
 # outer catch nie interferuje).
 function _wizualizuj_impl(stan::StanSymulacji, params::Parametry, alg::Algorytm;
                           liczba_krokow::Int, fps::Int, kroki_na_klatke::Int,
-                          eksport::Union{Nothing,String})
+                          eksport::Union{Nothing,String},
+                          figure_size::Tuple{Int,Int}=(1400, 700))
     # Walidacja argumentow internal (LANG-04 — asserty po angielsku).
     @assert liczba_krokow > 0 "liczba_krokow must be positive"
     @assert fps > 0 "fps must be positive"
@@ -378,7 +380,7 @@ function _wizualizuj_impl(stan::StanSymulacji, params::Parametry, alg::Algorytm;
     # w wizualizuj(). try/catch jest NA ZEWNATRZ with_theme (hierarchia: outer try →
     # with_theme do → display → loop).
     with_theme(theme_dark()) do
-        fig, ax_trasa, ax_energia = _setup_figure(stan, nn_trasa)
+        fig, ax_trasa, ax_energia = _setup_figure(stan, nn_trasa; figure_size=figure_size)
         obs = _init_observables(stan, alg, ax_trasa, ax_energia)
 
         # Branching live vs eksport (D-09) — plan 03-03 = live, plan 03-04 = eksport.
@@ -443,6 +445,7 @@ krokow (default 50, per D-05) — okno pozostaje responsywne.
 - `fps::Int=30` — klatki na sekunde (live i eksport — unified per D-11)
 - `kroki_na_klatke::Int=50` — krokow SA miedzy aktualizacjami Observables (throttling, VIZ-05)
 - `eksport::Union{Nothing,String}=nothing` — sciezka do pliku MP4/GIF lub `nothing` dla live okna
+- `figure_size::Tuple{Int,Int}=(1400, 700)` — rozmiar zrodlowego okna Makie (Phase 4.1 D-08 — bumpowany do `(1920, 960)` przez `examples/eksport_mp4.jl` dla wyzszej rozdzielczosci eksportu GIF)
 
 # Zachowanie (D-09 — single API entry point)
 - `eksport=nothing`: otwiera okno GLMakie, animuje w czasie rzeczywistym, czeka na zamkniecie
@@ -458,7 +461,8 @@ function wizualizuj(stan::StanSymulacji, params::Parametry, alg::Algorytm;
                     liczba_krokow::Int=params.liczba_krokow,
                     fps::Int=30,
                     kroki_na_klatke::Int=50,
-                    eksport::Union{Nothing,String}=nothing)::Nothing
+                    eksport::Union{Nothing,String}=nothing,
+                    figure_size::Tuple{Int,Int}=(1400, 700))::Nothing
     # D-08: TTFP grace overlay — pierwszy @info PRZED with_theme/display.
     # Pitfall 14: czystego REPL TTFP GLMakie 60-150s; precompile cache 5-15s.
     # Uzytkownik nie mysli ze program sie zawisl podczas JIT-kompilacji.
@@ -470,7 +474,8 @@ function wizualizuj(stan::StanSymulacji, params::Parametry, alg::Algorytm;
     try
         _wizualizuj_impl(stan, params, alg;
                          liczba_krokow=liczba_krokow, fps=fps,
-                         kroki_na_klatke=kroki_na_klatke, eksport=eksport)
+                         kroki_na_klatke=kroki_na_klatke, eksport=eksport,
+                         figure_size=figure_size)
     catch e
         # Phase 4.1 D-03: zawezone do PRAWDZIWYCH init-time GLMakie blokad. Stara
         # logika "if contains(msg, 'GLMakie')" reklasyfikowala runtime MethodError
