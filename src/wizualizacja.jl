@@ -472,17 +472,37 @@ function wizualizuj(stan::StanSymulacji, params::Parametry, alg::Algorytm;
                          liczba_krokow=liczba_krokow, fps=fps,
                          kroki_na_klatke=kroki_na_klatke, eksport=eksport)
     catch e
-        # Q10: GLMakie rzuca GLFW.GLFWError lub InitError przy braku OpenGL/displayu.
-        # Sprawdzamy po stringu (GLFW nie eksportowane do scope'u) ORAZ typie InitError.
+        # Phase 4.1 D-03: zawezone do PRAWDZIWYCH init-time GLMakie blokad. Stara
+        # logika "if contains(msg, 'GLMakie')" reklasyfikowala runtime MethodError
+        # (np. isopen(::Makie.Figure) na Makie 0.24+) jako falszywy "display issue" —
+        # 04-UAT.md Test 2 BLOCKER. Teraz: runtime errors (MethodError, BoundsError,
+        # ArgumentError z @assert) propaguja unwrapped przez wczesne rethrow.
+        if isa(e, MethodError) || isa(e, BoundsError) || isa(e, ArgumentError) ||
+           isa(e, AssertionError) || isa(e, DomainError)
+            rethrow(e)
+        end
+
+        # Init-time GLMakie/OpenGL/X11/display blokady: LoadError/InitError + komunikat
+        # technologii. Slowo "GLMakie" same w sobie NIE wystarcza (zbyt szerokie —
+        # MethodError z stack trace zawiera nazwy modulow). Wymagane konkretne
+        # wskazniki braku kontekstu OpenGL.
         msg = sprint(showerror, e)
-        if contains(msg, "GLFW") || contains(msg, "OpenGL") || contains(msg, "display") ||
-           contains(msg, "X11") || contains(msg, "GLMakie") || isa(e, InitError)
-            # D-13: doslowny polish error (CONTEXT.md). Diakrytyki: "Spróbuj", "Linuksie".
+        init_time_glmakie = (isa(e, InitError) || isa(e, LoadError)) &&
+                            (contains(msg, "GLFW") || contains(msg, "OpenGL") ||
+                             contains(msg, "X11") || contains(msg, "display"))
+        runtime_opengl = !isa(e, MethodError) &&
+                         (contains(msg, "GLFW") || contains(msg, "OpenGL") ||
+                          contains(msg, "X11") || contains(msg, "no display"))
+
+        if init_time_glmakie || runtime_opengl
+            # D-13 verbatim polish error (Phase 3 03-CONTEXT D-13 LOCKED).
+            # Diakrytyki: "Spróbuj", "Linuksie".
             error("GLMakie wymaga aktywnego kontekstu OpenGL. Brak displayu? " *
                   "Spróbuj `xvfb-run -a julia ...` na Linuksie albo uruchom lokalnie z GUI. " *
                   "Headless cloud (CI, Docker bez X) NIE jest wspierany w wersji v1.")
         else
-            # Inny blad (np. ArgumentError z @assert, BoundsError) — propagujemy bez zmian.
+            # Wszystko inne (nieoczekiwane runtime errors) — propagujemy bez zmian
+            # zeby uzytkownik widzial prawdziwy stack trace zamiast falszywego komunikatu.
             rethrow(e)
         end
     end
