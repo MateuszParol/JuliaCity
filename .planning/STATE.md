@@ -2,14 +2,14 @@
 gsd-state-version: 1.0
 milestone: v1.1
 milestone_name: milestone
-status: Phase 04 COMPLETE — milestone v1.1 ready
-last_updated: "2026-05-04T00:00:00.000Z"
+status: Phase 4.1 (INSERTED) — UAT blockery z Phase 4 do domknięcia przed close milestone'a
+last_updated: "2026-05-04T08:00:00.000Z"
 progress:
-  total_phases: 4
+  total_phases: 5
   completed_phases: 4
   total_plans: 35
   completed_plans: 35
-  percent: 100
+  percent: 80
 ---
 
 # State: JuliaCity
@@ -20,21 +20,21 @@ progress:
 
 **Name:** JuliaCity
 **Core Value:** Wizualnie przekonująca, fizycznie umotywowana heurystyka TSP w idiomatycznej Julii — jeśli wszystko inne zawiedzie, użytkownik musi zobaczyć, jak trasa „bańki mydlanej" zaciska się wokół 1000 punktów w czasie rzeczywistym i otrzymać krótszą trasę niż naiwny baseline.
-**Current Focus:** Milestone v1.1 ukończony — wszystkie 4 phases COMPLETE
+**Current Focus:** Phase 4.1 (INSERTED) — domknięcie 2 blockerów z UAT Phase 4 (isopen MethodError + nieczytelny demo.gif → hybryda C3)
 
 ## Current Position
 
-Phase: 04 (demo-benchmarks-documentation) — COMPLETE 2026-05-04
-Plan: 8 of 8
+Phase: 4.1 (demo-gif-hybrid-and-isopen-fix) — INSERTED, not planned yet
+Plan: 0 of 3 (sugerowane plany w ROADMAP, finalne breakdown w `/gsd-plan-phase 4.1`)
 | Field | Value |
 |-------|-------|
-| Phase | 4 (of 4) — COMPLETE |
-| Phase Name | Demo, Benchmarks & Documentation |
-| Plan | 8 plans in 4 waves: `04-01-PLAN.md` .. `04-08-PLAN.md` — wszystkie z SUMMARY.md |
-| Status | COMPLETE — Wave 1-4 done. Headline: SA ~4% krótsza niż NN (mean_ratio=0.9559, std=0.0179). 230/230 testów PASS (1m42s). |
-| Progress | `[██████████] 100% (35/35 plans)` |
-| Last Action | Plan 04-06 SUMMARY.md (commit ea6c643) + plan 04-08 README rewrite (commit dcacd77) + plan 04-08 SUMMARY.md (commit ce4ca5f). Phase 4 zamknięty. |
-| Next Action | Opcjonalnie: `/gsd-progress` (dashboard), `/gsd-audit-milestone v1.1` (formalna audyt przed archiwum), `/gsd-complete-milestone` (archiwum + nowa wersja). Phase verifier (gsd-verifier) NIE byl spawnowany w tej sesji — manualna inspekcja akceptacyjna OK. |
+| Phase | 4.1 (INSERTED — urgent post-UAT) |
+| Phase Name | Demo GIF Hybrid & isopen Fix |
+| Plan | 3 plans w 3 waves (sugerowane): 04.1-01 isopen fix → 04.1-02 hybrid GIF + bump res → 04.1-03 content-level smoke testy |
+| Status | Not planned yet — katalog `.planning/phases/04.1-demo-gif-hybrid-and-isopen-fix/` utworzony, wpis w ROADMAP.md (INSERTED) |
+| Progress | `[░░░░░░░░░░] 0% (0/3 plans)` |
+| Last Action | Insert phase 4.1 (manual workflow — `gsd-sdk` CLI niedostępny na maszynie). Trigger: 04-UAT.md test 2 BLOCKER (isopen MethodError) + test 4 fail (demo.gif nieczytelny, user wybrał hybrydę C3: NN→separator→SA, 1920×960/SZEROKOSC_GIF=1600). |
+| Next Action | `/gsd-plan-phase 4.1` (utworzy 04.1-XX-PLAN.md per wave). Po planach: `/gsd-execute-phase 4.1`. Po wykonaniu: re-run testy 4 i 2 z 04-UAT.md, potem testy 5 i 6 (pending). |
 
 ## Roadmap Snapshot
 
@@ -42,6 +42,7 @@ Plan: 8 of 8
 - [x] **Phase 2: Energy, SA Algorithm & Test Suite** — `oblicz_energie`, `symuluj_krok!` (SA), pełen suite testowy (222/222 PASS; SC #4 zluźnione 10%→5% per plan 02-14 erratum)
 - [x] **Phase 3: Visualization & Export** — GLMakie + Observables, eksport MP4/GIF
 - [x] **Phase 4: Demo, Benchmarks & Documentation** — `examples/`, `bench/`, README po polsku (ukończone 2026-05-04; headline ~4% krótsza niż NN, 230/230 testów PASS)
+- [ ] **Phase 4.1: Demo GIF Hybrid & isopen Fix (INSERTED)** — fix `isopen(::Makie.Figure)` MethodError + przeprojektowanie `assets/demo.gif` na hybrydę NN→separator→SA w 1920×960 (urgent post-UAT 2026-05-04)
 
 ## Performance Metrics
 
@@ -94,6 +95,10 @@ Plan: 8 of 8
 | `KROKI_NA_KLATKE` default — UX-tuning decision for N=1000 on commodity laptops | Phase 3 | Default ≥ 10 per VIZ-05; tune empirically |
 | Distance matrix precompute (~8 MB Float64) vs on-the-fly | Phase 1 | RESOLVED 2026-04-28 — precompute `D::Matrix{Float64}` lock-in (Phase 1 CONTEXT D-08; Phase 2 fills values) |
 | CairoMakie fallback for headless CI? | Phase 3+4 | If CI fails on Linux, add backend abstraction; otherwise GLMakie-only |
+
+### Roadmap Evolution
+
+- Phase 4.1 (URGENT) — inserted after Phase 4 on 2026-05-04. Reason: 04-UAT.md zidentyfikował 2 blockery, których fix wymaga koordynowanej zmiany w `src/wizualizacja.jl` + `examples/eksport_mp4.jl`: (a) live mode crashuje na `MethodError: isopen(::Makie.Figure)` (3 call-sites + maskujący try/catch); (b) `assets/demo.gif` nieczytelny — wybrana hybryda C: 5s NN-construction edge-by-edge → wizualny separator → 5s SA optimization, rozdzielczość 1920×960/SZEROKOSC_GIF=1600. Insert wykonany manualnie (workflow `gsd-sdk` CLI niedostępny na maszynie Windows).
 
 ### Active TODOs
 

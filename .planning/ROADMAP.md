@@ -10,6 +10,7 @@
 - [ ] **Phase 2: Energy, SA Algorithm & Test Suite** — `oblicz_energie` i `symuluj_krok!` (SA + 2-opt + NN init + Metropolis) działają headlessly, type-stable, zero-alloc, zwalidowane suitem testowym (Hamilton, JET, Aqua, NN-baseline-beat).
 - [x] **Phase 3: Visualization & Export** — Okno GLMakie z animacją „zaciągania trasy", polskie etykiety, opcjonalny eksport MP4/GIF.
 - [x] **Phase 4: Demo, Benchmarks & Documentation** — Skrypty `examples/`, suite benchmarków w `bench/`, README po polsku z demo GIF i liczbami benchmarków. *(ukończone 2026-05-04)*
+- [ ] **Phase 4.1: Demo GIF Hybrid & isopen Fix (INSERTED)** — Domknięcie 2 blockerów z 04-UAT.md: (1) `MethodError: isopen(::Makie.Figure)` w live mode `examples/podstawowy.jl` (Makie 0.24+ wycofało metodę, brak fallbacku planowanego dla 03-05); (2) `assets/demo.gif` nieczytelny — przeprojektować na hybrydę 5s NN-construction edge-by-edge → wizualny separator → 5s SA optimization, rozdzielczość 1920×960 / SZEROKOSC_GIF=1600.
 
 ## Phase Details
 
@@ -168,6 +169,35 @@
 - Encoding hygiene NFC + BOM-free + LF + final newline (Phase 1 D-21 — guard test waliduje)
 **UI hint**: yes
 
+### Phase 4.1: Demo GIF Hybrid & isopen Fix (INSERTED)
+**Goal**: Domknąć dwa blockery wykryte podczas UAT Phase 4 (`.planning/phases/04-demo-benchmarks-documentation/04-UAT.md`): (1) `examples/podstawowy.jl` crashuje na `MethodError: no method matching isopen(::Makie.Figure)` w `src/wizualizacja.jl:202` — Makie 0.24+ wycofało metodę, brak fallbacku planowanego dla 03-05; (2) `assets/demo.gif` jest nieczytelny — startuje z gotowej trasy NN i pokazuje SA-2-opt swapy wyglądające jak teleporty, plus rozdzielczość 700×350 jest za mała dla README embed na nowoczesnym ekranie.
+**Depends on**: Phase 4 (urgent post-UAT insertion)
+**Requirements**: REQ-IDs do potwierdzenia w fazie planowania (kandydaci: nowy DEMO-05 dla hybrid GIF design, VIZ-08 dla isopen fallback)
+**Success Criteria** (what must be TRUE):
+  1. `julia --project=. --threads=auto examples/podstawowy.jl` otwiera okno GLMakie i nie crashuje na MethodError; `isopen(fig)` używa fallbacku `events(fig).window_open[]` lub konwersji do `GLFW.Window` we wszystkich 3 call-sites (`src/wizualizacja.jl:202, 373, 377`); outer try/catch (449-462) NIE maskuje już MethodError jako fałszywego "display error".
+  2. `assets/demo.gif` pokazuje czytelnie hybrydę: ~5s NN-construction edge-by-edge od pustej trasy + wizualny separator (czarna klatka / overlay text fade) + ~5s SA-2-opt optimization; pierwsza klatka GIF ma ≤1 krawędź (test content-level).
+  3. Rozdzielczość docelowa: `Figure(size=(1920, 960))` źródło + `SZEROKOSC_GIF=1600` ffmpeg downscale; rozmiar pliku ≤ 1.5 MB (akceptowalny dla GitHub README embed).
+  4. Smoke test live mode: `wizualizuj(...; liczba_krokow=10, kroki_na_klatke=2)` z headless guard (skip jeśli brak OpenGL/display) — rozszerzenie Phase 3 VIZ-06 grep-only check o faktyczne uruchomienie.
+  5. `Pkg.test()` nadal raportuje 0 failures (≥230/230 PASS); regresje pokrycia content-level (pierwsza/środek/koniec klatki) dodane do test suite.
+**Plans**: 3 plans in 3 waves (sugerowane — finalizowane w `/gsd-plan-phase 4.1`)
+
+**Wave 1** *(BLOCKER fix — niezależne)*
+- [ ] 04.1-01-PLAN.md — fix `isopen(::Figure)` w `src/wizualizacja.jl` (3 call-sites: linie 202, 373, 377) → fallback `events(fig).window_open[]` LUB konwersja do `GLFW.Window` przez `GLMakie.to_native(display(fig))`; zawężenie outer try/catch (449-462) żeby NIE reklasyfikować `MethodError` jako display error.
+
+**Wave 2** *(blocked on Wave 1 — live mode musi działać)*
+- [ ] 04.1-02-PLAN.md — nowy helper `animuj_nn_construction!` (incremental NN edge-by-edge z yieldem stanów do Observable) + rewrite `examples/eksport_mp4.jl` na hybrydę (faza 1: NN-construction record block; faza 2: separator klatka/overlay; faza 3: SA optimization); bump `Figure(size=(1920, 960))` w `src/wizualizacja.jl:93` (lub parametryzacja przez kwarg) + `SZEROKOSC_GIF=1600` w `examples/eksport_mp4.jl:26`.
+
+**Wave 3** *(blocked on Wave 2 — testuje nowy hybrid output)*
+- [ ] 04.1-03-PLAN.md — content-level smoke testy: pierwsza klatka GIF ma ≤1 krawędź (NN faza start), środek-NN ma full trasę, koniec-SA ma `energia < energia_nn`; live mode smoke test `wizualizuj(...; liczba_krokow=10)` z headless guard (`Sys.iswindows() && !haskey(ENV, "DISPLAY")` skip pattern albo `try/catch` na initialization błędach).
+
+**Cross-cutting constraints** *(must_haves shared across plans):*
+- BRAK modyfikacji w src/{punkty,energia,baselines,algorytmy/,typy,JuliaCity}.jl (Phase 1+2 PHASE COMPLETE preserved — modyfikacje TYLKO w `wizualizacja.jl` + `examples/eksport_mp4.jl` + opcjonalnie nowy `src/animacja_nn.jl`)
+- Polski docstring + komentarze + @info/@error (LANG-01, LANG-02); ASCII identyfikatory (BOOT-04)
+- Polska typografia w user-facing markdown per D-18 / CONTRIBUTING §4
+- Encoding hygiene NFC + BOM-free + LF + final newline (Phase 1 D-21 — guard test waliduje)
+- `assets/demo.gif` po regenie commitowany z markerem „URGENT post-UAT 4.1" w commit message
+**UI hint**: yes
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
@@ -175,7 +205,8 @@
 | 1. Bootstrap, Core Types & Points | 6/6 | Complete | 2026-04-28 |
 | 2. Energy, SA Algorithm & Test Suite | 14/14 | Complete | 2026-04-30 |
 | 3. Visualization & Export | 7/7 | Complete | 2026-04-30 |
-| 4. Demo, Benchmarks & Documentation | 0/8 | Planned (4 waves) | - |
+| 4. Demo, Benchmarks & Documentation | 8/8 | Complete | 2026-05-04 |
+| 4.1. Demo GIF Hybrid & isopen Fix (INSERTED) | 0/? | Not planned yet | - |
 
 ## Coverage Summary
 
