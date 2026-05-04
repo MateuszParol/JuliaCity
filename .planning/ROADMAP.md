@@ -182,7 +182,7 @@
 **Plans**: 3 plans in 3 waves (sugerowane — finalizowane w `/gsd-plan-phase 4.1`)
 
 **Wave 1** *(BLOCKER fix — niezależne)*
-- [ ] 04.1-01-PLAN.md — fix `isopen(::Figure)` w `src/wizualizacja.jl` (3 call-sites: linie 202, 373, 377) → fallback `events(fig).window_open[]` LUB konwersja do `GLFW.Window` przez `GLMakie.to_native(display(fig))`; zawężenie outer try/catch (449-462) żeby NIE reklasyfikować `MethodError` jako display error.
+- [x] 04.1-01-PLAN.md — fix `isopen(::Figure)` w `src/wizualizacja.jl` (3 call-sites: linie 202, 373, 377) → fallback `events(fig).window_open[]` przez prywatny helper `_is_window_open(fig)::Bool` (CONTEXT D-01/D-02); zawężenie outer try/catch (449-462) — runtime MethodError/BoundsError/ArgumentError/AssertionError/DomainError propagują unwrapped, init-time GLMakie blockades wymagają (LoadError|InitError) AND (GLFW|OpenGL|X11|display) substring (CONTEXT D-03). 3 task commits 5033672, 0871b97, c293b91. Smoke validation PASS (`wizualizuj()` N=10/5 kroków bez MethodError leak). 04-UAT BLOCKER #1 zlikwidowany. Ukończone 2026-05-04.
 
 **Wave 2** *(blocked on Wave 1 — live mode musi działać)*
 - [ ] 04.1-02-PLAN.md — nowy helper `animuj_nn_construction!` (incremental NN edge-by-edge z yieldem stanów do Observable) + rewrite `examples/eksport_mp4.jl` na hybrydę (faza 1: NN-construction record block; faza 2: separator klatka/overlay; faza 3: SA optimization); bump `Figure(size=(1920, 960))` w `src/wizualizacja.jl:93` (lub parametryzacja przez kwarg) + `SZEROKOSC_GIF=1600` w `examples/eksport_mp4.jl:26`.
@@ -206,7 +206,7 @@
 | 2. Energy, SA Algorithm & Test Suite | 14/14 | Complete | 2026-04-30 |
 | 3. Visualization & Export | 7/7 | Complete | 2026-04-30 |
 | 4. Demo, Benchmarks & Documentation | 8/8 | Complete | 2026-05-04 |
-| 4.1. Demo GIF Hybrid & isopen Fix (INSERTED) | 0/? | Not planned yet | - |
+| 4.1. Demo GIF Hybrid & isopen Fix (INSERTED) | 1/3 | In Progress (Wave 1 done, Wave 2-3 pending) | - |
 
 ## Coverage Summary
 
@@ -244,4 +244,4 @@ For v1, the only `<:Algorytm` subtype shipped is `SimAnnealing` (SA-2-opt + NN i
 
 ---
 *Roadmap created: 2026-04-28*
-*Last updated: 2026-04-28 after initialization*
+*Last updated: 2026-05-04 — Phase 4.1 plan 04.1-01 marked complete (isopen fallback wired, 04-UAT BLOCKER #1 zlikwidowany)*

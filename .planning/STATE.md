@@ -3,12 +3,12 @@ gsd-state-version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: Phase 4.1 (INSERTED) — UAT blockery z Phase 4 do domknięcia przed close milestone'a
-last_updated: "2026-05-04T08:00:00.000Z"
+last_updated: "2026-05-04T10:30:00.000Z"
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 35
-  completed_plans: 35
+  completed_plans: 36
   percent: 80
 ---
 
@@ -24,17 +24,17 @@ progress:
 
 ## Current Position
 
-Phase: 4.1 (demo-gif-hybrid-and-isopen-fix) — INSERTED, not planned yet
-Plan: 0 of 3 (sugerowane plany w ROADMAP, finalne breakdown w `/gsd-plan-phase 4.1`)
+Phase: 4.1 (demo-gif-hybrid-and-isopen-fix) — IN PROGRESS, 1 z 3 planów wykonany
+Plan: 1 of 3 (Wave 1 04.1-01 COMPLETE; Wave 2 04.1-02 + Wave 3 04.1-03 pending)
 | Field | Value |
 |-------|-------|
 | Phase | 4.1 (INSERTED — urgent post-UAT) |
 | Phase Name | Demo GIF Hybrid & isopen Fix |
-| Plan | 3 plans w 3 waves (sugerowane): 04.1-01 isopen fix → 04.1-02 hybrid GIF + bump res → 04.1-03 content-level smoke testy |
-| Status | Not planned yet — katalog `.planning/phases/04.1-demo-gif-hybrid-and-isopen-fix/` utworzony, wpis w ROADMAP.md (INSERTED) |
-| Progress | `[░░░░░░░░░░] 0% (0/3 plans)` |
-| Last Action | Insert phase 4.1 (manual workflow — `gsd-sdk` CLI niedostępny na maszynie). Trigger: 04-UAT.md test 2 BLOCKER (isopen MethodError) + test 4 fail (demo.gif nieczytelny, user wybrał hybrydę C3: NN→separator→SA, 1920×960/SZEROKOSC_GIF=1600). |
-| Next Action | `/gsd-plan-phase 4.1` (utworzy 04.1-XX-PLAN.md per wave). Po planach: `/gsd-execute-phase 4.1`. Po wykonaniu: re-run testy 4 i 2 z 04-UAT.md, potem testy 5 i 6 (pending). |
+| Plan | 1 of 3 (04.1-01 isopen fix DONE) → 04.1-02 hybrid GIF + bump res (Wave 2) → 04.1-03 content-level smoke testy (Wave 3) |
+| Status | Wave 1 COMPLETE — `src/wizualizacja.jl` ma helper `_is_window_open(fig)::Bool` (events.window_open[] fallback), 3 call-sites podmienione, outer catch zawężony (MethodError propaguje unwrapped); 04-UAT BLOCKER #1 zlikwidowany. |
+| Progress | `[███░░░░░░░] 33% (1/3 plans)` |
+| Last Action | Plan 04.1-01 COMPLETE — isopen fallback wired (3 call-sites + narrowed outer catch + helper). 3 atomic task commits (5033672, 0871b97, c293b91) + smoke validation PASS (julia/GLMakie window otworzył się i SA ran 5 kroków bez MethodError). |
+| Next Action | `/gsd-execute-phase 4.1` — Wave 2 (04.1-02 hybrid GIF) — autonomous: false, requires local GLMakie + manual GIF inspection. Po Wave 2: Wave 3 (04.1-03 smoke testy). Po Phase 4.1: re-run UAT testów 4 i 2 + testy 5 i 6 z 04-UAT.md (pending). |
 
 ## Roadmap Snapshot
 
@@ -61,6 +61,7 @@ Plan: 0 of 3 (sugerowane plany w ROADMAP, finalne breakdown w `/gsd-plan-phase 4
 | Phase 03 P04 | 8min | 1 task | 1 file |
 | Phase 03 P05 | 12min | 1 task | 1 file |
 | Phase 03 P06 | 3min | 1 task | 1 file |
+| Phase 04.1 P01 | ~25min | 3 tasks | 1 file (src/wizualizacja.jl) — isopen fallback + narrowed outer catch |
 
 ## Accumulated Context
 
@@ -131,4 +132,4 @@ Plan: 0 of 3 (sugerowane plany w ROADMAP, finalne breakdown w `/gsd-plan-phase 4
 
 ---
 *State initialized: 2026-04-28 after roadmap creation*
-*Last updated: 2026-04-30T — Phase 3 COMPLETE: plan 03-06 COMPLETE (@testset "VIZ-06: GLMakie isolation" dodany do runtests.jl; grep-level walkdir+per-line scan, pkgdir anchor; 230/230 PASS; Phase 3 11/11 REQ-IDow VIZ-01..07 EKS-01..04 pokryte; wszystkie 5 ROADMAP SC Phase 3 osiagniete); nastepna: Phase 4*
+*Last updated: 2026-05-04T10:30Z — Phase 4.1 plan 01 COMPLETE (isopen MethodError fix). 3 task commits 5033672/0871b97/c293b91 + tracking commit. Smoke validation PASS (live mode `wizualizuj()` na N=10/5 kroków bez MethodError leak). Następna: plan 04.1-02 (hybrid GIF NN→separator→SA + 1920×960 bump) — Wave 2, autonomous: false.*
