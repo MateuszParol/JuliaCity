@@ -2,7 +2,7 @@
 
 julia_version = "1.12.6"
 manifest_format = "2.0"
-project_hash = "5ec40a197d08a338a3e34196954d29b17ac25410"
+project_hash = "dddddf9dc42f5ea258bc93eefa12214128f9fbd7"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -690,7 +690,7 @@ uuid = "aacddb02-875f-59d6-b918-886e6ef4fbf8"
 version = "3.1.5+0"
 
 [[deps.JuliaCity]]
-deps = ["ChunkSplitters", "GLMakie", "GeometryBasics", "Makie", "Observables", "ProgressMeter", "Random", "Statistics"]
+deps = ["ChunkSplitters", "FFMPEG_jll", "GLMakie", "GeometryBasics", "Makie", "Observables", "ProgressMeter", "Random", "Statistics"]
 path = "."
 uuid = "91765426-3422-4b27-9a04-a58724ef843e"
 version = "0.1.0"
