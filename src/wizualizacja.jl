@@ -192,15 +192,15 @@ end
 const _ACC_WIN = 1000
 
 """
-Live renderloop (D-09 branch eksport === nothing): petla `while isopen(fig)`
+Live renderloop (D-09 branch eksport === nothing): petla `while _is_window_open(fig)`
 z throttled Observable updates per VIZ-05 + D-05. Wykonuje `kroki_na_klatke`
 SA krokow miedzy kazda aktualizacja (1 notify per klatka — Pitfall 5 mitigation).
 Liczy rolling FPS (window=60 klatek — instantaneous dt proxy), accept-rate worsening
 (circular buffer 1000 krokow), ETA sec (extrapolacja z biezacego dt).
 `sleep(1/fps)` jest KLUCZOWE — yielding GLMakie event loopowi (RESEARCH Q2).
 Blokuje glowny watek (RESEARCH Q14 — GLMakie nie thread-safe). Zwraca nothing
-gdy SA hits liczba_krokow LUB user zamknie okno (warunek `isopen(fig)` — A2 ASSUMED,
-fallback w plan 03-05).
+gdy SA hits liczba_krokow LUB user zamknie okno (warunek `_is_window_open(fig)` —
+Phase 4.1 D-01 fallback po deprecacji `Base.isopen(::Makie.Figure)` w Makie 0.24+).
 """
 function _live_loop(fig, stan::StanSymulacji, params::Parametry, alg::Algorytm,
                     obs_trasa::Observable{Vector{Point2f}},
@@ -217,10 +217,11 @@ function _live_loop(fig, stan::StanSymulacji, params::Parametry, alg::Algorytm,
     # renderloopie — rolling srednia nie jest konieczna dla sugestywnego overlay).
     t_prev = time()
 
-    # Stop conditions: window zamkniete (A2 — isopen dla Figure) LUB SA osiagnal limit.
-    # `isopen(fig)` z Makie events; jezeli MethodError, plan 03-05 doda try/catch
-    # z fallback `events(fig).window_open[]`.
-    while isopen(fig) && stan.iteracja < liczba_krokow
+    # Stop conditions: window zamkniete (Phase 4.1 D-01 fallback przez
+    # `events(fig).window_open[]` zamiast deprecated `isopen(::Makie.Figure)`)
+    # LUB SA osiagnal limit. Helper `_is_window_open` defensywnie zwraca true
+    # gdy fig nie zostal jeszcze wyswietlony (D-02).
+    while _is_window_open(fig) && stan.iteracja < liczba_krokow
         # 1. SA steps (throttling per D-05 + VIZ-05): kroki_na_klatke krokow per klatka.
         #    Early-break gdy SA dobiegnie konca wewnatrz batcha — brak nadmiarowych krokow.
         for _ in 1:kroki_na_klatke
@@ -383,19 +384,22 @@ function _wizualizuj_impl(stan::StanSymulacji, params::Parametry, alg::Algorytm;
         # Branching live vs eksport (D-09) — plan 03-03 = live, plan 03-04 = eksport.
         if eksport === nothing
             # Live mode: otworz okno + uruchom renderloop (blokujace az user zamknie lub SA stop).
-            # display(fig) MUSI byc PRZED _live_loop — isopen(fig) zwraca true dopiero po display.
+            # display(fig) MUSI byc PRZED _live_loop — _is_window_open(fig) zwraca true
+            # dopiero po display (Phase 4.1 D-01 fallback przez events(fig).window_open[]).
             display(fig)
             # D-08: drugi @info PO display(fig) — uzytkownik widzi ze okno sie zaladowalo.
             @info "Wizualizacja gotowa, rozpoczynam symulację..."
             _live_loop(fig, stan, params, alg, obs.obs_trasa, obs.obs_historia, obs.obs_overlay;
                        liczba_krokow=liczba_krokow, fps=fps, kroki_na_klatke=kroki_na_klatke)
             # D-06: GOTOWE overlay — tylko gdy SA dobiegl konca I okno jest jeszcze otwarte.
-            # Gdy user zamknie okno przed SA stop, isopen(fig) == false — pomijamy overlay.
-            if isopen(fig) && stan.iteracja >= liczba_krokow
+            # Gdy user zamknie okno przed SA stop, _is_window_open(fig) == false — pomijamy overlay.
+            # Phase 4.1 D-01 fallback (Makie 0.24+ deprecate isopen(::Figure)).
+            if _is_window_open(fig) && stan.iteracja >= liczba_krokow
                 _dodaj_gotowe_overlay!(ax_trasa, stan, energia_nn)
                 # Pasywny event loop — czekamy az user zamknie okno recznie (D-06: brak auto-close).
                 # sleep(1/fps) yielding GLMakie event loopowi (RESEARCH Q2).
-                while isopen(fig)
+                # Phase 4.1 D-01 fallback (Makie 0.24+ deprecate isopen(::Figure)).
+                while _is_window_open(fig)
                     sleep(1 / fps)
                 end
             end
